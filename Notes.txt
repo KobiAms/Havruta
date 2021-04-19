@@ -1,0 +1,3 @@
+To see/search all icons please enter: 
+https://oblador.github.io/react-native-vector-icons/
+package needs to be import at top of the components. example provided at App.js
