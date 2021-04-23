@@ -1,0 +1,30 @@
+1. Risk assesments:
+    Gets article from existig server - high
+    UI/UX easy & simple - medium 
+    Complete all features at Time - high
+    dev group isn't familier with platform - high
+    servers security - high.
+    gets data from both servers need to be fast - medium
+    using firebase may cost money after reaching the limit of traffic - medium
+2. CRC cards
+    Login:
+        login - registered
+        repasswords - registered
+3. Sequance diagram
+    read <Category> article:
+        
+4. finishing Class diagram
+
+
+
+סיכוני פיתוח –
+סיכונים שמשפיעים על משך הזמן או המשאבים הדרושים לפיתוח.
+לדוגמא חוסר יכולת לסיים משימה בזמן הנידרש. או תוכניתן מרכזי שעלול לעזוב
+סיכוני מוצר – 
+סיכונים שעלולים על איכות של המוצר המפותח. 
+לדוגמא הערכה שגויה אודות זמן התגובה של המערכת שנובע מביצועים נמוכים של רשת התקשורת
+סיכונים עסקיים – 
+סיכונים שכלולים להשפיע על האירגון המפתח או על הלקוח. 
+לדוגמא הופעתו של מוצר מתחרה שגורמת לכך שהשערות על גודל השוק מתבררות כמוטות למעלה
+
+
