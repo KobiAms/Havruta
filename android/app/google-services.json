@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "725185804438",
+    "project_id": "havruta-jce",
+    "storage_bucket": "havruta-jce.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:725185804438:android:312fae4b72965cde662ab7",
+        "android_client_info": {
+          "package_name": "com.havruta"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "725185804438-rpbq9k4cj1mptd5be55kfnhvuf1rple8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWvGMrIwG-TaZt9392ahdW4-9X6kiFDlQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "725185804438-rpbq9k4cj1mptd5be55kfnhvuf1rple8.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "725185804438-3b34b3mkfba15egfjbul8i61atfhvtud.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "il.org.havruta"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
