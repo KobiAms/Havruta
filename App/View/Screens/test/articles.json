@@ -1,0 +1,61 @@
+[
+    {
+        "id":"arti1",
+        "headline":"this head",
+        "autor":"the writer",
+        "date":"6/5/2021",
+        "contant":"bla bla bla",
+        "contant-short":"bla",
+        "likes":["kobi", "zohar", "oded"],
+        "comments":[
+            {"user":"kobi",
+            "comment":"i like you"},
+            {"user":"ben",
+            "comment":"best dev ev"}
+        ]
+    },
+    {
+        "id":"arti2",
+        "headline":"this header",
+        "autor":"who writer",
+        "date":"6/6/2021",
+        "contant":"bla bla bla",
+        "contant-short":"bla",
+        "likes":["kobi", "zohar", "oded"],
+        "comments":[
+            {"user":"kobi",
+            "comment":"i like you"},
+            {"user":"ben",
+            "comment":"best dev ev"}
+        ]
+    },
+    {   "id":"arti3",
+        "headline":"this nuts",
+        "autor":"the nuts",
+        "date":"99/5/2021",
+        "contant":"bla bla bla",
+        "contant-short":"bla",
+        "likes":["kobi", "zohar", "oded"],
+        "comments":[
+            {"user":"kobi",
+            "comment":"i like you"},
+            {"user":"ben",
+            "comment":"best dev ev"}
+        ]
+    },
+    {
+        "id":"arti4",
+        "headline":"Alice please",
+        "autor":"all of us",
+        "date":"99/55/4042",
+        "contant":"hi alice! can you please give the funcking func from  REST API of WordPress?",
+        "contant-short":"bla",
+        "likes":["kobi", "zohar", "oded", "","","","","","","","","","","",""],
+        "comments":[
+            {"user":"kobi",
+            "comment":"i like you"},
+            {"user":"ben",
+            "comment":"best dev ev"}
+        ]
+    }
+]
