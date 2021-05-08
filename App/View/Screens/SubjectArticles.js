@@ -8,6 +8,7 @@ import artiTest from './test/articles.json';
 function SubjectArticles({navigation, route}) {
   const feed_type = route.name;
   const [articles, setArticles] = useState();
+
   return (
     <View style={styles.main}>
       <FlatList
@@ -18,7 +19,8 @@ function SubjectArticles({navigation, route}) {
             data={item}
           />
         )}
-        keyExtractor={item => item.id}></FlatList>
+        keyExtractor={item => item.id}
+      />
     </View>
   );
 }
