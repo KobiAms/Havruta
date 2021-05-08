@@ -17,28 +17,31 @@ function PostInFeed({onPress, data}) {
             uri:
               'https://post.medicalnewstoday.com/wp-content/uploads/sites/3/2020/03/GettyImages-1092658864_hero-1024x575.jpg',
           }}
-          onPress={() => console.log('Works!')}
-          backgroundColor={'rgb(0,255,0)'}
         />
         <View>
           <Text style={styles.autor}>{autor}</Text>
           <Text>{date}</Text>
         </View>
       </View>
-      <Text style={styles.headline}>
+
+      <Text onPress={() => onPress()} data={data} style={styles.headline}>
         {headline}
         {'\n'}
       </Text>
-      <Text onPress={() => onPress()}>{contant}</Text>
+      <Text onPress={() => onPress()} data={data}>
+        {contant}
+      </Text>
       <Text style={styles.main}>
         ______________________________________________________{'\n'}
       </Text>
       <View style={styles.response}>
-        <TouchableOpacity>
+        <TouchableOpacity style={styles.row}>
+          <Icon name={'like1'} size={20} style={styles.pad} />
           <Text>likes: {likes.length}</Text>
-          <Icon name={'like1'} />
         </TouchableOpacity>
-        <Text>comments: {comments.length}</Text>
+        <Text onPress={() => onPress()} data={data}>
+          comments: {comments.length}
+        </Text>
       </View>
     </View>
   );
@@ -66,6 +69,9 @@ const styles = StyleSheet.create({
   response: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+  },
+  pad: {
+    paddingRight: 5,
   },
 });
 
