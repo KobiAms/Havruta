@@ -1,61 +1,111 @@
 [
-    {
-        "id":"arti1",
-        "headline":"this head",
-        "autor":"the writer",
-        "date":"6/5/2021",
-        "contant":"bla bla bla",
-        "contant-short":"bla",
-        "likes":["kobi", "zohar", "oded"],
-        "comments":[
-            {"user":"kobi",
-            "comment":"i like you"},
-            {"user":"ben",
-            "comment":"best dev ev"}
-        ]
-    },
-    {
-        "id":"arti2",
-        "headline":"this header",
-        "autor":"who writer",
-        "date":"6/6/2021",
-        "contant":"bla bla bla",
-        "contant-short":"bla",
-        "likes":["kobi", "zohar", "oded"],
-        "comments":[
-            {"user":"kobi",
-            "comment":"i like you"},
-            {"user":"ben",
-            "comment":"best dev ev"}
-        ]
-    },
-    {   "id":"arti3",
-        "headline":"this nuts",
-        "autor":"the nuts",
-        "date":"99/5/2021",
-        "contant":"bla bla bla",
-        "contant-short":"bla",
-        "likes":["kobi", "zohar", "oded"],
-        "comments":[
-            {"user":"kobi",
-            "comment":"i like you"},
-            {"user":"ben",
-            "comment":"best dev ev"}
-        ]
-    },
-    {
-        "id":"arti4",
-        "headline":"Alice please",
-        "autor":"all of us",
-        "date":"99/55/4042",
-        "contant":"hi alice! can you please give the funcking func from  REST API of WordPress?",
-        "contant-short":"bla",
-        "likes":["kobi", "zohar", "oded", "","","","","","","","","","","",""],
-        "comments":[
-            {"user":"kobi",
-            "comment":"i like you"},
-            {"user":"ben",
-            "comment":"best dev ev"}
-        ]
-    }
+  {
+    "id": "arti1",
+    "headline": "אם כבר הגעת לפה",
+    "autor": "בוא",
+    "date": "1/1/1001",
+    "contant": "תגיד איך הגעת לפה",
+    "contant-short": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
+    "likes": ["Kobi Amsalem", "zohar", "oded", "dani", "moshe", "maor"],
+    "comments": [
+      {"comKey": "000", "user": "דניאל", "comment": "שם מים על כל בקבוקי היין"},
+      {"comKey": "001", "user": "דניאל", "comment": "best dev ev"},
+      {"comKey": "002", "user": "Kobi Amsalem", "comment": "אחונדלה"},
+      {"comKey": "003", "user": "Ben Sagir", "comment": "best dev ev"},
+      {"comKey": "004", "user": "Kobi Amsalem", "comment": "i like you"},
+      {"comKey": "005", "user": "Ben Sagir", "comment": "best dev ev"},
+      {"comKey": "006", "user": "Kobi Amsalem", "comment": "i like you"},
+      {"comKey": "007", "user": "Ben Sagir", "comment": "best dev ev"},
+      {"comKey": "008", "user": "Kobi Amsalem", "comment": "i like you"},
+      {"comKey": "009", "user": "Ben Sagir", "comment": "best dev ev"},
+      {"comKey": "010", "user": "Kobi Amsalem", "comment": "i like you"},
+      {"comKey": "011", "user": "Ben Sagir", "comment": "best dev ev"},
+      {"comKey": "012", "user": "Kobi Amsalem", "comment": "i like you"},
+      {"comKey": "013", "user": "Ben Sagir", "comment": "best dev ev"}
+    ]
+  },
+  {
+    "id": "arti2",
+    "headline": "זה מגן מטילים וגם ממרגמות",
+    "autor": "Daniel Ohayon",
+    "date": "6/6/2021",
+    "contant": "שתי בחורות עליי רק רבות בחדשות רק קרבות לא מזיז לי יש עליי מאות של בנות",
+    "contant-short": "bla",
+    "likes": [
+      "Kobi Amsalem",
+      "zohar",
+      "oded",
+      "nati",
+      "yona",
+      "yarin",
+      "karen",
+      "Ben Sagir",
+      "moshe",
+      "gabay"
+    ],
+    "comments": [
+      {"comKey": "001", "user": "Kobi Amsalem", "comment": "i like you"},
+      {"comKey": "002", "user": "Ben Sagir", "comment": "best dev ev"},
+      {
+        "comKey": "003",
+        "user": "daniel",
+        "comment": "OMG I SM what what i say OMG I SM what what OMG I SM what what OMG I SM what what OMG I SM what what"
+      },
+      {"comKey": "asdsada", "user": "Ben Sagir", "comment": "best dev ev"}
+    ]
+  },
+  {
+    "id": "arti3",
+    "headline": "זה הפינאלי",
+    "autor": "סאבמלימינאלי",
+    "date": "99/5/2021",
+    "contant": "נכנסתי למשחק למה המשחק אוניברסלי",
+    "contant-short": "לא נומלי זה בא לי היפ הופ אורגינל",
+    "likes": ["Kobi Amsalem", "zohar", "oded"],
+    "comments": [
+      {"comKey": "000", "user": "Kobi Amsalem", "comment": "כל מה שצריך זה"},
+      {"comKey": "001", "user": "Ben Sagir", "comment": "פטיפון"},
+      {"comKey": "002", "user": "Kobi Amsalem", "comment": "כשרון"},
+      {"comKey": "003", "user": "Ben Sagir", "comment": "סגנון"},
+      {"comKey": "004", "user": "Kobi Amsalem", "comment": "ארמון"},
+      {"comKey": "005", "user": "Ben Sagir", "comment": "לימון"},
+      {"comKey": "006", "user": "Kobi Amsalem", "comment": "קלסתרון"},
+      {"comKey": "007", "user": "Ben Sagir", "comment": "אוירון"},
+      {"comKey": "008", "user": "Kobi Amsalem", "comment": "מיניון"},
+      {"comKey": "009", "user": "Ben Sagir", "comment": "מיליון"},
+      {"comKey": "010", "user": "Kobi Amsalem", "comment": "פולינום"},
+      {"comKey": "011", "user": "Ben Sagir", "comment": "טרינום"},
+      {"comKey": "012", "user": "Kobi Amsalem", "comment": "אגרונום"},
+      {"comKey": "013", "user": "Ben Sagir", "comment": "כל שיר נהיה המנון"}
+    ]
+  },
+  {
+    "id": "arti4",
+    "headline": "Alice please",
+    "autor": "all of us",
+    "date": "99/55/4042",
+    "contant": "hi alice! can you please give the funcking func from  REST API of WordPress?",
+    "contant-short": "bla",
+    "likes": [
+      "Kobi Amsalem",
+      "zohar",
+      "oded",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "comments": [
+      {"comKey": "asdsda", "user": "Kobi Amsalem", "comment": "i like you"},
+      {"comKey": "asds2da", "user": "Ben Sagir", "comment": "best dev ev"}
+    ]
+  }
 ]
