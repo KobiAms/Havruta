@@ -1,14 +1,14 @@
 [
   {
     "id": "arti1",
-    "headline": "אם כבר הגעת לפה",
-    "autor": "בוא",
+    "headline": "Daimonds in the sky",
+    "autor": "Zohar",
     "date": "1/1/1001",
-    "contant": "תגיד איך הגעת לפה",
+    "contant": "Shine bright like a diamond. Shine bright like a diamond. Find light in the beautiful sea. I choose to be happy, You and I, you and I, We're like diamonds in the sky, You're a shooting star I see, A vision of ecstasy, When you hold me, I'm alive",
     "contant-short": "Lorem Ipsum is simply dummy text of the printing and typesetting industry",
     "likes": ["Kobi Amsalem", "zohar", "oded", "dani", "moshe", "maor"],
     "comments": [
-      {"comKey": "000", "user": "דניאל", "comment": "שם מים על כל בקבוקי היין"},
+      {"comKey": "019", "user": "דניאל", "comment": "שם מים על כל בקבוקי היין"},
       {"comKey": "001", "user": "דניאל", "comment": "best dev ev"},
       {"comKey": "002", "user": "Kobi Amsalem", "comment": "אחונדלה"},
       {"comKey": "003", "user": "Ben Sagir", "comment": "best dev ev"},
@@ -29,7 +29,7 @@
     "headline": "זה מגן מטילים וגם ממרגמות",
     "autor": "Daniel Ohayon",
     "date": "6/6/2021",
-    "contant": "שתי בחורות עליי רק רבות בחדשות רק קרבות לא מזיז לי יש עליי מאות של בנות",
+    "contant": "לך עליה עליה בבוקר, למה לא למה לא, אם רצית בה לגעת כמו חלום, למה לא, אם הצעת לה טבעת יהלום, למה לא, אם ניסית והצלחת, למה לא למה לא, למה לא למה לא",
     "contant-short": "bla",
     "likes": [
       "Kobi Amsalem",
@@ -84,7 +84,7 @@
     "headline": "Alice please",
     "autor": "all of us",
     "date": "99/55/4042",
-    "contant": "hi alice! can you please give the funcking func from  REST API of WordPress?",
+    "contant": "hi alice! can you please give the real func from  REST API of WordPress?",
     "contant-short": "bla",
     "likes": [
       "Kobi Amsalem",

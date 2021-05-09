@@ -7,7 +7,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   LogBox,
-  TextInput,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Icons from 'react-native-vector-icons/Ionicons';
@@ -16,7 +15,7 @@ import {FlatList} from 'react-native-gesture-handler';
 import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
 
 function ArticleScreen({navigation, route}) {
-  const feed_type = route.name;
+  // const feed_type = route.name;
   useEffect(() => {
     LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
   }, []);
