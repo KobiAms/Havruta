@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef, useCallback, useState} from 'react';
 import {
   ScrollView,
   View,
@@ -20,6 +20,13 @@ function ArticleScreen({navigation, route}) {
     LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
   }, []);
   let {autor, date, headline, comments, likes, contant} = route.params.data;
+  let comment_input = '';
+  const inputRef = useRef();
+  const clearText = useCallback(() => {
+    inputRef.current.setNativeProps({text: ''});
+  }, []);
+
+  const [comInput, setcomInput] = useState();
   return (
     <ScrollView style={styles.main}>
       <View style={styles.row}>
@@ -55,8 +62,14 @@ function ArticleScreen({navigation, route}) {
         <AutoGrowingTextInput
           placeholder={'    Add your comment...'}
           style={styles.input}
+          onChangeText={setcomInput}
+          ref={inputRef}
         />
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            console.log(comInput);
+            clearText();
+          }}>
           <Icons name={'send'} size={25} />
         </TouchableOpacity>
       </View>
