@@ -24,8 +24,9 @@ SignupForm = () => {
         }
         setLoading(true);
         auth().createUserWithEmailAndPassword(email, password)
-            .then((value) => {
+            .then(() => {
                 setLoading(false);
+                setUser(auth().currentUser)
             })
             .catch((error) => {
                 Alert.alert("Oops..! Some Error Just happen. Please Try Again Later\n" + error.code, [{ text: "OK", }], { cancelable: false })
@@ -56,8 +57,7 @@ SignupForm = () => {
                 secureTextEntry={true}
             />
             <TouchableOpacity style={styles.signup_button} onPress={() => signup()}>
-                {loading ? <ActivityIndicator size={'small'} color={'#000000'} /> : null}
-                <Text>Sign-Up Now!</Text>
+                {loading ? <ActivityIndicator size={'small'} color={'#000000'} /> : <Text>Sign-Up Now!</Text>}
             </TouchableOpacity>
         </View>
     )

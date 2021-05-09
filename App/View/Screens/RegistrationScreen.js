@@ -1,44 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import auth from '@react-native-firebase/auth'
 import LoginForm from '../Components/LoginForm'
 import SignupForm from '../Components/SignupForm'
 
 
-RegistrationScreen = ({ navigation }) => {
-    const [LOGIN, LOGOUT, REGISTER] = ['Sign-In', 'Log-Out', 'Sign-Up']
-    const [mode, setMode] = useState(LOGIN)
-    onChange = (user) => {
-        if (user) {
-            setMode(LOGOUT)
-        } else if (mode == REGISTER) {
-            setMode(REGISTER)
-        } else {
-            setMode(LOGIN)
-        }
-    }
+RegistrationScreen = ({ navigation, route }) => {
+    const [login_mode, setLogin_mode] = useState(true)
+    const [user, setUser] = useState(auth().currentUser)
 
-    useEffect(() => {
-        // listen for auth state changes
-        const unsubscribe = auth().onAuthStateChanged((user) => {
-            if (user) {
-                setMode(LOGOUT)
-            } else if (mode == REGISTER) {
-                setMode(REGISTER)
-            } else {
-                setMode(LOGIN)
-            }
-        })
-        // unsubscribe to the listener when unmounting
-        return () => unsubscribe()
-    }, [setMode])
 
     LogoutForm = () => {
         return (
             <View style={styles.form}>
-                <TouchableOpacity style={styles.login_button} onPress={() => auth().signOut()}>
-                    <Text>{mode}</Text>
+                <TouchableOpacity style={styles.login_button} onPress={() => auth().signOut().then(() => setUser(auth().currentUser))}>
+                    <Text>Log Out</Text>
                 </TouchableOpacity>
             </View>
         )
@@ -56,12 +33,14 @@ RegistrationScreen = ({ navigation }) => {
                 <View style={[styles.register, { backgroundColor: 'rgba(0,0,0,0)' }]}>
                 </View>
             </View>
-            {mode == LOGIN ? <LoginForm /> : (mode == REGISTER ? <SignupForm /> : <LogoutForm />)}
             {
-                mode == LOGOUT ? null :
-                    <TouchableOpacity style={{ marginTop: 5, borderBottomColor: 'rgb(0,127,255)', borderBottomWidth: 1 }} onPress={() => mode == LOGIN ? setMode(REGISTER) : setMode(LOGIN)}>
-                        <Text style={styles.headline}>{mode == LOGIN ? 'Create New Account' : 'I Already Have Account'}</Text>
-                    </TouchableOpacity>
+                user ? <LogoutForm /> :
+                    <View style={styles.form}>
+                        {login_mode ? <LoginForm setUser={setUser} /> : <SignupForm setUser={setUser} />}
+                        <TouchableOpacity style={{ marginTop: 5, borderBottomColor: 'rgb(0,127,255)', borderBottomWidth: 1 }} onPress={() => login_mode ? setLogin_mode(false) : setLogin_mode(true)}>
+                            <Text style={styles.headline}>{login_mode ? 'Create New Account' : 'I Already Have Account'}</Text>
+                        </TouchableOpacity>
+                    </View>
             }
         </View>
     )
