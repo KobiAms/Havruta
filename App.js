@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -12,12 +13,14 @@ import MainScreen from './App/View/Screens/MainScreen'
 import RegistrationScreen from './App/View/Screens/RegistrationScreen'
 
 
+
+
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-
 App = () => {
   return (
+
     <SafeAreaView style={{ flex: 1 }}>
       <NavigationContainer>
         <Tab.Navigator>
@@ -31,6 +34,7 @@ App = () => {
             options={{ tabBarIcon: ({ color }) => <Icon name="torah" size={25} color={color} /> }} />
           <Tab.Screen name="Other" component={OtherScreen}
             options={{ tabBarIcon: ({ color }) => <Icon name="bars" size={25} color={color} /> }} />
+
         </Tab.Navigator>
       </NavigationContainer>
     </SafeAreaView>
@@ -81,7 +85,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'rgb(0, 127, 255)',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
 });
 
