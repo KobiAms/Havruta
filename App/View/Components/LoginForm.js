@@ -1,28 +1,35 @@
 import React from 'react';
 import { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, ActivityIndicator } from 'react-native';
 import auth from '@react-native-firebase/auth'
 
 
-LoginForm = () => {
+LoginForm = ({ setUser }) => {
     const [password, setPassword] = useState("123123")
     const [email, setEmail] = useState("testy@test.com")
+    const [loading, setLoading] = useState(false)
+
 
     login = () => {
+        if (loading)
+            return;
         if (!(email && password)) {
             Alert.alert("Email or Password Missing", [{ text: "OK", }], { cancelable: false })
             return
         }
+        setLoading(true)
         auth().signInWithEmailAndPassword(email, password)
-            .then((value) => {
-                console.log(value)
+            .then(() => {
+                setLoading(false)
+                setUser(auth().currentUser)
             })
             .catch((error) => {
+                setLoading(false)
                 Alert.alert("Oops..! Some Error Just happen. Please Try Again Later\n" + error.code, [{ text: "OK", }], { cancelable: false })
             })
     }
-
     return (
+
         <View style={styles.form}>
             <TextInput
                 style={styles.input}
@@ -38,7 +45,7 @@ LoginForm = () => {
                 secureTextEntry={true}
             />
             <TouchableOpacity style={styles.login_button} onPress={() => login()}>
-                <Text>Log-In</Text>
+                {loading ? <ActivityIndicator size={'small'} color={'#000000'} /> : <Text>Log-In</Text>}
             </TouchableOpacity>
         </View>
     )

@@ -1,15 +1,19 @@
 import React from 'react';
 import { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, ActivityIndicator } from 'react-native';
 import auth from '@react-native-firebase/auth'
+
 
 
 SignupForm = () => {
     const [password, setPassword] = useState()
     const [rePassword, setRePassword] = useState()
     const [email, setEmail] = useState()
+    const [loading, setLoading] = useState(false)
 
     signup = () => {
+        if (loading)
+            return;
         if (!(email && password && rePassword)) {
             Alert.alert("one of the fields are Missing", [{ text: "OK", }], { cancelable: false })
             return
@@ -18,12 +22,15 @@ SignupForm = () => {
             Alert.alert("your passwords are not the same", [{ text: "OK", }], { cancelable: false })
             return
         }
+        setLoading(true);
         auth().createUserWithEmailAndPassword(email, password)
-            .then((value) => {
-                console.log(value)
+            .then(() => {
+                setLoading(false);
+                setUser(auth().currentUser)
             })
             .catch((error) => {
                 Alert.alert("Oops..! Some Error Just happen. Please Try Again Later\n" + error.code, [{ text: "OK", }], { cancelable: false })
+                setLoading(false);
             })
     }
 
@@ -50,7 +57,7 @@ SignupForm = () => {
                 secureTextEntry={true}
             />
             <TouchableOpacity style={styles.signup_button} onPress={() => signup()}>
-                <Text>Sign-Up Now!</Text>
+                {loading ? <ActivityIndicator size={'small'} color={'#000000'} /> : <Text>Sign-Up Now!</Text>}
             </TouchableOpacity>
         </View>
     )
