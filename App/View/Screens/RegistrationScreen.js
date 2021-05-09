@@ -1,18 +1,38 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import auth from '@react-native-firebase/auth'
 import LoginForm from '../Components/LoginForm'
 import SignupForm from '../Components/SignupForm'
 
 
-RegistrationScreen = ({ navigation, route }) => {
+RegistrationScreen = ({ navigation }) => {
     const [LOGIN, LOGOUT, REGISTER] = ['Sign-In', 'Log-Out', 'Sign-Up']
     const [mode, setMode] = useState(LOGIN)
+    onChange = (user) => {
+        if (user) {
+            setMode(LOGOUT)
+        } else if (mode == REGISTER) {
+            setMode(REGISTER)
+        } else {
+            setMode(LOGIN)
+        }
+    }
 
-    auth().onAuthStateChanged(user => {
-        user ? setMode(LOGOUT) : setMode(LOGIN)
-    })
+    useEffect(() => {
+        // listen for auth state changes
+        const unsubscribe = auth().onAuthStateChanged((user) => {
+            if (user) {
+                setMode(LOGOUT)
+            } else if (mode == REGISTER) {
+                setMode(REGISTER)
+            } else {
+                setMode(LOGIN)
+            }
+        })
+        // unsubscribe to the listener when unmounting
+        return () => unsubscribe()
+    }, [setMode])
 
     LogoutForm = () => {
         return (
