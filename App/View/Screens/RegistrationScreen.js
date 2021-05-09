@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import auth from '@react-native-firebase/auth'
@@ -10,16 +10,14 @@ RegistrationScreen = ({ navigation, route }) => {
     const [LOGIN, LOGOUT, REGISTER] = ['Sign-In', 'Log-Out', 'Sign-Up']
     const [mode, setMode] = useState(LOGIN)
 
-    useEffect(() => {
-        auth().onAuthStateChanged(user => {
-            user ? setMode(LOGOUT) : setMode(LOGIN)
-        })
-    }, [])
+    auth().onAuthStateChanged(user => {
+        user ? setMode(LOGOUT) : setMode(LOGIN)
+    })
 
     LogoutForm = () => {
         return (
             <View style={styles.form}>
-                <TouchableOpacity style={styles.login_button} onPress={() => console.log(email, password)}>
+                <TouchableOpacity style={styles.login_button} onPress={() => auth().signOut()}>
                     <Text>{mode}</Text>
                 </TouchableOpacity>
             </View>

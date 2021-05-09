@@ -5,8 +5,8 @@ import auth from '@react-native-firebase/auth'
 
 
 LoginForm = () => {
-    const [password, setPassword] = useState()
-    const [email, setEmail] = useState()
+    const [password, setPassword] = useState("123123")
+    const [email, setEmail] = useState("testy@test.com")
 
     login = () => {
         if (!(email && password)) {
