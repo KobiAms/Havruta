@@ -7,9 +7,10 @@ import Icon from 'react-native-vector-icons/Ionicons'
 
 let flag=false
 ChatMessage=({item})=>{
+    let date = item.date.toDate()
     return (
         <View style ={styles.item}>
-            <Text>
+            <Text style={styles.userId}>
                 {item.user_id}
             </Text>
             
@@ -18,20 +19,28 @@ ChatMessage=({item})=>{
             </Text>
 
             <Text>
-                {item.date.toDate().toString()}
+                {(date.getDate()+1) + '.' + (date.getMonth()+1) + '.' + date.getFullYear()+"  "+date.getHours()+":"+("0" + (date.getMinutes())).slice(-2)
+}
             </Text>
         </View>
     )
 }
 
 GenericChat = ({ navigation, route }) => {
-    const [newMessage,set_new_message]=useState("")
+    const [newMessage,setNewMessage]=useState("")
     const [chat_data,set_chat_data]=useState({})
     const feed_type = route.name
     const chat_id="example_chat_id"
     sendMessage=()=>{
-        console.log(newMessage)
-        set_new_message("")
+        let tempMessage = {user_id:"test@test.com" , message:newMessage , date:new Date()}
+        console.log(tempMessage)
+        firestore().collection('chats').doc('example_chat_id').update({
+            messages:firestore.FieldValue.arrayUnion(tempMessage)
+        }).then(()=>{
+            setNewMessage("")
+        }).catch(error=>{
+            console.log(error.toString())
+        })
     }
     useEffect(() => {
         //
@@ -54,14 +63,14 @@ GenericChat = ({ navigation, route }) => {
                 {chat_id}
                 </Text>
             </View>
-            <FlatList style={styles.list} data={chat_data.messages} keyExtractor={(item,index)=>index}
+            <FlatList style={styles.list} data={chat_data.messages} inverted={true} keyExtractor={(item,index)=>index }
                 renderItem={({item})=><ChatMessage item={item}/>}/>
             <View style={styles.inputContainer}>    
-                <TextInput placeholder="your message" style={styles.input} value={newMessage} 
-                  onChangeText={set_new_message}/>
+                <TextInput placeholder="your message.." style={styles.input} value={newMessage} 
+                  onChangeText={setNewMessage}/>
 
-                <TouchableOpacity onPress={()=>sendMessage()} style={styles.sendButten}>
-                    <Icon name={"md-send"} size={20} color={"#007fff"}/>
+                <TouchableOpacity onPress={()=>sendMessage()} style={newMessage.length == 0 ? styles.sendButtonEmpty:styles.sendButtonFull}>
+                    <Icon name={"md-send"} size={20} color={"#ffffff"}/>
                 </TouchableOpacity>  
             </View>       
         </View>
@@ -76,33 +85,71 @@ const styles = StyleSheet.create({
 
     },
     headline: {
+        padding:15,
         fontSize: 20,
         fontWeight: 'bold',
-        color: 'rgb(0,127,255)'
+        color: "#fff"
     },
     inputContainer:{
-        padding:5,
+        padding:2,
         backgroundColor:"#999999",
         width:"100%",
         alignItems:"center",
-        justifyContent:"space-between",
+        justifyContent:"space-evenly",
         flexDirection:'row',
     },
     input: {
+        borderColor:"black",
+        borderWidth:1,
         backgroundColor:"#ffffff",
-        width:"85%",
-        borderRadius:15,
-        paddingLeft:5,
+        width:"88%",
+        borderRadius:30,
+        paddingLeft:15,
+        height:"75%",
     },
-    sendButten: {
-        backgroundColor:"#ffffff",
+    sendButtonEmpty: {
+        padding:8,
+        backgroundColor:"#555555",
         alignItems:"center",
         justifyContent:"center",
-        width:"10%",
-        borderRadius:10,
+        borderRadius:100,
+    },
+    sendButtonFull: {
+        padding:8,
+        backgroundColor:"#007fff",
+        alignItems:"center",
+        justifyContent:"center",
+        borderRadius:100,
+    },
+    header: {
+        width:"100%",
+        backgroundColor:"purple",
+        alignItems:"center",
+        justifyContent:"center",
     },
     list:{
+        padding:10,
+        backgroundColor:"white",
+        width:"100%",
         
+    },
+    userId:{
+        fontSize:16,
+        fontWeight:'bold'
+    },
+    messageDate:{
+
+    },
+    date:{
+
+    },
+    item:{
+        margin:5,
+        paddingLeft:5,
+        backgroundColor:"#007fffd0",
+        borderColor:"black",
+        borderWidth:1,
+        borderRadius:7,
     }
 });
 
