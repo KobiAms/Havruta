@@ -149,25 +149,27 @@ const styles = StyleSheet.create({
 
     },
     date:{
-        fontSize:16
+        fontSize:16,
     },
     item:{
         margin:5,
         paddingLeft:5,
-        backgroundColor:"#0072ff",
+        backgroundColor:"dodgerblue",
         borderColor:"black",
         borderWidth:1,
         borderRadius:7,
         alignSelf:'flex-start',
+        maxWidth: "83%"
     },
     userIdDate:{
         flexDirection:'row',
+        flex:1,
+        alignContent:'flex-end'
     },
     messageStyle:{
+        color:"white",
         fontSize: 17.5
-
-    },
-    
+    }, 
     userPhoto:{
         width:50,
         height:50,
