@@ -1,6 +1,6 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, Image } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -12,6 +12,12 @@ let flag=false
 ChatMessage=({item})=>{
     let date = item.date.toDate()
     return (
+        <View>
+        <View>
+            {/* <Image style={styles.userPhoto} source={require('C:/Users/user/Desktop/Havruta/user.png')}>
+
+            </Image> */}
+        </View>
         <View style ={styles.item}>
             <Text style={styles.messageStyle}>
                 {item.message}
@@ -24,6 +30,7 @@ ChatMessage=({item})=>{
                 {" "+(date.getDate()) + '/' + (date.getMonth()+1) + '/' + date.getFullYear()+" "+date.getHours()+":"+("0" + (date.getMinutes())).slice(-2)+" "}
             </Text>
             </View>
+        </View>
         </View>
     )
 }
@@ -159,8 +166,12 @@ const styles = StyleSheet.create({
     messageStyle:{
         fontSize: 17.5
 
-    }
+    },
     
+    userPhoto:{
+        width:10,
+        height:10,
+    }
 
 });
 
