@@ -23,10 +23,10 @@ ChatMessage=({item})=>{
             </Text>
             <View style = {styles.userIdDate}>
             <Text style={styles.userId}>
-                {item.user_id}
+                {" " + item.user_id}
             </Text>
-            <Text>
-                {(date.getDate()) + '.' + (date.getMonth()+1) + '.' + date.getFullYear()+"  "+date.getHours()+":"+("0" + (date.getMinutes())).slice(-2)}
+            <Text style={styles.userId}>
+                {(date.getDate()) + '.' + (date.getMonth()+1) + '.' + date.getFullYear()+" "+date.getHours()+":"+("0" + (date.getMinutes())).slice(-2)}
             </Text>
             </View>
         </View>
@@ -147,6 +147,7 @@ const styles = StyleSheet.create({
 
     },
     date:{
+        
 
     },
     item:{
@@ -156,13 +157,14 @@ const styles = StyleSheet.create({
         borderColor:"black",
         borderWidth:1,
         borderRadius:7,
+        alignSelf:'flex-start',
     },
     userIdDate:{
         flexDirection:'row',
-        justifyContent:'space-between',
     },
     messageStyle:{
         fontSize: 17.5
+
     }
     
 
