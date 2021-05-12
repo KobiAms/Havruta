@@ -4,6 +4,13 @@ import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity } from 'r
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/Ionicons'
+import 'react-native-size-matters'
+import {moderateScale} from 'react-native-size-matters'
+import 'react-native-svg'
+import svg , {Path} from 'react-native-svg'
+import Bubble from 'react-native-gifted-chat'
+
+
 
 
 let flag=false
@@ -11,17 +18,17 @@ ChatMessage=({item})=>{
     let date = item.date.toDate()
     return (
         <View style ={styles.item}>
+            <Text style={styles.messageStyle}>
+                {item.message}
+            </Text>
+            <View style = {styles.userIdDate}>
             <Text style={styles.userId}>
                 {item.user_id}
             </Text>
-            
-            <Text>
-                {item.message}
-            </Text>
-
             <Text>
                 {(date.getDate()) + '.' + (date.getMonth()+1) + '.' + date.getFullYear()+"  "+date.getHours()+":"+("0" + (date.getMinutes())).slice(-2)}
             </Text>
+            </View>
         </View>
     )
 }
@@ -145,11 +152,20 @@ const styles = StyleSheet.create({
     item:{
         margin:5,
         paddingLeft:5,
-        backgroundColor:"#007fffd0",
+        backgroundColor:"#0072ff",
         borderColor:"black",
         borderWidth:1,
         borderRadius:7,
+    },
+    userIdDate:{
+        flexDirection:'row',
+        justifyContent:'space-between',
+    },
+    messageStyle:{
+        fontSize: 17.5
     }
+    
+
 });
 
 
