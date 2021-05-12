@@ -72,7 +72,7 @@ GenericChat = ({ navigation, route }) => {
                 {chat_id}
                 </Text>
             </View>
-            <FlatList style={styles.list} data={chat_data.messages} keyExtractor={(item,index)=>index }
+            <FlatList style={styles.list} data={chat_data.messages} inverted keyExtractor={(item,index)=>index }
                 renderItem={({item})=><ChatMessage item={item}/>}/>
             <View style={styles.inputContainer}>    
                 <TextInput placeholder="your message.." style={styles.input} value={newMessage}
