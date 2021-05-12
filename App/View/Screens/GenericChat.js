@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity } from 'r
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/Ionicons'
+import Moment from 'moment';
 
 let flag=false
 ChatMessage=({item})=>{
@@ -19,8 +20,7 @@ ChatMessage=({item})=>{
             </Text>
 
             <Text>
-                {(date.getDate()+1) + '.' + (date.getMonth()+1) + '.' + date.getFullYear()+"  "+date.getHours()+":"+("0" + (date.getMinutes())).slice(-2)
-}
+                {(date.getDate()) + '.' + (date.getMonth()+1) + '.' + date.getFullYear()+"  "+date.getHours()+":"+("0" + (date.getMinutes())).slice(-2)}
             </Text>
         </View>
     )
@@ -63,10 +63,10 @@ GenericChat = ({ navigation, route }) => {
                 {chat_id}
                 </Text>
             </View>
-            <FlatList style={styles.list} data={chat_data.messages} inverted={true} keyExtractor={(item,index)=>index }
+            <FlatList style={styles.list} data={chat_data.messages} keyExtractor={(item,index)=>index }
                 renderItem={({item})=><ChatMessage item={item}/>}/>
             <View style={styles.inputContainer}>    
-                <TextInput placeholder="your message.." style={styles.input} value={newMessage} 
+                <TextInput placeholder="your message.." style={styles.input} value={newMessage}
                   onChangeText={setNewMessage}/>
 
                 <TouchableOpacity onPress={()=>sendMessage()} style={newMessage.length == 0 ? styles.sendButtonEmpty:styles.sendButtonFull}>
