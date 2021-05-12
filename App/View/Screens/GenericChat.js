@@ -128,7 +128,6 @@ const styles = StyleSheet.create({
         justifyContent:"center",
     },
     list:{
-        padding:10,
         backgroundColor:"white",
         width:"100%",
         
