@@ -3,12 +3,7 @@ import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-import Icon from 'react-native-vector-icons/Ionicons'
-import 'react-native-size-matters'
-import {moderateScale} from 'react-native-size-matters'
-import 'react-native-svg'
-import svg , {Path} from 'react-native-svg'
-import Bubble from 'react-native-gifted-chat'
+import Icon from 'react-native-vector-icons/Ionicons';
 
 
 
@@ -23,10 +18,10 @@ ChatMessage=({item})=>{
             </Text>
             <View style = {styles.userIdDate}>
             <Text style={styles.userId}>
-                {" " + item.user_id}
+                {" " + item.user_id + " "}
             </Text>
             <Text style={styles.date}>
-                {" "+(date.getDate()) + '/' + (date.getMonth()+1) + '/' + date.getFullYear()+" "+date.getHours()+":"+("0" + (date.getMinutes())).slice(-2)}
+                {" "+(date.getDate()) + '/' + (date.getMonth()+1) + '/' + date.getFullYear()+" "+date.getHours()+":"+("0" + (date.getMinutes())).slice(-2)+" "}
             </Text>
             </View>
         </View>
