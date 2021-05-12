@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity } from 'r
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/Ionicons'
-import Moment from 'moment';
+
 
 let flag=false
 ChatMessage=({item})=>{
