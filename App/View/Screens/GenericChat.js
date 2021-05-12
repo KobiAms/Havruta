@@ -38,6 +38,7 @@ ChatMessage=({item})=>{
 GenericChat = ({ navigation, route }) => {
     const [newMessage,setNewMessage]=useState("")
     const [chat_data,set_chat_data]=useState({})
+    let flat_list_ref
     const feed_type = route.name
     const chat_id="example_chat_id"
     sendMessage=()=>{
@@ -72,7 +73,7 @@ GenericChat = ({ navigation, route }) => {
                 {chat_id}
                 </Text>
             </View>
-            <FlatList style={styles.list} data={chat_data.messages} inverted keyExtractor={(item,index)=>index }
+            <FlatList style={styles.list} data={chat_data.messages} ref = {ref => flat_list_ref=ref}keyExtractor={(item,index)=>index }
                 renderItem={({item})=><ChatMessage item={item}/>}/>
             <View style={styles.inputContainer}>    
                 <TextInput placeholder="your message.." style={styles.input} value={newMessage}
@@ -91,7 +92,6 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-
     },
     headline: {
         padding:15,
@@ -139,7 +139,6 @@ const styles = StyleSheet.create({
     list:{
         backgroundColor:"white",
         width:"100%",
-        
     },
     userId:{
         fontSize:16,
@@ -159,7 +158,8 @@ const styles = StyleSheet.create({
         borderWidth:1,
         borderRadius:7,
         alignSelf:'flex-start',
-        maxWidth: "83%"
+        maxWidth: "83%",
+        
     },
     userIdDate:{
         flexDirection:'row',
