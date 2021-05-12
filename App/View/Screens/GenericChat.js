@@ -12,11 +12,11 @@ let flag=false
 ChatMessage=({item})=>{
     let date = item.date.toDate()
     return (
+        <View style={styles.userIdDate}>
         <View>
-        <View>
-            {/* <Image style={styles.userPhoto} source={require('C:/Users/user/Desktop/Havruta/user.png')}>
+            <Image style={styles.userPhoto} source={{uri: 'https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-ios7-contact-512.png'}}>
 
-            </Image> */}
+            </Image> 
         </View>
         <View style ={styles.item}>
             <Text style={styles.messageStyle}>
@@ -169,8 +169,9 @@ const styles = StyleSheet.create({
     },
     
     userPhoto:{
-        width:10,
-        height:10,
+        width:50,
+        height:50,
+        borderRadius:25,
     }
 
 });
