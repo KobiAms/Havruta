@@ -25,8 +25,8 @@ ChatMessage=({item})=>{
             <Text style={styles.userId}>
                 {" " + item.user_id}
             </Text>
-            <Text style={styles.userId}>
-                {(date.getDate()) + '.' + (date.getMonth()+1) + '.' + date.getFullYear()+" "+date.getHours()+":"+("0" + (date.getMinutes())).slice(-2)}
+            <Text style={styles.date}>
+                {" "+(date.getDate()) + '/' + (date.getMonth()+1) + '/' + date.getFullYear()+" "+date.getHours()+":"+("0" + (date.getMinutes())).slice(-2)}
             </Text>
             </View>
         </View>
@@ -147,8 +147,7 @@ const styles = StyleSheet.create({
 
     },
     date:{
-        
-
+        fontSize:16
     },
     item:{
         margin:5,
