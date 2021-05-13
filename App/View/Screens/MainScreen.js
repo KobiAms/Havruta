@@ -1,9 +1,29 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5'
+import axios from 'axios'
+import { useState } from 'react';
+import { useEffect } from 'react';
+
+let baseURL = 'https://havruta.org.il/wp-json'
 
 MainScreen = ({ navigation, route }) => {
     const feed_type = route.name
+
+    api = axios.create({baseURL});
+    const[news, setNews] = useState([]);
+    
+    getArticles = async ()=> {
+
+        let articles = await api.get('/wp/v2/posts');
+        setNews(articles);
+        console.log(articles);
+    } 
+    useEffect(()=> {
+
+        getArticles();
+    }, [])
+    
     return (
         <View style={styles.main}>
             <View style={styles.header}>
