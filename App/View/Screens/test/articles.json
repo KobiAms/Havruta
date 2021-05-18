@@ -20,8 +20,7 @@
       {"comKey": "009", "user": "Ben Sagir", "comment": "best dev ev"},
       {"comKey": "010", "user": "Kobi Amsalem", "comment": "i like you"},
       {"comKey": "011", "user": "Ben Sagir", "comment": "best dev ev"},
-      {"comKey": "012", "user": "Kobi Amsalem", "comment": "i like you"},
-      {"comKey": "013", "user": "Ben Sagir", "comment": "best dev ev"}
+      {"comKey": "012", "user": "Kobi Amsalem", "comment": "i like you"}
     ]
   },
   {
@@ -81,31 +80,12 @@
   },
   {
     "id": "arti4",
-    "headline": "Alice please",
+    "headline": "Dani please",
     "autor": "all of us",
     "date": "99/55/4042",
-    "contant": "hi alice! can you please give the real func from  REST API of WordPress?",
+    "contant": "hi dani! can you please give the real func from downtown london?",
     "contant-short": "bla",
-    "likes": [
-      "Kobi Amsalem",
-      "zohar",
-      "oded",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      "",
-      ""
-    ],
-    "comments": [
-      {"comKey": "asdsda", "user": "Kobi Amsalem", "comment": "i like you"},
-      {"comKey": "asds2da", "user": "Ben Sagir", "comment": "best dev ev"}
-    ]
+    "likes": [],
+    "comments": []
   }
 ]

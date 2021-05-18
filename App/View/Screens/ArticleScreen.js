@@ -20,7 +20,7 @@ function ArticleScreen({navigation, route}) {
     LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
   }, []);
   let {autor, date, headline, comments, likes, contant} = route.params.data;
-  let comment_input = '';
+  // let comment_input = '';
   const inputRef = useRef();
   const clearText = useCallback(() => {
     inputRef.current.setNativeProps({text: ''});
@@ -48,9 +48,7 @@ function ArticleScreen({navigation, route}) {
         {'\n'}
       </Text>
       <Text>{contant}</Text>
-      <Text style={styles.main}>
-        ______________________________________________________{'\n'}
-      </Text>
+      <View style={styles.line} />
       <View style={styles.response}>
         <TouchableOpacity style={styles.row}>
           <Icon name={'like1'} size={20} style={styles.pad} />
@@ -159,6 +157,11 @@ const styles = StyleSheet.create({
     borderRadius: 21,
     paddingVertical: 5,
     margin: 5,
+  },
+  line: {
+    height: 1,
+    margin: 10,
+    backgroundColor: '#000000',
   },
 });
 
