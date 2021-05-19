@@ -10,12 +10,13 @@ import OtherScreen from './App/View/Screens/OtherScreen'
 import GenericChat from './App/View/Screens/GenericChat'
 import MainScreen from './App/View/Screens/MainScreen'
 import ManageUsers from './App/View/Components/ManageUsers'
+import ManageUser from './App/View/Components/ManageUser'
 import RegistrationScreen from './App/View/Screens/RegistrationScreen'
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
-const hide_tab_bar_screens = ['Registration', 'Reporters', 'Manage Users'];
+const hide_tab_bar_screens = ['Registration', 'Reporters', 'Manage Users', 'Manage User'];
 
 App = () => {
 
@@ -87,6 +88,21 @@ MainScreenNavigator = () => {
         component={ManageUsers}
         options={{
           title: 'Manage Users',
+          headerStyle: {
+            backgroundColor: 'rgb(117,25,124)',
+            borderBottomWidth: 1,
+            borderBottomColor: 'rgb(200,200,200)'
+          },
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }}
+      />
+      <Stack.Screen
+        name="Manage User"
+        component={ManageUser}
+        options={{
+          title: 'Manage User',
           headerStyle: {
             backgroundColor: 'rgb(117,25,124)',
             borderBottomWidth: 1,
