@@ -5,7 +5,7 @@ import auth from '@react-native-firebase/auth'
 
 
 LoginForm = ({ setUser }) => {
-    const [password, setPassword] = useState("123123")
+    const [password, setPassword] = useState("12344321")
     const [email, setEmail] = useState("testy@test.com")
     const [loading, setLoading] = useState(false)
 
@@ -32,12 +32,14 @@ LoginForm = ({ setUser }) => {
 
         <View style={styles.form}>
             <TextInput
+                autoCapitalize={'none'}
                 style={styles.input}
                 onChangeText={setEmail}
                 value={email}
                 placeholder={'Enter Email'}
             />
             <TextInput
+                autoCapitalize={'none'}
                 style={styles.input}
                 onChangeText={setPassword}
                 value={password}
@@ -56,7 +58,7 @@ const styles = StyleSheet.create({
     form: {
         width: '100%',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     input: {
         width: '80%',
