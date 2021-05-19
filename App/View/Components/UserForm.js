@@ -28,7 +28,7 @@ export default UserForm = ({ setUser, navigation }) => {
             {
                 userRole && userRole == 'admin' ?
                     <TouchableOpacity style={[styles.option, { borderTopWidth: 1 }]} onPress={() => navigation.navigate('Manage Users')} >
-                        <Text style={{ color: '#888888', fontSize: 20 }}>Menage Users</Text>
+                        <Text style={{ color: '#888888', fontSize: 20 }}>Manage Users</Text>
                         <IconFAW5 name={"user-cog"} color={'#666666'} size={20} />
                     </TouchableOpacity>
                     : null

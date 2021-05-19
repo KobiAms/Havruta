@@ -86,7 +86,7 @@ export default ManageUsers = ({ navigation }) => {
                             <FlatList
                                 style={styles.list}
                                 data={list_to_show}
-                                renderItem={({ item }) => <UserItem headline={item.email} color={item.color} onPress={() => navigation.navigate('Manage User', { id: item.id })} />
+                                renderItem={({ item }) => <UserItem headline={item.email} color={item.color} onPress={() => navigation.navigate('Manage User', { data: item })} />
                                 }
                             />
                     }
@@ -143,10 +143,12 @@ const styles = StyleSheet.create({
         backgroundColor: "rgba(255, 255, 255, 1)",
         alignItems: 'center',
         justifyContent: 'space-evenly',
-        flexDirection: 'row'
+        flexDirection: 'row',
+        borderColor: '#999',
+        borderBottomWidth: 1,
     },
     search_box: {
-        width: '85%',
+        width: '90%',
         height: '80%',
         backgroundColor: "rgba(238, 238, 238, 1)",
         borderRadius: 15,
