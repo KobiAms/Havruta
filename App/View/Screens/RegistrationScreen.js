@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5'
-import IconIC from 'react-native-vector-icons/Ionicons'
 import auth from '@react-native-firebase/auth'
 import LoginForm from '../Components/LoginForm'
 import SignupForm from '../Components/SignupForm'
+import UserForm from '../Components/UserForm'
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 GoogleSignin.configure({
@@ -47,7 +47,7 @@ RegistrationScreen = ({ navigation, route }) => {
                 </View>
             </View>
             {
-                user ? <LogoutForm /> :
+                user ? <UserForm setUser={setUser} navigation={navigation} /> :
                     <View style={styles.body}>
                         <View style={styles.form}>
                             {login_mode ? <LoginForm setUser={setUser} /> : <SignupForm setUser={setUser} />}
@@ -55,7 +55,7 @@ RegistrationScreen = ({ navigation, route }) => {
                                 <Text style={styles.headline}>{login_mode ? 'Create New Account' : 'I Already Have Account'}</Text>
                             </TouchableOpacity>
                         </View>
-                        <View style={styles.social_login}>
+                        {/* <View style={styles.social_login}>
                             <TouchableOpacity style={styles.social_login_button}>
                                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                                     <IconIC size={30} name={'md-logo-apple'} />
@@ -80,7 +80,7 @@ RegistrationScreen = ({ navigation, route }) => {
                                     <Text>{login_mode ? 'Continue' : 'Register'} With Facebook</Text>
                                 </View>
                             </TouchableOpacity>
-                        </View>
+                        </View> */}
                     </View>
             }
         </View>
