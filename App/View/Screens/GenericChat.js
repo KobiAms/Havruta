@@ -81,10 +81,10 @@ GenericChat = ({ navigation, route }) => {
                 {chat_id}
                 </Text>
             </View>
-            <ScrollView>
+            {/* <ScrollView> */}
             <FlatList style={styles.list} inverted data={chat_data.messages} ref = {ref => flat_list_ref=ref} keyExtractor={(item,index)=>index}
                 renderItem={({item})=><ChatMessage item={item}/>}/>
-            </ScrollView>    
+            {/* </ScrollView>     */}
             <View style={styles.inputContainer}>    
                 <TextInput placeholder="your message.." style={styles.input} value={newMessage}
                   onChangeText={setNewMessage}/>
