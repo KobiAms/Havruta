@@ -1,56 +1,65 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, Image,ScrollView } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/Ionicons';
-
-
-
-
-let flag=false
+import { resolvePreset } from '@babel/core';
+ 
+ 
+ 
+ 
+let flag=false  
 ChatMessage=({item})=>{
     let date = item.date.toDate()
     return (
         <View style={styles.userIdDate}>
-        <View>
-            <Image style={styles.userPhoto} source={{uri: 'https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-ios7-contact-512.png'}}>
-
-            </Image> 
-        </View>
-        <View style ={styles.item}>
-            <Text style={styles.messageStyle}>
-                {item.message}
-            </Text>
-            <View style = {styles.userIdDate}>
-            <Text style={styles.userId}>
-                {" " + item.user_id + " "}
-            </Text>
-            <Text style={styles.date}>
-                {" "+(date.getDate()) + '/' + (date.getMonth()+1) + '/' + date.getFullYear()+" "+date.getHours()+":"+("0" + (date.getMinutes())).slice(-2)+" "}
-            </Text>
+            <View>
+                <Image style={styles.userPhoto} source={{uri: 'https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-ios7-contact-512.png'}}>
+ 
+                </Image> 
             </View>
-        </View>
+            <View style ={styles.item}>
+                <Text style={styles.messageStyle}>
+                    {item.message}
+                </Text>                
+                <View style = {styles.messageDetails}>
+                    <Text style={styles.userId}>
+                       {" " + item.user_id + " "}
+                    </Text>
+                    <Text style={styles.date}>
+                        {" "+(date.getDate()) + '/' + (date.getMonth()+1)+" "+date.getHours()+":"+("0" + (date.getMinutes())).slice(-2)+" "}
+                    </Text>
+                </View>
+            </View>
         </View>
     )
 }
-
+ 
 GenericChat = ({ navigation, route }) => {
     const [newMessage,setNewMessage]=useState("")
     const [chat_data,set_chat_data]=useState({})
+    let flat_list_ref
     const feed_type = route.name
     const chat_id="example_chat_id"
     sendMessage=()=>{
-        let tempMessage = {user_id:"test@test.com" , message:newMessage , date:new Date()}
-        console.log(tempMessage)
-        firestore().collection('chats').doc('example_chat_id').update({
-            messages:firestore.FieldValue.arrayUnion(tempMessage)
-        }).then(()=>{
+ 
+        let tempMessage = {user_id:"אבי" , message:newMessage , date:new Date()}
+        console.log("this is message "+tempMessage.message)
+        if (!tempMessage.message.replace(/\s/g, '').length){
             setNewMessage("")
-        }).catch(error=>{
-            console.log(error.toString())
-        })
-    }
+        }
+        else{
+            firestore().collection('chats').doc('example_chat_id').update({
+                messages:firestore.FieldValue.arrayUnion(tempMessage)
+            }).then(()=>{
+                setNewMessage("")
+            }).catch(error=>{
+                console.log(error.toString())
+            })
+        }
+ 
+        }
     useEffect(() => {
         //
         if (flag==false){
@@ -61,10 +70,10 @@ GenericChat = ({ navigation, route }) => {
                         return;
                     set_chat_data(doc.data())
                 })
-            
+ 
         }
     }, [])
-    
+ 
     return (
         <View style={styles.main}>
             <View style ={styles.header}>
@@ -72,12 +81,14 @@ GenericChat = ({ navigation, route }) => {
                 {chat_id}
                 </Text>
             </View>
-            <FlatList style={styles.list} data={chat_data.messages} inverted keyExtractor={(item,index)=>index }
+            {/* <ScrollView> */}
+            <FlatList style={styles.list} inverted data={chat_data.messages} ref = {ref => flat_list_ref=ref} keyExtractor={(item,index)=>index}
                 renderItem={({item})=><ChatMessage item={item}/>}/>
+            {/* </ScrollView>     */}
             <View style={styles.inputContainer}>    
                 <TextInput placeholder="your message.." style={styles.input} value={newMessage}
                   onChangeText={setNewMessage}/>
-
+ 
                 <TouchableOpacity onPress={()=>sendMessage()} style={newMessage.length == 0 ? styles.sendButtonEmpty:styles.sendButtonFull}>
                     <Icon name={"md-send"} size={20} color={"#ffffff"}/>
                 </TouchableOpacity>  
@@ -85,13 +96,12 @@ GenericChat = ({ navigation, route }) => {
         </View>
     )
 }
-
+ 
 const styles = StyleSheet.create({
     main: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-
     },
     headline: {
         padding:15,
@@ -139,15 +149,14 @@ const styles = StyleSheet.create({
     list:{
         backgroundColor:"white",
         width:"100%",
-        
+ 
+ 
     },
     userId:{
         fontSize:16,
         fontWeight:'bold'
     },
-    messageDate:{
-
-    },
+ 
     date:{
         fontSize:16,
     },
@@ -159,12 +168,15 @@ const styles = StyleSheet.create({
         borderWidth:1,
         borderRadius:7,
         alignSelf:'flex-start',
-        maxWidth: "83%"
+        maxWidth: "83%",
+ 
+ 
     },
     userIdDate:{
         flexDirection:'row',
         flex:1,
-        alignContent:'flex-end'
+        alignContent:'flex-end',
+ 
     },
     messageStyle:{
         color:"white",
@@ -174,9 +186,13 @@ const styles = StyleSheet.create({
         width:50,
         height:50,
         borderRadius:25,
+    },
+    messageDetails:{
+        flexDirection:'row',
+        justifyContent:"space-between"
     }
-
+ 
 });
-
-
+ 
+ 
 export default GenericChat;
