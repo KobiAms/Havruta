@@ -202,7 +202,6 @@
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				3DE21929A650B941BFE8D35D /* [CP] Embed Pods Frameworks */,
 				2CD15A5080E9D46831E783FE /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
@@ -225,7 +224,6 @@
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				05342B36BDCF3CA4BB93BEF0 /* [CP] Embed Pods Frameworks */,
 				03B361D6715D96E5558CB9D6 /* [CP] Copy Pods Resources */,
 				4D7437B5AA330F34E03D9FD8 /* [CP-User] [RNFB] Core Configuration */,
 			);
@@ -326,23 +324,6 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Havruta/Pods-Havruta-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		05342B36BDCF3CA4BB93BEF0 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Havruta/Pods-Havruta-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Havruta/Pods-Havruta-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Havruta/Pods-Havruta-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		2CD15A5080E9D46831E783FE /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -358,23 +339,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Havruta-HavrutaTests/Pods-Havruta-HavrutaTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		3DE21929A650B941BFE8D35D /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Havruta-HavrutaTests/Pods-Havruta-HavrutaTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Havruta-HavrutaTests/Pods-Havruta-HavrutaTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Havruta-HavrutaTests/Pods-Havruta-HavrutaTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		4D7437B5AA330F34E03D9FD8 /* [CP-User] [RNFB] Core Configuration */ = {

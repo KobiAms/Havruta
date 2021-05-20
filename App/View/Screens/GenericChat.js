@@ -1,6 +1,6 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, Image,ScrollView } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, Image, ScrollView } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -9,26 +9,26 @@ import { resolvePreset } from '@babel/core';
 
 
 
-let flag=false  
-ChatMessage=({item})=>{
+let flag = false
+ChatMessage = ({ item }) => {
     let date = item.date.toDate()
     return (
         <View style={styles.userIdDate}>
             <View>
-                <Image style={styles.userPhoto} source={{uri: 'https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-ios7-contact-512.png'}}>
+                <Image style={styles.userPhoto} source={{ uri: 'https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-ios7-contact-512.png' }}>
 
-                </Image> 
+                </Image>
             </View>
-            <View style ={styles.item}>
+            <View style={styles.item}>
                 <Text style={styles.messageStyle}>
                     {item.message}
-                </Text>                
-                <View style = {styles.messageDetails}>
+                </Text>
+                <View style={styles.messageDetails}>
                     <Text style={styles.userId}>
-                       {" " + item.user_id + " "}
+                        {" " + item.user_id + " "}
                     </Text>
                     <Text style={styles.date}>
-                        {" "+(date.getDate()) + '/' + (date.getMonth()+1)+" "+date.getHours()+":"+("0" + (date.getMinutes())).slice(-2)+" "}
+                        {" " + (date.getDate()) + '/' + (date.getMonth() + 1) + " " + date.getHours() + ":" + ("0" + (date.getMinutes())).slice(-2) + " "}
                     </Text>
                 </View>
             </View>
@@ -37,62 +37,60 @@ ChatMessage=({item})=>{
 }
 
 GenericChat = ({ navigation, route }) => {
-    const [newMessage,setNewMessage]=useState("")
-    const [chat_data,set_chat_data]=useState({})
+    const [newMessage, setNewMessage] = useState("")
+    const [chat_data, set_chat_data] = useState({})
     let flat_list_ref
     const feed_type = route.name
-    const chat_id="example_chat_id"
-    sendMessage=()=>{
+    const chat_id = "example_chat_id"
+    sendMessage = () => {
 
-        let tempMessage = {user_id:"אבי" , message:newMessage , date:new Date()}
-        console.log("this is message "+tempMessage.message)
-        if (!tempMessage.message.replace(/\s/g, '').length){
+        let tempMessage = { user_id: "אבי", message: newMessage, date: new Date() }
+        console.log("this is message " + tempMessage.message)
+        if (!tempMessage.message.replace(/\s/g, '').length) {
             setNewMessage("")
         }
-        else{
+        else {
             firestore().collection('chats').doc('example_chat_id').update({
-                messages:firestore.FieldValue.arrayUnion(tempMessage)
-            }).then(()=>{
+                messages: firestore.FieldValue.arrayUnion(tempMessage)
+            }).then(() => {
                 setNewMessage("")
-            }).catch(error=>{
+            }).catch(error => {
                 console.log(error.toString())
             })
         }
-            
-        }
+
+    }
     useEffect(() => {
         //
-        if (flag==false){
-            flag=true
+        if (flag == false) {
+            flag = true
             firestore().collection('chats').doc('example_chat_id')
                 .onSnapshot(doc => {
                     if (!doc)
                         return;
-                    set_chat_data(doc.data())
+                    let reversed = doc.data().messages.reverse()
+                    set_chat_data(reversed)
                 })
-            
+
         }
     }, [])
-    
+
     return (
         <View style={styles.main}>
-            <View style ={styles.header}>
+            <View style={styles.header}>
                 <Text style={styles.headline}>
-                {chat_id}
+                    {chat_id}
                 </Text>
             </View>
-            {/* <ScrollView> */}
-            <FlatList style={styles.list} inverted data={chat_data.messages} ref = {ref => flat_list_ref=ref} keyExtractor={(item,index)=>index}
-                renderItem={({item})=><ChatMessage item={item}/>}/>
-            {/* </ScrollView>     */}
-            <View style={styles.inputContainer}>    
+            <FlatList style={styles.list} inverted data={chat_data} ref={ref => flat_list_ref = ref} keyExtractor={(item, index) => index}
+                renderItem={({ item }) => <ChatMessage item={item} />} />
+            <View style={styles.inputContainer}>
                 <TextInput placeholder="your message.." style={styles.input} value={newMessage}
-                  onChangeText={setNewMessage}/>
-
-                <TouchableOpacity onPress={()=>sendMessage()} style={newMessage.length == 0 ? styles.sendButtonEmpty:styles.sendButtonFull}>
-                    <Icon name={"md-send"} size={20} color={"#ffffff"}/>
-                </TouchableOpacity>  
-            </View>       
+                    onChangeText={setNewMessage} />
+                <TouchableOpacity onPress={() => sendMessage()} style={newMessage.length == 0 ? styles.sendButtonEmpty : styles.sendButtonFull}>
+                    <Icon name={"md-send"} size={20} color={"#ffffff"} />
+                </TouchableOpacity>
+            </View>
         </View>
     )
 }
@@ -104,92 +102,90 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     headline: {
-        padding:15,
+        padding: 15,
         fontSize: 20,
         fontWeight: 'bold',
         color: "#fff"
     },
-    inputContainer:{
-        padding:2,
-        backgroundColor:"#999999",
-        width:"100%",
-        alignItems:"center",
-        justifyContent:"space-evenly",
-        flexDirection:'row',
+    inputContainer: {
+        padding: 2,
+        backgroundColor: "#999999",
+        width: "100%",
+        alignItems: "center",
+        justifyContent: "space-evenly",
+        flexDirection: 'row',
     },
     input: {
-        borderColor:"black",
-        borderWidth:1,
-        backgroundColor:"#ffffff",
-        width:"88%",
-        borderRadius:30,
-        paddingLeft:15,
-        height:"75%",
+        borderColor: "black",
+        borderWidth: 1,
+        backgroundColor: "#ffffff",
+        width: "88%",
+        borderRadius: 30,
+        paddingLeft: 15,
+        height: "75%",
     },
     sendButtonEmpty: {
-        padding:8,
-        backgroundColor:"#555555",
-        alignItems:"center",
-        justifyContent:"center",
-        borderRadius:100,
+        padding: 8,
+        backgroundColor: "#555555",
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: 100,
     },
     sendButtonFull: {
-        padding:8,
-        backgroundColor:"#007fff",
-        alignItems:"center",
-        justifyContent:"center",
-        borderRadius:100,
+        padding: 8,
+        backgroundColor: "#007fff",
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: 100,
     },
     header: {
-        width:"100%",
-        backgroundColor:"purple",
-        alignItems:"center",
-        justifyContent:"center",
+        width: "100%",
+        backgroundColor: "purple",
+        alignItems: "center",
+        justifyContent: "center",
     },
-    list:{
-        backgroundColor:"white",
-        width:"100%",
-        
-        
+    list: {
+        backgroundColor: "white",
+        flex: 1
     },
-    userId:{
-        fontSize:16,
-        fontWeight:'bold'
+    userId: {
+        fontSize: 16,
+        fontWeight: 'bold'
     },
-    
-    date:{
-        fontSize:16,
+
+    date: {
+        fontSize: 16,
     },
-    item:{
-        margin:5,
-        paddingLeft:5,
-        backgroundColor:"dodgerblue",
-        borderColor:"black",
-        borderWidth:1,
-        borderRadius:7,
-        alignSelf:'flex-start',
+    item: {
+        margin: 5,
+        paddingLeft: 5,
+        backgroundColor: "dodgerblue",
+        borderColor: "black",
+        borderWidth: 1,
+        borderRadius: 7,
+        alignSelf: 'flex-start',
         maxWidth: "83%",
-        
-        
+
+
     },
-    userIdDate:{
-        flexDirection:'row',
-        flex:1,
-        alignContent:'flex-end',
-         
+    userIdDate: {
+        flexDirection: 'row',
+        flex: 1,
+        alignContent: 'flex-end',
+
     },
-    messageStyle:{
-        color:"white",
+    messageStyle: {
+        color: "white",
         fontSize: 17.5
-    }, 
-    userPhoto:{
-        width:50,
-        height:50,
-        borderRadius:25,
     },
-    messageDetails:{
-        flexDirection:'row',
-        justifyContent:"space-between"
+    userPhoto: {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+    },
+    messageDetails: {
+        flexDirection: 'row',
+        justifyContent: "space-between"
     }
 
 });
