@@ -1,57 +1,80 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+  ScrollView,
+} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import IconFeather from 'react-native-vector-icons/Feather';
 import IconFAW5 from 'react-native-vector-icons/FontAwesome5';
-import {Component} from 'react';
 import {Avatar} from 'react-native-elements';
+
 export default function UserForm({setUser, navigation}) {
-  const [userData, setUserData] = useState();
   const [userRole, setUserRole] = useState();
   const [defaultStyle, setDefaultStyle] = useState(true);
   const [userName, setuserName] = useState('');
   const [userDOB, setuserDOB] = useState();
-
+  const [userAbout, setuserAbout] = useState();
   useEffect(() => {
     const subscriber = firestore()
       .collection('users')
       .doc(auth().currentUser.email)
       .get()
       .then(doc => {
-        setUserData(doc.data());
+        setuserAbout(doc.data().about);
         setUserRole(doc.data().role);
         doc.data().role === 'user' ? setDefaultStyle(!defaultStyle) : null;
-        let DAT = new Date(7200000 + 1000 * doc.data().dob.seconds);
+        let DAT = new Date((7200 + doc.data().dob.seconds) * 1000);
+        /*//times go by sec GMT, so in order to get the right date, need to add 2 hours and mult by 1000 in nanosec*/
         setuserDOB(DAT.toDateString());
         setuserName(doc.data().name);
       })
       .catch(() => {});
     return subscriber;
-  }, [setUserData, setUserRole, setDefaultStyle, setuserName, setuserDOB]);
+  }, [setuserAbout, setUserRole, setDefaultStyle, setuserName, setuserDOB]);
 
   return (
     <View style={styles.main}>
+      <View style={styles.backline} />
+      <Avatar
+        size="xlarge"
+        rounded
+        source={{
+          uri:
+            'https://post.medicalnewstoday.com/wp-content/uploads/sites/3/2020/03/GettyImages-1092658864_hero-1024x575.jpg',
+        }}
+        containerStyle={{alignSelf: 'center', borderWidth: 2}}
+      />
       <View style={styles.row}>
-        <Avatar
-          size="xlarge"
-          rounded
-          source={{
-            uri:
-              'https://post.medicalnewstoday.com/wp-content/uploads/sites/3/2020/03/GettyImages-1092658864_hero-1024x575.jpg',
-          }}
-        />
-        <View>
-          <Text style={styles.name}>{userName}</Text>
-          <View style={styles.row}>
-            <Text>Date of Birth:</Text>
-            <Text style={{fontSize: 18, margin: 5}}>{userDOB}</Text>
-          </View>
-        </View>
+        <Text style={styles.name}>{userName}</Text>
+        <TouchableOpacity
+          onPress={() => {
+            console.log('editing user name of ' + userName);
+          }}>
+          <IconFAW5
+            name={'edit'}
+            color={'#000000'}
+            size={18}
+            style={{margin: 5}}
+          />
+        </TouchableOpacity>
+      </View>
+      <View style={styles.row}>
+        <Text>Date of Birth:</Text>
+        <Text style={{fontSize: 18, margin: 5}}>{userDOB}</Text>
+      </View>
+      <View style={{padding: 20}}>
+        <Text style={{fontWeight: 'bold', fontSize: 21}}>About Me:</Text>
+        <Text style={{fontSize: 17}}>{userAbout}</Text>
       </View>
 
+      {/*the following view contain the logout / manage users buttons*/}
       <View style={styles.chose}>
         {userRole && userRole == 'admin' ? (
           <TouchableOpacity
@@ -85,7 +108,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignContent: 'center',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     padding: 5,
   },
   name: {
@@ -100,7 +123,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexDirection: 'row',
   },
-
   option: {
     width: '50%',
     backgroundColor: 'rgb(240,240,255)',
@@ -109,7 +131,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 15,
     borderWidth: 1,
-    //borderRadius: 50,
   },
   userOption: {
     width: '100%',
@@ -117,9 +138,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     flexDirection: 'row',
-
     padding: 15,
-
     borderWidth: 1,
+  },
+  backline: {
+    backgroundColor: 'rgb(160,160,200)',
+    height: Dimensions.get('screen').height / 10,
+    marginBottom: -Dimensions.get('screen').height / 15,
   },
 });
