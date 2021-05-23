@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import React, {useState} from 'react';
+import React from 'react';
 import {Text, View, StyleSheet, TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {Avatar} from 'react-native-elements';
@@ -31,9 +31,7 @@ function PostInFeed({onPress, data}) {
       <Text onPress={() => onPress()} data={data}>
         {contant}
       </Text>
-      <Text style={styles.main}>
-        ______________________________________________________{'\n'}
-      </Text>
+      <View style={styles.line} />
       <View style={styles.response}>
         <TouchableOpacity style={styles.row}>
           <Icon name={'like1'} size={20} style={styles.pad} />
@@ -46,6 +44,7 @@ function PostInFeed({onPress, data}) {
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   main: {
     borderRadius: 5,
@@ -53,7 +52,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgb(220,220,240)',
     justifyContent: 'center',
     padding: 10,
-    margin: 5,
+    marginVertical: 5,
+    flex: 1,
+    minWidth: '100%',
   },
   headline: {
     fontSize: 22,
@@ -72,6 +73,11 @@ const styles = StyleSheet.create({
   },
   pad: {
     paddingRight: 5,
+  },
+  line: {
+    height: 1,
+    margin: 10,
+    backgroundColor: '#000000',
   },
 });
 

@@ -1,13 +1,26 @@
 /* eslint-disable prettier/prettier */
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {ScrollView, Text, StyleSheet, View} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import PostInFeed from './PostInFeed';
 import artiTest from './test/articles.json';
+import firestore from '@react-native-firebase/firestore';
 
 function SubjectArticles({navigation, route}) {
   const feed_type = route.name;
-  const [articles, setArticles] = useState();
+  const [articles, setArticles] = useState(['example_articale_id']);
+  const [data_fb, setDataFB] = useState([]);
+
+  firestore()
+    .collection('article')
+    .doc(articles[0])
+    .get()
+    .then(doc => {
+      console.log(doc._data);
+    })
+    .catch(err => {
+      console.log('error:', err.code);
+    });
 
   return (
     <View style={styles.main}>
@@ -29,6 +42,7 @@ const styles = StyleSheet.create({
   main: {
     flex: 1,
     backgroundColor: '#ffffff',
+    paddingHorizontal: 5,
   },
   headline: {
     fontSize: 20,

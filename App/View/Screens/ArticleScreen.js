@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef, useCallback, useState} from 'react';
 import {
   ScrollView,
   View,
@@ -15,14 +15,21 @@ import {FlatList} from 'react-native-gesture-handler';
 import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
 
 function ArticleScreen({navigation, route}) {
-  // const feed_type = route.name;
   useEffect(() => {
     LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
-  }, []);
+  }, []); //enable to render a flatlist inside a scrollview
   let {autor, date, headline, comments, likes, contant} = route.params.data;
+  const inputRef = useRef();
+  const clearText = useCallback(() => {
+    inputRef.current.setNativeProps({text: ''});
+  }, []); //use the clearText inorder to erase the content inside the comment text field
+
+  const [comInput, setcomInput] = useState();
   return (
     <ScrollView style={styles.main}>
-      <View style={styles.row}>
+      <View
+        style={styles.row} /** user info - icon, name and date of publish */
+      >
         <Avatar
           size="small"
           rounded
@@ -41,22 +48,28 @@ function ArticleScreen({navigation, route}) {
         {'\n'}
       </Text>
       <Text>{contant}</Text>
-      <Text style={styles.main}>
-        ______________________________________________________{'\n'}
-      </Text>
-      <View style={styles.response}>
+      <View style={styles.line} />
+      <View
+        style={styles.response} /** displays the amount of likes and comments */
+      >
         <TouchableOpacity style={styles.row}>
           <Icon name={'like1'} size={20} style={styles.pad} />
           <Text>likes: {likes.length}</Text>
         </TouchableOpacity>
         <Text>comments: {comments.length}</Text>
       </View>
-      <View style={styles.rower}>
+      <View style={styles.rower} /** text input to add new comment */>
         <AutoGrowingTextInput
           placeholder={'    Add your comment...'}
           style={styles.input}
+          onChangeText={setcomInput}
+          ref={inputRef}
         />
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            console.log(comInput);
+            clearText();
+          }}>
           <Icons name={'send'} size={25} />
         </TouchableOpacity>
       </View>
@@ -146,6 +159,11 @@ const styles = StyleSheet.create({
     borderRadius: 21,
     paddingVertical: 5,
     margin: 5,
+  },
+  line: {
+    height: 1,
+    margin: 10,
+    backgroundColor: '#000000',
   },
 });
 
