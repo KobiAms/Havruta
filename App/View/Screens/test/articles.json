@@ -80,10 +80,10 @@
   },
   {
     "id": "arti4",
-    "headline": "Dani please",
-    "autor": "all of us",
-    "date": "99/55/4042",
-    "contant": "hi dani! can you please give the real func from downtown london?",
+    "headline": "Test Headline",
+    "autor": "Tester Autorski",
+    "date": "15/5/2008",
+    "contant": "Hi everyone! this is your test speaking. Welcome to the test enviourment. you are now haveing fun reading this",
     "contant-short": "bla",
     "likes": [],
     "comments": []
