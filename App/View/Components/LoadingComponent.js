@@ -1,43 +1,51 @@
-import React from 'react'
-import { View, StyleSheet, Dimensions, ActivityIndicator, Image, Text } from 'react-native'
+import React from 'react';
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  ActivityIndicator,
+  Image,
+  Text,
+} from 'react-native';
 
 export default function LoadingComponent() {
-
-    return (
-        <View style={styles.container}>
-            <Image style={styles.image} source={require('../../Assets/POWERPNT_frXVLHdxnI.png')} />
-            <View>
-                <ActivityIndicator size={'large'} color={'rgb(200,200,220)'} />
-                <Text style={styles.text}>Please Wait...</Text>
-            </View>
-        </View>
-    )
-
+  return (
+    <View style={styles.container}>
+      <Image
+        style={styles.image}
+        source={require('../../Assets/POWERPNT_frXVLHdxnI.png')}
+      />
+      <View>
+        <ActivityIndicator size={'large'} color={'rgb(200,200,220)'} />
+        <Text style={styles.text}>Please Wait...</Text>
+      </View>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        height: Dimensions.get('window').height,
-        width: Dimensions.get('window').width,
-        backgroundColor: '#00000088',
-        alignItems: 'center',
-        justifyContent: 'space-evenly',
-        zIndex: 1,
-        position: 'absolute'
-    },
-    image: {
-        height: Dimensions.get('window').width / 2,
-        width: Dimensions.get('window').width / 2,
-        borderRadius: Dimensions.get('window').width / 4,
-        borderWidth: 4,
-        borderColor: 'rgb(200,200,220)',
-        overflow: 'hidden',
-        backgroundColor: 'rgb(200,200,220)'
-    },
-    text: {
-        marginTop: 30,
-        fontSize: 30,
-        color: 'rgb(200,200,220)',
-        fontWeight: 'bold'
-    }
-})
+  container: {
+    height: Dimensions.get('window').height,
+    width: Dimensions.get('window').width,
+    backgroundColor: 'rgb(160,160,210)',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+    zIndex: 1,
+    position: 'absolute',
+  },
+  image: {
+    height: Dimensions.get('window').width / 2,
+    width: Dimensions.get('window').width / 2,
+    borderRadius: Dimensions.get('window').width / 4,
+    borderWidth: 4,
+    borderColor: 'rgb(200,200,220)',
+    overflow: 'hidden',
+    backgroundColor: 'rgb(200,200,220)',
+  },
+  text: {
+    marginTop: 30,
+    fontSize: 30,
+    color: 'rgb(200,200,220)',
+    fontWeight: 'bold',
+  },
+});
