@@ -149,12 +149,12 @@ const styles = StyleSheet.create({
         flex: 1
     },
     userId: {
-        fontSize: 16,
-        fontWeight: 'bold'
+        fontSize: 11,
+       
     },
 
     date: {
-        fontSize: 16,
+        fontSize: 11,
     },
     item: {
         margin: 5,
@@ -175,12 +175,13 @@ const styles = StyleSheet.create({
 
     },
     messageStyle: {
-        color: "white",
+        color: "black",
         fontSize: 17.5
     },
     userPhoto: {
-        width: 50,
-        height: 50,
+        
+        width: 40,
+        height: 40,
         borderRadius: 25,
     },
     messageDetails: {
