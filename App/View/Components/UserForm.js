@@ -185,15 +185,6 @@ const styles = StyleSheet.create({
     padding: 15,
     borderWidth: 1,
   },
-  userOption: {
-    width: '100%',
-    backgroundColor: 'rgb(240,240,255)',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-    padding: 15,
-    borderWidth: 1,
-  },
   backline: {
     backgroundColor: 'rgb(160,160,200)',
     height: Dimensions.get('screen').height / 10,
