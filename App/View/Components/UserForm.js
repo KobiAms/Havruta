@@ -1,56 +1,104 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   Dimensions,
-  ScrollView,
+  Alert
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
+import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
 import IconFeather from 'react-native-vector-icons/Feather';
 import IconFAW5 from 'react-native-vector-icons/FontAwesome5';
-import {Avatar} from 'react-native-elements';
+import { Avatar } from 'react-native-elements';
+import { launchImageLibrary } from 'react-native-image-picker';
+import { Image } from 'react-native';
+import { ActivityIndicator } from 'react-native';
 
-export default function UserForm({setUser, navigation}) {
+export default function UserForm({ setUser, navigation, setLoading }) {
   const [userRole, setUserRole] = useState();
   const [defaultStyle, setDefaultStyle] = useState(true);
   const [userName, setuserName] = useState('');
   const [userDOB, setuserDOB] = useState();
-  const [userAbout, setuserAbout] = useState();
+  const [userAbout, setUserAbout] = useState();
+  const [userAvatar, setUserAvatar] = useState();
+
+
+  // this function upload the avatar image into the storage
+  uploadNewAvatar = () => {
+    // lunching the camera roll / gallery
+    launchImageLibrary({}, async (response) => {
+      setLoading(true)
+      if (response.didCancel) {
+        setLoading(false)
+      } else if (response.error) {
+        Alert.alert('Error', response.errorCode + ": " + response.errorMessage, [{ text: "OK", }], { cancelable: false })
+        setLoading(false)
+      } else {
+        const reference = storage().ref('/users/' + auth().currentUser.email + '/' + 'user_image.png');
+        await reference.putFile(response.uri);
+        reference.getDownloadURL().then((url) => {
+          setUserAvatar({ uri: url });
+          setLoading(false)
+        })
+      }
+    });
+  }
+
   useEffect(() => {
+    setLoading(true)
     const subscriber = firestore()
       .collection('users')
       .doc(auth().currentUser.email)
       .get()
       .then(doc => {
-        setuserAbout(doc.data().about);
+        if (!doc.data()) {
+          return;
+        }
+        setUserAbout(doc.data().about);
         setUserRole(doc.data().role);
+        const reference = storage().ref('/users/' + auth().currentUser.email + '/' + 'user_image.png');
+        reference.getDownloadURL()
+          .then(url => {
+            console.log(url)
+            setUserAvatar({ uri: url })
+          })
+          .catch(err => {
+
+          })
         doc.data().role === 'user' ? setDefaultStyle(!defaultStyle) : null;
         let DAT = new Date((7200 + doc.data().dob.seconds) * 1000);
         /*//times go by sec GMT, so in order to get the right date, need to add 2 hours and mult by 1000 in nanosec*/
         setuserDOB(DAT.toDateString());
         setuserName(doc.data().name);
+        setLoading(false)
       })
-      .catch(() => {});
+      .catch(() => { });
     return subscriber;
-  }, [setuserAbout, setUserRole, setDefaultStyle, setuserName, setuserDOB]);
+  }, [setUserAbout, setUserRole, setDefaultStyle, setuserName, setuserDOB]);
 
   return (
     <View style={styles.main}>
       <View style={styles.backline} />
-      <Avatar
+      <View style={{ alignSelf: 'center', height: Dimensions.get('screen').width / 3, width: Dimensions.get('screen').width / 3, borderRadius: Dimensions.get('screen').width / 1.5, backgroundColor: 'rgb(200,200,220)', borderColor: '#000', borderWidth: 1, alignItems: 'center', justifyContent: 'center' }}>
+        {
+          userAvatar ? <Image style={{ flex: 1 }} source={userAvatar} />
+            :
+            <ActivityIndicator color={'#007fff'} size={'large'} />
+        }
+      </View>
+      {/* <Avatar
         size="xlarge"
         rounded
-        source={{
-          uri:
-            'https://post.medicalnewstoday.com/wp-content/uploads/sites/3/2020/03/GettyImages-1092658864_hero-1024x575.jpg',
-        }}
-        containerStyle={{alignSelf: 'center', borderWidth: 2}}
-      />
+        title={userName[0] + userName[1]}
+        source={userAvatar}
+        containerStyle={{ alignSelf: 'center', borderWidth: 2 }}
+        onPress={() => uploadNewAvatar()}
+      /> */}
       <View style={styles.row}>
         <Text style={styles.name}>{userName}</Text>
         <TouchableOpacity
@@ -61,17 +109,17 @@ export default function UserForm({setUser, navigation}) {
             name={'edit'}
             color={'#000000'}
             size={18}
-            style={{margin: 5}}
+            style={{ margin: 5 }}
           />
         </TouchableOpacity>
       </View>
       <View style={styles.row}>
         <Text>Date of Birth:</Text>
-        <Text style={{fontSize: 18, margin: 5}}>{userDOB}</Text>
+        <Text style={{ fontSize: 18, margin: 5 }}>{userDOB}</Text>
       </View>
-      <View style={{padding: 20}}>
-        <Text style={{fontWeight: 'bold', fontSize: 21}}>About Me:</Text>
-        <Text style={{fontSize: 17}}>{userAbout}</Text>
+      <View style={{ padding: 20 }}>
+        <Text style={{ fontWeight: 'bold', fontSize: 21 }}>About Me:</Text>
+        <Text style={{ fontSize: 17 }}>{userAbout}</Text>
       </View>
 
       {/*the following view contain the logout / manage users buttons*/}
@@ -80,18 +128,18 @@ export default function UserForm({setUser, navigation}) {
           <TouchableOpacity
             style={styles.option}
             onPress={() => navigation.navigate('Manage Users')}>
-            <Text style={{color: '#000000', fontSize: 20}}>Manage Users</Text>
+            <Text style={{ color: '#000000', fontSize: 20 }}>Manage Users</Text>
             <IconFAW5 name={'user-cog'} color={'#666666'} size={20} />
           </TouchableOpacity>
         ) : null}
         <TouchableOpacity
-          style={defaultStyle ? styles.option : styles.userOption}
+          style={styles.option}
           onPress={() =>
             auth()
               .signOut()
               .then(() => setUser(auth().currentUser))
           }>
-          <Text style={{color: '#ff0000', fontSize: 20}}>Log Out</Text>
+          <Text style={{ color: '#ff0000', fontSize: 20 }}>Log Out</Text>
           <IconFeather name={'log-out'} color={'#ff0000'} size={20} />
         </TouchableOpacity>
       </View>
@@ -124,7 +172,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   option: {
-    width: '50%',
+    flex: 1,
     backgroundColor: 'rgb(240,240,255)',
     alignItems: 'center',
     justifyContent: 'space-between',

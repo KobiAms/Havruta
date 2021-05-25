@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
-MainScreen = ({navigation, route}) => {
+MainScreen = ({ navigation, route }) => {
   const feed_type = route.name;
   return (
     <View style={styles.main}>
@@ -21,9 +21,11 @@ MainScreen = ({navigation, route}) => {
         </TouchableOpacity>
         <Text style={styles.screen_title}>Havruta</Text>
         <View
-          style={[styles.register, {backgroundColor: 'rgba(0,0,0,0)'}]}></View>
+          style={[styles.register, { backgroundColor: 'rgba(0,0,0,0)' }]}></View>
       </View>
-      <Text style={styles.headline}>{feed_type}</Text>
+      <View style={styles.body}>
+        <Text style={styles.headline}>{feed_type}</Text>
+      </View>
     </View>
   );
 };
@@ -31,18 +33,24 @@ MainScreen = ({navigation, route}) => {
 const styles = StyleSheet.create({
   main: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: 'column',
   },
   header: {
     width: '100%',
     height: Dimensions.get('screen').height / 10,
-    backgroundColor: 'purple',
-    position: 'absolute',
-    top: '0%',
+    backgroundColor: 'rgb(200,200,220)',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
+    borderColor: '#999',
+    borderBottomWidth: 1,
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+  body: {
+    height: Dimensions.get('screen').height * (9 / 10),
+    width: '100%',
+    paddingTop: '10%',
   },
   screen_title: {
     fontSize: 20,

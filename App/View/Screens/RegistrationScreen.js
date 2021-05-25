@@ -1,52 +1,37 @@
-import React, {useState, useEffect} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Dimensions,
-} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import IconIC from 'react-native-vector-icons/Ionicons';
 import auth from '@react-native-firebase/auth';
 import LoginForm from '../Components/LoginForm';
 import SignupForm from '../Components/SignupForm';
 import UserForm from '../Components/UserForm';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import LoadingComponent from '../Components/LoadingComponent'
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 GoogleSignin.configure({
   webClientId: '',
 });
 
-RegistrationScreen = ({navigation, route}) => {
+RegistrationScreen = ({ navigation }) => {
   const [login_mode, setLogin_mode] = useState(true);
   const [user, setUser] = useState(auth().currentUser);
+  const [loading, setLoading] = useState(false)
 
-  signInGoogle = async () => {
-    const {idToken} = await GoogleSignin.signIn();
+  async function signInGoogle() {
+    return;
+    const { idToken } = await GoogleSignin.signIn();
     // Create a Google credential with the token
     const googleCredential = auth.GoogleAuthProvider.credential(idToken);
     // Sign-in the user with the credential
     return auth().signInWithCredential(googleCredential);
   };
 
-  LogoutForm = () => {
-    return (
-      <View style={styles.form}>
-        <TouchableOpacity
-          style={styles.login_button}
-          onPress={() =>
-            auth()
-              .signOut()
-              .then(() => setUser(auth().currentUser))
-          }>
-          <Text>Log Out</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  };
-
   return (
     <View style={styles.main}>
+      {
+        loading ? <LoadingComponent /> : null
+      }
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.back_button}
@@ -55,10 +40,10 @@ RegistrationScreen = ({navigation, route}) => {
         </TouchableOpacity>
         <Text style={styles.screen_title}>Havruta</Text>
         <View
-          style={[styles.back_button, {backgroundColor: 'rgba(0,0,0)'}]}></View>
+          style={[styles.back_button, { backgroundColor: 'rgba(0,0,0)' }]}></View>
       </View>
       {user ? (
-        <UserForm style={{flex: 1}} setUser={setUser} navigation={navigation} />
+        <UserForm style={{ flex: 1 }} setUser={setUser} navigation={navigation} setLoading={setLoading} />
       ) : (
         <View style={styles.body}>
           <View style={styles.form}>
@@ -81,32 +66,32 @@ RegistrationScreen = ({navigation, route}) => {
               </Text>
             </TouchableOpacity>
           </View>
-          {/* <View style={styles.social_login}>
-                            <TouchableOpacity style={styles.social_login_button}>
-                                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                                    <IconIC size={30} name={'md-logo-apple'} />
-                                </View>
-                                <View style={{ flex: 4, alignItems: 'center', justifyContent: 'center' }}>
-                                    <Text>{login_mode ? 'Continue' : 'Register'} With Apple</Text>
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={styles.social_login_button} onPress={() => signInGoogle()}>
-                                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                                    <IconIC size={30} name={'ios-logo-google'} />
-                                </View>
-                                <View style={{ flex: 4, alignItems: 'center', justifyContent: 'center' }}>
-                                    <Text>{login_mode ? 'Continue' : 'Register'} With Google</Text>
-                                </View>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={styles.social_login_button}>
-                                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                                    <IconIC size={30} name={'ios-logo-facebook'} color={'#3577ea'} />
-                                </View>
-                                <View style={{ flex: 4, alignItems: 'center', justifyContent: 'center' }}>
-                                    <Text>{login_mode ? 'Continue' : 'Register'} With Facebook</Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View> */}
+          <View style={styles.social_login}>
+            <TouchableOpacity style={styles.social_login_button}>
+              <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                <IconIC size={30} name={'md-logo-apple'} />
+              </View>
+              <View style={{ flex: 4, alignItems: 'center', justifyContent: 'center' }}>
+                <Text>{login_mode ? 'Continue' : 'Register'} With Apple</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.social_login_button} onPress={() => signInGoogle()}>
+              <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                <IconIC size={30} name={'ios-logo-google'} />
+              </View>
+              <View style={{ flex: 4, alignItems: 'center', justifyContent: 'center' }}>
+                <Text>{login_mode ? 'Continue' : 'Register'} With Google</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.social_login_button}>
+              <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                <IconIC size={30} name={'ios-logo-facebook'} color={'#3577ea'} />
+              </View>
+              <View style={{ flex: 4, alignItems: 'center', justifyContent: 'center' }}>
+                <Text>{login_mode ? 'Continue' : 'Register'} With Facebook</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
       )}
     </View>
@@ -121,7 +106,7 @@ const styles = StyleSheet.create({
   header: {
     width: '100%',
     height: Dimensions.get('screen').height / 10,
-    backgroundColor: 'purple',
+    backgroundColor: 'rgb(200,200,220)',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

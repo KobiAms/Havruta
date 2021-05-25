@@ -1,0 +1,4 @@
+1. fix ios safe area views
+2.create new screen that create new chat
+3.scroll to bottom at first
+4.

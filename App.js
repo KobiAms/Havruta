@@ -3,10 +3,10 @@ import {
   NavigationContainer,
   getFocusedRouteNameFromRoute,
 } from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {StyleSheet} from 'react-native';
-import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
+import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { StyleSheet } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import GenericFeed from './App/View/Screens/GenericFeed';
 import OtherScreen from './App/View/Screens/OtherScreen';
@@ -37,15 +37,15 @@ App = () => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={{ flex: 1 }}>
       <NavigationContainer>
         <Tab.Navigator>
           <Tab.Screen
             name="MainScreen"
             component={MainScreenNavigator}
-            options={({route}) => ({
+            options={({ route }) => ({
               tabBarVisible: getTabBarVisibility(route),
-              tabBarIcon: ({color}) => (
+              tabBarIcon: ({ color }) => (
                 <Icon name="file-contract" size={25} color={color} />
               ),
             })}
@@ -53,9 +53,9 @@ App = () => {
           <Tab.Screen
             name="Gays"
             component={GenericFeed}
-            options={({route}) => ({
+            options={({ route }) => ({
               tabBarVisible: getTabBarVisibility(route),
-              tabBarIcon: ({color}) => (
+              tabBarIcon: ({ color }) => (
                 <Icon name="venus-double" size={25} color={color} />
               ),
             })}
@@ -63,9 +63,9 @@ App = () => {
           <Tab.Screen
             name="Reporters"
             component={GenericChat}
-            options={({route}) => ({
+            options={({ route }) => ({
               tabBarVisible: getTabBarVisibility(route),
-              tabBarIcon: ({color}) => (
+              tabBarIcon: ({ color }) => (
                 <Icon name="comment-alt" size={25} color={color} />
               ),
             })}
@@ -73,9 +73,9 @@ App = () => {
           <Tab.Screen
             name="Judaism"
             component={GenericFeed}
-            options={({route}) => ({
+            options={({ route }) => ({
               tabBarVisible: getTabBarVisibility(route),
-              tabBarIcon: ({color}) => (
+              tabBarIcon: ({ color }) => (
                 <Icon name="torah" size={25} color={color} />
               ),
             })}
@@ -83,9 +83,9 @@ App = () => {
           <Tab.Screen
             name="Other"
             component={OtherScreen}
-            options={({route}) => ({
+            options={({ route }) => ({
               tabBarVisible: getTabBarVisibility(route),
-              tabBarIcon: ({color}) => (
+              tabBarIcon: ({ color }) => (
                 <Icon name="bars" size={25} color={color} />
               ),
             })}
