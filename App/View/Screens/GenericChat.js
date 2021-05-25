@@ -13,13 +13,13 @@ let flag = false
 ChatMessage = ({ item }) => {
     let date = item.date.toDate()
     return (
-        <View style={auth().currentUser.email === item.user_id? styles.myItem:styles.userIdDate}>
+        <View style={auth().currentUser && (auth().currentUser.email === item.user_id)? styles.myItemElement:styles.ItemElement}>
             <View>
                 <Image style={styles.userPhoto} source={{ uri: 'https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-ios7-contact-512.png' }}>
 
                 </Image>
             </View>
-            <View style={styles.item}>
+            <View style={auth().currentUser && (auth().currentUser.email === item.user_id)? styles.myMessageBox:styles.messageBox}>
                 <Text style={styles.messageStyle}>
                     {item.message}
                 </Text>
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
     date: {
         fontSize: 11,
     },
-    item: {
+    messageBox: {
         margin: 5,
         paddingLeft: 5,
         backgroundColor: "rgb(200,200,220)",
@@ -190,7 +190,20 @@ const styles = StyleSheet.create({
 
 
     },
-    userIdDate: {
+    myMessageBox: {
+        margin: 5,
+        paddingLeft: 5,
+        backgroundColor: "rgb(200,240,240)",
+        borderColor: "black",
+        borderWidth: 1,
+        borderRadius: 7,
+        alignSelf: 'flex-start',
+        maxWidth: "83%",
+        
+
+
+    },
+    ItemElement: {
         flexDirection: 'row',
         flex: 1,
         alignContent: 'flex-end',
@@ -198,7 +211,7 @@ const styles = StyleSheet.create({
 
 
     },
-    myItem:{
+    myItemElement:{
         flexDirection: 'row',
         flex: 1,
         alignContent: 'flex-end'
