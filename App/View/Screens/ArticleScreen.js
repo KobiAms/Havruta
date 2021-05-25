@@ -14,6 +14,25 @@ import { Avatar } from 'react-native-elements';
 import { FlatList } from 'react-native-gesture-handler';
 import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 
+function timePassParser(time) {
+  let now = new Date();
+  let diff = now - ((7200 + time) * 1000);
+  if (diff < 0) return ('a while ago');
+  if (diff < 1000) return (parseInt(diff) + ' milliseconds ago');
+  diff /= 1000;
+  if (diff < 60) return (parseInt(diff) + ' seconds ago');
+  diff /= 60;
+  if (diff < 60) return (parseInt(diff) + ' minutes ago');
+  diff /= 60;
+  if (diff < 24) return (parseInt(diff) + ' hours ago');
+  diff /= 24;
+  if (diff < 30) return (parseInt(diff) + ' days ago');
+  diff /= 30;
+  if (diff < 12) return (parseInt(diff) + ' months ago');
+  diff /= 12;
+  return (parseInt(diff) + ' years ago');
+}
+
 function ArticleScreen({ navigation, route }) {
   useEffect(() => {
     LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
@@ -84,10 +103,16 @@ function ArticleScreen({ navigation, route }) {
                 uri:
                   'https://post.medicalnewstoday.com/wp-content/uploads/sites/3/2020/03/GettyImages-1092658864_hero-1024x575.jpg',
               }}
+              onPress={() => { console.log(item.timestamp) }}
             />
             <View style={styles.comment}>
-              <Text style={styles.autor}>{item.user_name}</Text>
-              <Text>{item.comment}</Text>
+              <View>
+                <Text style={styles.autor}>{item.user_name}</Text>
+                <Text>{item.comment}</Text>
+              </View>
+              <View>
+                <Text>{timePassParser(item.timestamp.seconds)}</Text>
+              </View>
             </View>
           </View>
         )}
@@ -150,6 +175,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 18,
+    flexDirection: 'row',
+    justifyContent: 'space-between'
   },
   combox: {
     flexDirection: 'row',
