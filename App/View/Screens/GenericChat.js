@@ -25,7 +25,7 @@ ChatMessage = ({ item }) => {
                 </Text>
                 <View style={styles.messageDetails}>
                     <Text style={styles.userId}>
-                        {" " + item.user_id + " "}
+                        {" " + item.user_nick + " "}
                     </Text>
                     <Text style={styles.date}>
                         {" " + (date.getDate()) + '/' + (date.getMonth() + 1) + " " + date.getHours() + ":" + ("0" + (date.getMinutes())).slice(-2) + " "}
@@ -39,20 +39,23 @@ ChatMessage = ({ item }) => {
 GenericChat = ({ navigation, route }) => {
     const [newMessage, setNewMessage] = useState("")
     const [chat_data, set_chat_data] = useState({})
+    const [user, setUser] = useState();
+    if(user)console.log("user is :"+user.name)
     let flat_list_ref
     const feed_type = route.name
     const chat_id = "example_chat_id"
     sendMessage = () => {
 
-        let tempMessage = { user_id: "אבי", message: newMessage, date: new Date() }
+        let tempMessage = {user_id: user.email,user_nick: user.name, message: newMessage, date: new Date()}
         console.log("this is message " + tempMessage.message)
-        if (!tempMessage.message.replace(/\s/g, '').length) {
+        if (!tempMessage.message.replace(/\s/g, '').length || !auth().currentUser) {
             setNewMessage("")
         }
         else {
-            firestore().collection('chats').doc('example_chat_id').update({
+            firestore().collection('chats').doc('reporters').update({
                 messages: firestore.FieldValue.arrayUnion(tempMessage)
             }).then(() => {
+                console.log(auth().currentUser.email)
                 setNewMessage("")
             }).catch(error => {
                 console.log(error.toString())
@@ -60,45 +63,59 @@ GenericChat = ({ navigation, route }) => {
         }
 
     }
+
+    function onAuthStateChanged(user) {
+        setUser(user);
+        //if (initializing) setInitializing(false);
+      }
+
+    
     useEffect(() => {
         //
-        if (flag == false) {
-            flag = true
-            firestore().collection('chats').doc('example_chat_id')
+        const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+            if(auth().currentUser){
+                firestore().collection('users').doc(auth().currentUser.email).onSnapshot(email => {
+                    let userDetails = email.data()
+                    setUser(userDetails)
+                })
+                    
+            } 
+            firestore().collection('chats').doc('reporters')
                 .onSnapshot(doc => {
                     if (!doc)
                         return;
                     let reversed = doc.data().messages.reverse()
                     set_chat_data(reversed)
                 })
-
-        }
+         return subscriber; // unsubscribe on unmount
+        
     }, [])
+        return (
+            <View style={styles.main}>
+                <View style={styles.header}>
+                    <Text style={styles.headline}>
+                        {chat_id}
+                    </Text>
+                </View>
+                <FlatList style={styles.list} inverted data={chat_data} ref={ref => flat_list_ref = ref} keyExtractor={(item, index) => index}
+                    renderItem={({ item }) => <ChatMessage item={item} />} />
+                {user?  <View style={styles.inputContainer}>
 
-    return (
-        <View style={styles.main}>
-            <View style={styles.header}>
-                <Text style={styles.headline}>
-                    {chat_id}
-                </Text>
+                    <TextInput placeholder="הכנס את ההודעה.." style={styles.input} value={newMessage}
+                        onChangeText={setNewMessage} />
+                    <TouchableOpacity onPress={() => sendMessage()} style={newMessage.length == 0 ? styles.sendButtonEmpty : styles.sendButtonFull}>
+                        <Icon name={"md-send"} size={20} color={"#ffffff"} />
+                    </TouchableOpacity>
+                </View>:null}
             </View>
-            <FlatList style={styles.list} inverted data={chat_data} ref={ref => flat_list_ref = ref} keyExtractor={(item, index) => index}
-                renderItem={({ item }) => <ChatMessage item={item} />} />
-            <View style={styles.inputContainer}>
-                <TextInput placeholder="your message.." style={styles.input} value={newMessage}
-                    onChangeText={setNewMessage} />
-                <TouchableOpacity onPress={() => sendMessage()} style={newMessage.length == 0 ? styles.sendButtonEmpty : styles.sendButtonFull}>
-                    <Icon name={"md-send"} size={20} color={"#ffffff"} />
-                </TouchableOpacity>
-            </View>
-        </View>
-    )
+        )
+    
+    
 }
 
 const styles = StyleSheet.create({
     main: {
         flex: 1,
-        alignItems: 'center',
         justifyContent: 'center',
     },
     headline: {
@@ -176,7 +193,8 @@ const styles = StyleSheet.create({
     },
     messageStyle: {
         color: "black",
-        fontSize: 17.5
+        fontSize: 17,
+        paddingLeft:4
     },
     userPhoto: {
         
