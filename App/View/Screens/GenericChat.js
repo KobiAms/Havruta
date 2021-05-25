@@ -9,7 +9,24 @@ import { resolvePreset } from '@babel/core';
 
 
 let msgToLoad = 10
+let msgToStart = 0
 let flag = false
+loadMore =()=>{
+    let loadMoreData;
+    msgToStart=msgToStart+10;
+    msgToLoad=msgToLoad+10
+    firestore().collection('chats').doc('reporters')
+    .onSnapshot(doc => {
+        if (!doc)
+            return;
+        
+        let reversed = doc.data().messages.reverse()
+        set_chat_data(reversed.slice(0,msgToLoad))
+
+    })
+    
+    console.log("Akol tov")
+}
 ChatMessage = ({ item }) => {
     let date = item.date.toDate()
     return (
@@ -98,10 +115,10 @@ GenericChat = ({ navigation, route }) => {
                         {chat_id}
                     </Text>
                 </View>
-                <FlatList style={styles.list} inverted data={chat_data} onEndReachedThreshold={0.5}  ref={ref => flat_list_ref = ref} keyExtractor={(item, index) => index}
+                <FlatList style={styles.list} inverted data={chat_data} onEndReachedThreshold={0.5} onEndReached={()=> console.log("end")}  ref={ref => flat_list_ref = ref} keyExtractor={(item, index) => index}
                     renderItem={({ item }) => <ChatMessage item={item} />} />
                 {user?  <View style={styles.inputContainer}>
-                    <TextInput placeholder="הכנס את ההודעה.." style={styles.input} onEndReachedThreshold ={100} value={newMessage}
+                    <TextInput placeholder="הכנס את ההודעה.." style={styles.input} value={newMessage}
                         onChangeText={setNewMessage} />
                     <TouchableOpacity onPress={() => sendMessage()} style={newMessage.length == 0 ? styles.sendButtonEmpty : styles.sendButtonFull}>
                         <Icon name={"md-send"} size={20} color={"#ffffff"} />
