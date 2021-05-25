@@ -33,9 +33,7 @@ export default function UserForm({setUser, navigation, setLoading}) {
     launchImageLibrary({}, async response => {
       setLoading(true);
       if (response.didCancel) {
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
+        setLoading(false);
       } else if (response.error) {
         Alert.alert(
           'Error',
@@ -43,9 +41,8 @@ export default function UserForm({setUser, navigation, setLoading}) {
           [{text: 'OK'}],
           {cancelable: false},
         );
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
+
+        setLoading(false);
       } else {
         const reference = storage().ref(
           '/users/' + auth().currentUser.email + '/' + 'user_image.png',
@@ -53,9 +50,9 @@ export default function UserForm({setUser, navigation, setLoading}) {
         await reference.putFile(response.uri);
         reference.getDownloadURL().then(url => {
           setUserAvatar({uri: url});
-          setTimeout(() => {
-            setLoading(false);
-          }, 1000);
+          // setTimeout(() => {
+          setLoading(false);
+          // }, 1000);
         });
       }
     });
@@ -81,16 +78,17 @@ export default function UserForm({setUser, navigation, setLoading}) {
           .then(url => {
             console.log(url);
             setUserAvatar({uri: url});
+            setLoading(false);
           })
           .catch(err => {});
         doc.data().role === 'user' ? setDefaultStyle(!defaultStyle) : null;
         let DAT = new Date((7200 + doc.data().dob.seconds) * 1000);
         /*//times go by sec GMT, so in order to get the right date, need to add 2 hours and mult by 1000 in nanosec*/
-        setuserDOB(DAT.toDateString());
+        let DAT_parse =
+          DAT.getDate() + '.' + (DAT.getMonth() + 1) + '.' + DAT.getFullYear();
+
+        setuserDOB(DAT_parse);
         setuserName(doc.data().name);
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
       })
       .catch(() => {});
     return subscriber;
@@ -99,20 +97,13 @@ export default function UserForm({setUser, navigation, setLoading}) {
   return (
     <View style={styles.main}>
       <View style={styles.backline} />
-      <View style={styles.aview}>
+      <TouchableOpacity style={styles.aview} onPress={() => uploadNewAvatar()}>
         {userAvatar ? (
-          <Avatar
-            size="xlarge"
-            rounded
-            title={userName[0] + userName[1]}
-            source={userAvatar}
-            containerStyle={{alignSelf: 'center', borderWidth: 2}}
-            onPress={() => uploadNewAvatar()}
-          />
+          <Image source={userAvatar} style={{width: '100%', height: '100%'}} />
         ) : (
           <ActivityIndicator color={'#007fff'} size={'large'} />
         )}
-      </View>
+      </TouchableOpacity>
       <View style={styles.row}>
         <Text style={styles.name}>{userName}</Text>
         <TouchableOpacity
@@ -218,5 +209,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
   },
 });
