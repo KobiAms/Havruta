@@ -13,7 +13,7 @@ let flag = false
 ChatMessage = ({ item }) => {
     let date = item.date.toDate()
     return (
-        <View style={styles.userIdDate}>
+        <View style={auth().currentUser.email === item.user_id? styles.myItem:styles.userIdDate}>
             <View>
                 <Image style={styles.userPhoto} source={{ uri: 'https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-ios7-contact-512.png' }}>
 
@@ -40,10 +40,11 @@ GenericChat = ({ navigation, route }) => {
     const [newMessage, setNewMessage] = useState("")
     const [chat_data, set_chat_data] = useState({})
     const [user, setUser] = useState();
+    const [chat_name , set_chat_name] =useState(""); 
     if(user)console.log("user is :"+user.name)
     let flat_list_ref
     const feed_type = route.name
-    const chat_id = "example_chat_id"
+    const chat_id ="test"
     sendMessage = () => {
 
         let tempMessage = {user_id: user.email,user_nick: user.name, message: newMessage, date: new Date()}
@@ -84,9 +85,12 @@ GenericChat = ({ navigation, route }) => {
                 .onSnapshot(doc => {
                     if (!doc)
                         return;
+                    
                     let reversed = doc.data().messages.reverse()
                     set_chat_data(reversed)
+
                 })
+
          return subscriber; // unsubscribe on unmount
         
     }, [])
@@ -182,6 +186,7 @@ const styles = StyleSheet.create({
         borderRadius: 7,
         alignSelf: 'flex-start',
         maxWidth: "83%",
+        
 
 
     },
@@ -189,6 +194,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flex: 1,
         alignContent: 'flex-end',
+        flexDirection:'row-reverse'
+
+
+    },
+    myItem:{
+        flexDirection: 'row',
+        flex: 1,
+        alignContent: 'flex-end'
 
     },
     messageStyle: {
