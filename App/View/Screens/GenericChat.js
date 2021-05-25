@@ -41,14 +41,12 @@ GenericChat = ({ navigation, route }) => {
     const [chat_data, set_chat_data] = useState({})
     const [user, setUser] = useState();
     const [chat_name , set_chat_name] =useState(""); 
-    if(user)console.log("user is :"+user.name)
     let flat_list_ref
     const feed_type = route.name
     const chat_id ="test"
     sendMessage = () => {
 
         let tempMessage = {user_id: user.email,user_nick: user.name, message: newMessage, date: new Date()}
-        console.log("this is message " + tempMessage.message)
         if (!tempMessage.message.replace(/\s/g, '').length || !auth().currentUser) {
             setNewMessage("")
         }
@@ -56,7 +54,6 @@ GenericChat = ({ navigation, route }) => {
             firestore().collection('chats').doc('reporters').update({
                 messages: firestore.FieldValue.arrayUnion(tempMessage)
             }).then(() => {
-                console.log(auth().currentUser.email)
                 setNewMessage("")
             }).catch(error => {
                 console.log(error.toString())
