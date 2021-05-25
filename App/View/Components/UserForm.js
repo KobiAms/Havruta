@@ -17,7 +17,9 @@ import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
 import IconFeather from 'react-native-vector-icons/Feather';
 import IconFAW5 from 'react-native-vector-icons/FontAwesome5';
+import IconAnt from 'react-native-vector-icons/AntDesign';
 import { launchImageLibrary } from 'react-native-image-picker';
+import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 
 export default function UserForm({ setUser, navigation, setLoading }) {
   const [userRole, setUserRole] = useState();
@@ -46,7 +48,6 @@ export default function UserForm({ setUser, navigation, setLoading }) {
           [{ text: 'OK' }],
           { cancelable: false },
         );
-
         setLoading(false);
       } else {
         const reference = storage().ref(
@@ -60,13 +61,15 @@ export default function UserForm({ setUser, navigation, setLoading }) {
       }
     });
   }
-
+  /** function activated by pressing the edit icon. allow changes in the user name, date of birth, about */
   function setToEditable() {
     if (editable) {
-      setEditable(false)
+      setEditable(false);
     } else {
-      setEditName(userName)
-      setEditable(true)
+      setEditName(userName);
+      setEditDate(userDOB);
+      setEditAbout(userAbout);
+      setEditable(true);
     }
   }
 
@@ -88,20 +91,19 @@ export default function UserForm({ setUser, navigation, setLoading }) {
         reference
           .getDownloadURL()
           .then(url => {
-            console.log(url);
+            //console.log(url);
             setUserAvatar({ uri: url });
             setLoading(false);
           })
-          .catch(err => {
-            setUserAvatar(require('../../Assets/POWERPNT_frXVLHdxnI.png'))
-            setLoading(false)
+          .catch(() => {
+            setUserAvatar(require('../../Assets/POWERPNT_frXVLHdxnI.png'));
+            setLoading(false);
           });
         doc.data().role === 'user' ? setDefaultStyle(!defaultStyle) : null;
         let DAT = new Date((7200 + doc.data().dob.seconds) * 1000);
         /*//times go by sec GMT, so in order to get the right date, need to add 2 hours and mult by 1000 in nanosec*/
         let DAT_parse =
           DAT.getDate() + '.' + (DAT.getMonth() + 1) + '.' + DAT.getFullYear();
-
         setuserDOB(DAT_parse);
         setuserName(doc.data().name);
       })
@@ -111,13 +113,36 @@ export default function UserForm({ setUser, navigation, setLoading }) {
 
   return (
     <View style={styles.main}>
-      <View style={styles.backline} />
+      <View style={styles.backline} >
+        <TouchableOpacity onPress={() => { setToEditable(); }}>
+          {editable ?
+            <View style={{ alignItems: 'center', flexDirection: 'row' }}>
+              <IconFeather
+                name={'check-square'}
+                color={'#008800'}
+                size={18}
+                style={{ margin: 5 }} />
+              <Text>Click to save changes</Text>
+            </View>
+            :
+            <View style={{ alignItems: 'center', flexDirection: 'row' }}>
+              <IconFAW5
+                name={'edit'}
+                color={'#000000'}
+                size={18}
+                style={{ margin: 5 }} />
+              <Text>Click to edit</Text>
+            </View>}
+        </TouchableOpacity>
+      </View>
+
       <TouchableOpacity style={styles.aview} onPress={() => uploadNewAvatar()}>
-        {userAvatar ? (
-          <Image source={userAvatar} style={{ width: '100%', height: '100%' }} />
-        ) : (
-          <ActivityIndicator color={'#007fff'} size={'large'} />
-        )}
+        {
+          userAvatar ?
+            <Image source={userAvatar} style={{ width: '100%', height: '100%' }} />
+            :
+            <ActivityIndicator color={'#007fff'} size={'large'} />
+        }
       </TouchableOpacity>
       <View style={styles.row}>
         {
@@ -129,25 +154,30 @@ export default function UserForm({ setUser, navigation, setLoading }) {
             :
             <Text style={styles.name}>{userName}</Text>
         }
-        <TouchableOpacity
-          onPress={() => {
-            setToEditable();
-          }}>
-          <IconFAW5
-            name={'edit'}
-            color={'#000000'}
-            size={18}
-            style={{ margin: 5 }}
-          />
-        </TouchableOpacity>
       </View>
       <View style={styles.row}>
-        <Text>Date of Birth:</Text>
-        <Text style={{ fontSize: 18, margin: 5 }}>{userDOB}</Text>
+        <Text style={{ margin: 5 }}>Date of Birth:</Text>
+        {
+          editable ?
+            <TextInput
+              style={[styles.editable, { fontSize: 18 }]}
+              value={editDate}
+              onChangeText={setEditDate} />
+            :
+            <Text style={{ fontSize: 18 }}>{userDOB}</Text>
+        }
       </View>
       <View style={{ padding: 20 }}>
         <Text style={{ fontWeight: 'bold', fontSize: 21 }}>About Me:</Text>
-        <Text style={{ fontSize: 17 }}>{userAbout}</Text>
+        {
+          editable ?
+            <AutoGrowingTextInput
+              style={[styles.editable, { fontSize: 17 }]}
+              value={editAbout}
+              onChangeText={setEditAbout} />
+            :
+            <Text style={{ fontSize: 17 }}>{userAbout}</Text>
+        }
       </View>
 
       {/*the following view contain the logout / manage users buttons*/}
@@ -204,6 +234,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.32,
     shadowRadius: 5.46,
     elevation: 6,
+    padding: -4,
   },
   chose: {
     alignItems: 'flex-end',
@@ -225,6 +256,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgb(160,160,200)',
     height: Dimensions.get('screen').height / 10,
     marginBottom: -Dimensions.get('screen').height / 15,
+    justifyContent: "flex-start"
+
   },
   aview: {
     alignSelf: 'center',
