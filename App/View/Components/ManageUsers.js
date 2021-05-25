@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Text,
   StyleSheet,
@@ -14,7 +14,7 @@ import firestore from '@react-native-firebase/firestore';
 import IconAw from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/AntDesign';
 
-export default ManageUsers = ({navigation}) => {
+export default ManageUsers = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
   const [list_to_show, setShow] = useState(users);
@@ -47,7 +47,7 @@ export default ManageUsers = ({navigation}) => {
       });
   }, []);
 
-  UserItem = ({headline, color, onPress}) => {
+  UserItem = ({ headline, color, onPress }) => {
     return (
       <TouchableOpacity style={styles.item} onPress={onPress}>
         <IconAw style={styles.dot} name={'circle'} size={10} color={color} />
@@ -74,7 +74,7 @@ export default ManageUsers = ({navigation}) => {
         <View
           style={[
             styles.back_button,
-            {backgroundColor: 'rgba(0,0,0,0)'},
+            { backgroundColor: 'rgba(0,0,0,0)' },
           ]}></View>
       </View>
       <View style={styles.body}>
@@ -100,12 +100,12 @@ export default ManageUsers = ({navigation}) => {
             <FlatList
               style={styles.list}
               data={list_to_show}
-              renderItem={({item}) => (
+              renderItem={({ item }) => (
                 <UserItem
                   headline={item.name}
                   color={item.color}
                   onPress={() =>
-                    navigation.navigate('Manage User', {data: item})
+                    navigation.navigate('Manage User', { data: item })
                   }
                 />
               )}
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   },
   header: {
     width: '100%',
-    height: Dimensions.get('screen').height / 10,
+    height: Dimensions.get('window').height / 10,
     backgroundColor: 'purple',
     flexDirection: 'row',
     alignItems: 'center',
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   body: {
-    height: Dimensions.get('screen').height * (9 / 10),
+    height: Dimensions.get('window').height * (8.1 / 10),
     width: '100%',
   },
   search_container: {

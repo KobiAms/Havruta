@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import React, {useEffect, useRef, useCallback, useState} from 'react';
+import React, { useEffect, useRef, useCallback, useState } from 'react';
 import {
   ScrollView,
   View,
@@ -10,18 +10,18 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Icons from 'react-native-vector-icons/Ionicons';
-import {Avatar} from 'react-native-elements';
-import {FlatList} from 'react-native-gesture-handler';
-import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
+import { Avatar } from 'react-native-elements';
+import { FlatList } from 'react-native-gesture-handler';
+import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 
-function ArticleScreen({navigation, route}) {
+function ArticleScreen({ navigation, route }) {
   useEffect(() => {
     LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
   }, []); //enable to render a flatlist inside a scrollview
-  let {autor, date, headline, comments, likes, contant} = route.params.data;
+  let { autor, date, headline, comments, likes, contant } = route.params.data;
   const inputRef = useRef();
   const clearText = useCallback(() => {
-    inputRef.current.setNativeProps({text: ''});
+    inputRef.current.setNativeProps({ text: '' });
   }, []); //use the clearText inorder to erase the content inside the comment text field
 
   const [comInput, setcomInput] = useState();
@@ -56,7 +56,7 @@ function ArticleScreen({navigation, route}) {
           <Icon name={'like1'} size={20} style={styles.pad} />
           <Text>likes: {likes.length}</Text>
         </TouchableOpacity>
-        <Text>comments: {comments.length}</Text>
+        <Text>comments: {comments ? comments.length : 0}</Text>
       </View>
       <View style={styles.rower} /** text input to add new comment */>
         <AutoGrowingTextInput
@@ -75,7 +75,7 @@ function ArticleScreen({navigation, route}) {
       </View>
       <FlatList
         data={route.params.data.comments}
-        renderItem={({item}) => (
+        renderItem={({ item }) => (
           <View style={styles.combox}>
             <Avatar
               size="small"
@@ -86,7 +86,7 @@ function ArticleScreen({navigation, route}) {
               }}
             />
             <View style={styles.comment}>
-              <Text style={styles.autor}>{item.user}</Text>
+              <Text style={styles.autor}>{item.user_name}</Text>
               <Text>{item.comment}</Text>
             </View>
           </View>

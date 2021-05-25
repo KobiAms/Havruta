@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -10,22 +10,27 @@ import {
   Alert,
   ActivityIndicator,
   Image,
+  TextInput,
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
 import IconFeather from 'react-native-vector-icons/Feather';
 import IconFAW5 from 'react-native-vector-icons/FontAwesome5';
-import {Avatar} from 'react-native-elements';
-import {launchImageLibrary} from 'react-native-image-picker';
+import { launchImageLibrary } from 'react-native-image-picker';
 
-export default function UserForm({setUser, navigation, setLoading}) {
+export default function UserForm({ setUser, navigation, setLoading }) {
   const [userRole, setUserRole] = useState();
   const [defaultStyle, setDefaultStyle] = useState(true);
   const [userName, setuserName] = useState('');
   const [userDOB, setuserDOB] = useState();
   const [userAbout, setUserAbout] = useState();
   const [userAvatar, setUserAvatar] = useState();
+  const [editable, setEditable] = useState(false);
+  const [editName, setEditName] = useState();
+  const [editDate, setEditDate] = useState();
+  const [editAbout, setEditAbout] = useState();
+
 
   // this function upload the avatar image into the storage
   function uploadNewAvatar() {
@@ -38,8 +43,8 @@ export default function UserForm({setUser, navigation, setLoading}) {
         Alert.alert(
           'Error',
           response.errorCode + ': ' + response.errorMessage,
-          [{text: 'OK'}],
-          {cancelable: false},
+          [{ text: 'OK' }],
+          { cancelable: false },
         );
 
         setLoading(false);
@@ -49,13 +54,20 @@ export default function UserForm({setUser, navigation, setLoading}) {
         );
         await reference.putFile(response.uri);
         reference.getDownloadURL().then(url => {
-          setUserAvatar({uri: url});
-          // setTimeout(() => {
+          setUserAvatar({ uri: url });
           setLoading(false);
-          // }, 1000);
         });
       }
     });
+  }
+
+  function setToEditable() {
+    if (editable) {
+      setEditable(false)
+    } else {
+      setEditName(userName)
+      setEditable(true)
+    }
   }
 
   useEffect(() => {
@@ -77,10 +89,13 @@ export default function UserForm({setUser, navigation, setLoading}) {
           .getDownloadURL()
           .then(url => {
             console.log(url);
-            setUserAvatar({uri: url});
+            setUserAvatar({ uri: url });
             setLoading(false);
           })
-          .catch(err => {});
+          .catch(err => {
+            setUserAvatar(require('../../Assets/POWERPNT_frXVLHdxnI.png'))
+            setLoading(false)
+          });
         doc.data().role === 'user' ? setDefaultStyle(!defaultStyle) : null;
         let DAT = new Date((7200 + doc.data().dob.seconds) * 1000);
         /*//times go by sec GMT, so in order to get the right date, need to add 2 hours and mult by 1000 in nanosec*/
@@ -90,7 +105,7 @@ export default function UserForm({setUser, navigation, setLoading}) {
         setuserDOB(DAT_parse);
         setuserName(doc.data().name);
       })
-      .catch(() => {});
+      .catch(() => { });
     return subscriber;
   }, [setUserAbout, setUserRole, setDefaultStyle, setuserName, setuserDOB]);
 
@@ -99,32 +114,40 @@ export default function UserForm({setUser, navigation, setLoading}) {
       <View style={styles.backline} />
       <TouchableOpacity style={styles.aview} onPress={() => uploadNewAvatar()}>
         {userAvatar ? (
-          <Image source={userAvatar} style={{width: '100%', height: '100%'}} />
+          <Image source={userAvatar} style={{ width: '100%', height: '100%' }} />
         ) : (
           <ActivityIndicator color={'#007fff'} size={'large'} />
         )}
       </TouchableOpacity>
       <View style={styles.row}>
-        <Text style={styles.name}>{userName}</Text>
+        {
+          editable ?
+            <TextInput
+              style={[styles.name, styles.editable]}
+              value={editName}
+              onChangeText={setEditName} />
+            :
+            <Text style={styles.name}>{userName}</Text>
+        }
         <TouchableOpacity
           onPress={() => {
-            console.log('editing user name of ' + userName);
+            setToEditable();
           }}>
           <IconFAW5
             name={'edit'}
             color={'#000000'}
             size={18}
-            style={{margin: 5}}
+            style={{ margin: 5 }}
           />
         </TouchableOpacity>
       </View>
       <View style={styles.row}>
         <Text>Date of Birth:</Text>
-        <Text style={{fontSize: 18, margin: 5}}>{userDOB}</Text>
+        <Text style={{ fontSize: 18, margin: 5 }}>{userDOB}</Text>
       </View>
-      <View style={{padding: 20}}>
-        <Text style={{fontWeight: 'bold', fontSize: 21}}>About Me:</Text>
-        <Text style={{fontSize: 17}}>{userAbout}</Text>
+      <View style={{ padding: 20 }}>
+        <Text style={{ fontWeight: 'bold', fontSize: 21 }}>About Me:</Text>
+        <Text style={{ fontSize: 17 }}>{userAbout}</Text>
       </View>
 
       {/*the following view contain the logout / manage users buttons*/}
@@ -133,7 +156,7 @@ export default function UserForm({setUser, navigation, setLoading}) {
           <TouchableOpacity
             style={styles.option}
             onPress={() => navigation.navigate('Manage Users')}>
-            <Text style={{color: '#000000', fontSize: 20}}>Manage Users</Text>
+            <Text style={{ color: '#000000', fontSize: 20 }}>Manage Users</Text>
             <IconFAW5 name={'user-cog'} color={'#666666'} size={20} />
           </TouchableOpacity>
         ) : null}
@@ -144,7 +167,7 @@ export default function UserForm({setUser, navigation, setLoading}) {
               .signOut()
               .then(() => setUser(auth().currentUser))
           }>
-          <Text style={{color: '#ff0000', fontSize: 20}}>Log Out</Text>
+          <Text style={{ color: '#ff0000', fontSize: 20 }}>Log Out</Text>
           <IconFeather name={'log-out'} color={'#ff0000'} size={20} />
         </TouchableOpacity>
       </View>
@@ -168,6 +191,19 @@ const styles = StyleSheet.create({
     fontSize: 34,
     fontWeight: 'bold',
     margin: 5,
+  },
+  editable: {
+    borderWidth: 1,
+    borderRadius: 10,
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.32,
+    shadowRadius: 5.46,
+    elevation: 6,
   },
   chose: {
     alignItems: 'flex-end',

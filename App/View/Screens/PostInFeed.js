@@ -1,11 +1,11 @@
 /* eslint-disable prettier/prettier */
 import React from 'react';
-import {Text, View, StyleSheet, TouchableOpacity} from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {Avatar} from 'react-native-elements';
+import { Avatar } from 'react-native-elements';
 
-function PostInFeed({onPress, data}) {
-  let {autor, date, headline, comments, likes, contant} = data;
+function PostInFeed({ onPress, data }) {
+  let { autor, date, headline, comments, likes, contant } = data;
 
   return (
     <View style={styles.main}>
@@ -38,7 +38,7 @@ function PostInFeed({onPress, data}) {
           <Text>likes: {likes.length}</Text>
         </TouchableOpacity>
         <Text onPress={() => onPress()} data={data}>
-          comments: {comments.length}
+          comments: {comments ? comments.length : 0}
         </Text>
       </View>
     </View>
