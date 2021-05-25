@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
     item: {
         margin: 5,
         paddingLeft: 5,
-        backgroundColor: "dodgerblue",
+        backgroundColor: "rgb(200,200,220)",
         borderColor: "black",
         borderWidth: 1,
         borderRadius: 7,
