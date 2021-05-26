@@ -15,11 +15,11 @@ let flag = false
 
 const ListFooterComponent = ()=>{
     return(
-    <Text style={{textAlign:'center',padding:5}}>
-        Loading..
-    </Text>
+        <ActivityIndicator size="large" color="rainbow" />
     )
 }
+//this function dicompose the doc of the coplete chat into small object where as any object represent one msg item inside our chat
+//
 ChatMessage = ({ item }) => {
     let date = item.date.toDate()
     return (
@@ -63,6 +63,9 @@ GenericChat = ({ navigation, route }) => {
     wait(1000).then(() => setRefreshing(false));
      }, []);
 
+    //this function is used when we wanna send msg on the chat. first we check the the msg content exist in order the prevent from sending 
+    // empty msgs to the server.
+    // after we verify that the msg is decent we update our data base with the new msgs
     sendMessage = () => {
 
         let tempMessage = {user_id: user.email,user_nick: user.name, message: newMessage, date: new Date()}
@@ -82,9 +85,10 @@ GenericChat = ({ navigation, route }) => {
 
     function onAuthStateChanged(user) {
         setUser(user);
-        //if (initializing) setInitializing(false);
       }
-
+      // we call that function on reaching to the end of the screen 
+      // this function updates the displayed msgs list.
+      // we read all the chat list from the chat and we slice it into the amount of messages we want to see.
     function loadMore(chat_data) {
         set_loading_more(true)
         msgToLoad=msgToLoad+7
@@ -206,7 +210,7 @@ const styles = StyleSheet.create({
     },
     header: {
         width: "100%",
-        backgroundColor: "purple",
+        backgroundColor: "lightblue",
         alignItems: "center",
         justifyContent: "center",
     },
