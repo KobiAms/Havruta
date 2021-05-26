@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     header: {
         width: '100%',
         height: Dimensions.get('screen').height / 10,
-        backgroundColor: 'purple',
+        backgroundColor: 'rgb(120,90,140)',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',

@@ -10,14 +10,14 @@ function PostInFeed({ onPress, data }) {
   return (
     <View style={styles.main}>
       <View style={styles.row}>
-        <Avatar
+        {/* <Avatar
           size="small"
           rounded
           source={{
             uri:
               'https://post.medicalnewstoday.com/wp-content/uploads/sites/3/2020/03/GettyImages-1092658864_hero-1024x575.jpg',
           }}
-        />
+        /> */}
         <View>
           <Text style={styles.autor}>{autor}</Text>
           <Text>{date}</Text>
@@ -52,9 +52,18 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgb(220,220,240)',
     justifyContent: 'center',
     padding: 10,
-    marginVertical: 5,
+    margin: 5,
     flex: 1,
-    minWidth: '100%',
+    minWidth: '97%',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.34,
+    shadowRadius: 3.27,
+
+    elevation: 10,
   },
   headline: {
     fontSize: 22,

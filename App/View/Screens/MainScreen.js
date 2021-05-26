@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
-MainScreen = ({ navigation, route }) => {
+function MainScreen({ navigation, route }) {
   const feed_type = route.name;
   return (
     <View style={styles.main}>
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
   header: {
     width: '100%',
     height: Dimensions.get('screen').height / 10,
-    backgroundColor: 'rgb(200,200,220)',
+    backgroundColor: 'rgb(120,90,140)',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -51,6 +51,7 @@ const styles = StyleSheet.create({
     height: Dimensions.get('screen').height * (9 / 10),
     width: '100%',
     paddingTop: '10%',
+    alignItems: 'center'
   },
   screen_title: {
     fontSize: 20,

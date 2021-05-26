@@ -1,11 +1,11 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react';
-import { ScrollView, Text, StyleSheet, View } from 'react-native';
+import { Dimensions, Text, StyleSheet, View, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import PostInFeed from './PostInFeed';
 import artiTest from './test/articles.json';
 import firestore from '@react-native-firebase/firestore';
-import { ActivityIndicator } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 function SubjectArticles({ navigation, route }) {
   const feed_type = route.name;
@@ -41,7 +41,15 @@ function SubjectArticles({ navigation, route }) {
       "date": "6/6/2021",
       "contant": "לך עליה עליה בבוקר, למה לא למה לא, אם רצית בה לגעת כמו חלום, למה לא, אם הצעת לה טבעת יהלום, למה לא, אם ניסית והצלחת, למה לא למה לא, למה לא למה לא",
       "contant-short": "bla"
-    }]
+    }, {
+      "id": "arti3",
+      "headline": "This is America",
+      "autor": "Rihanna",
+      "date": "21/12/2012",
+      "contant": "Shine bright like a diamond. Shine bright like a diamond. Find light in the beautiful sea. I choose to be happy, You and I, you and I, We're like diamonds in the sky, You're a shooting star I see, A vision of ecstasy, When you hold me, I'm alive",
+      "contant-short": "Lorem Ipsum is simply dummy text of the printing and typesetting industry"
+    },
+    ]
 
     articles_wp.forEach((val, i, arr) => {
       firestore()
@@ -62,6 +70,16 @@ function SubjectArticles({ navigation, route }) {
 
   return (
     <View style={styles.main}>
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.register}
+          onPress={() => navigation.navigate('Registration')}>
+          <Icon name={'user-alt'} size={20} />
+        </TouchableOpacity>
+        <Text style={styles.screen_title}>Havruta</Text>
+        <View
+          style={[styles.register, { backgroundColor: 'rgba(0,0,0,0)' }]}></View>
+      </View>
       {
         fullArticles.articles.length == 0 ?
           <ActivityIndicator size={'large'} color={'#000'} />
@@ -85,7 +103,7 @@ const styles = StyleSheet.create({
   main: {
     flex: 1,
     backgroundColor: '#ffffff',
-    paddingHorizontal: 5,
+    //paddingHorizontal: 5,
   },
   headline: {
     fontSize: 20,
@@ -95,6 +113,33 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flex: 1,
     textAlign: 'center',
+  },
+  header: {
+    width: '100%',
+    height: Dimensions.get('screen').height / 10,
+    backgroundColor: 'rgb(120,90,140)',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderColor: '#999',
+    borderBottomWidth: 1,
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+
+  screen_title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'rgb(255,255,255)',
+  },
+
+  register: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#ffffff',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 

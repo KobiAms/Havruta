@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   header: {
     width: '100%',
     height: Dimensions.get('screen').height / 10,
-    backgroundColor: 'rgb(200,200,220)',
+    backgroundColor: 'rgb(120,90,140)',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

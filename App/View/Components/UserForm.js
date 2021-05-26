@@ -251,6 +251,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 15,
     borderWidth: 1,
+    borderRadius: 50,
+    margin: 5,
   },
   backline: {
     backgroundColor: 'rgb(160,160,200)',

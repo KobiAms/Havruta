@@ -56,7 +56,7 @@ App = () => {
             options={({ route }) => ({
               tabBarVisible: getTabBarVisibility(route),
               tabBarIcon: ({ color }) => (
-                <Icon name="venus-double" size={25} color={color} />
+                <Icon name="transgender" size={25} color={color} />
               ),
             })}
           />
@@ -103,7 +103,7 @@ MainScreenNavigator = () => {
         headerShown: false,
       }}>
       <Stack.Screen
-        name="MainFeed"
+        name="Welcome"
         component={MainScreen}
         options={{
           title: 'Havruta',
@@ -123,7 +123,6 @@ MainScreenNavigator = () => {
         options={{
           title: 'Registration',
           headerStyle: {
-            backgroundColor: 'rgb(117,25,124)',
             borderBottomWidth: 1,
             borderBottomColor: 'rgb(200,200,200)',
           },
@@ -138,7 +137,7 @@ MainScreenNavigator = () => {
         options={{
           title: 'Manage Users',
           headerStyle: {
-            backgroundColor: 'rgb(117,25,124)',
+            backgroundColor: 'rgb(120,90,140)',
             borderBottomWidth: 1,
             borderBottomColor: 'rgb(200,200,200)',
           },
@@ -153,7 +152,7 @@ MainScreenNavigator = () => {
         options={{
           title: 'Manage User',
           headerStyle: {
-            backgroundColor: 'rgb(117,25,124)',
+            backgroundColor: 'rgb(120,90,140)',
             borderBottomWidth: 1,
             borderBottomColor: 'rgb(200,200,200)',
           },
