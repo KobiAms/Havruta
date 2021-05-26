@@ -1,6 +1,6 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TextInput,ActivityIndicator,TouchableOpacity , RefreshControl, Image, ScrollView } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -8,10 +8,18 @@ import { resolvePreset } from '@babel/core';
 
 
 
-let msgToLoad = 10
+let msgToLoad = 11
 let msgToStart = 0
+let endReached=false;
 let flag = false
 
+const ListFooterComponent = ()=>{
+    return(
+    <Text style={{textAlign:'center',padding:5}}>
+        Loading..
+    </Text>
+    )
+}
 ChatMessage = ({ item }) => {
     let date = item.date.toDate()
     return (
@@ -43,9 +51,18 @@ GenericChat = ({ navigation, route }) => {
     const [chat_data, set_chat_data] = useState({})
     const [user, setUser] = useState();
     const [chat_name , set_chat_name] =useState(""); 
+    const [loadingMore,set_loading_more] = useState(false);
     let flat_list_ref
     const feed_type = route.name
     const chat_id ="test"
+    const [refreshing, setRefreshing] = React.useState(false);
+
+    const onRefresh = React.useCallback(() => {
+        console.log("im here")
+    setRefreshing(true);
+    then(() => setRefreshing(false));
+     }, []);
+
     sendMessage = () => {
 
         let tempMessage = {user_id: user.email,user_nick: user.name, message: newMessage, date: new Date()}
@@ -69,20 +86,32 @@ GenericChat = ({ navigation, route }) => {
         //if (initializing) setInitializing(false);
       }
 
-    function loadMore(chat_data,from,to) {
-        from=from+10;
-        to=to+10;
+    function loadMore(chat_data) {
+        if(refreshing === true)
+        {
+            return
+        }
+        set_loading_more(true)
+        msgToLoad=msgToLoad+5
         firestore().collection('chats').doc('reporters')
         .onSnapshot(doc => {
             if (!doc)
                 return;
             
+            
             let reversed = doc.data().messages.reverse()
-            chat_data.push(reversed)
-            console.log(chat_data)
-
-
+            if(reversed.length < msgToLoad)
+            {
+                set_chat_data(reversed.slice(msgToStart,reversed.length))
+            }else{
+                set_chat_data(reversed.slice(msgToStart,msgToLoad))
+            }
+            console.log(chat_data.length)
+            if(chat_data.length === doc.data().messages.length){
+                endReached=true
+            }
         })
+        set_loading_more(false)
     }
 
     
@@ -116,8 +145,14 @@ GenericChat = ({ navigation, route }) => {
                         {chat_id}
                     </Text>
                 </View>
-                <FlatList style={styles.list} inverted data={chat_data} onEndReachedThreshold={0.5} onEndReached={()=> loadMore(chat_data,msgToStart,msgToLoad)}  ref={ref => flat_list_ref = ref} keyExtractor={(item, index) => index}
-                    renderItem={({ item }) => <ChatMessage item={item} />} />
+                
+                <FlatList style={styles.list} inverted data={chat_data}  onEndReachedThreshold={0.5} onEndReached={()=> loadMore(chat_data)}  ref={ref => flat_list_ref = ref} keyExtractor={(item, index) => index}
+                    ListFooterComponent={()=>!endReached && <ListFooterComponent/>} renderItem={({ item }) => <ChatMessage item={item} 
+                    refreshControl={
+                        <RefreshControl
+                          refreshing={refreshing}
+                          onRefresh={onRefresh}
+                        />}/>}/>
                 {user?  <View style={styles.inputContainer}>
                     <TextInput placeholder="הכנס את ההודעה.." style={styles.input} value={newMessage}
                         onChangeText={setNewMessage} />
