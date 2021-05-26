@@ -11,22 +11,7 @@ import { resolvePreset } from '@babel/core';
 let msgToLoad = 10
 let msgToStart = 0
 let flag = false
-loadMore =()=>{
-    let loadMoreData;
-    msgToStart=msgToStart+10;
-    msgToLoad=msgToLoad+10
-    firestore().collection('chats').doc('reporters')
-    .onSnapshot(doc => {
-        if (!doc)
-            return;
-        
-        let reversed = doc.data().messages.reverse()
-        set_chat_data(reversed.slice(0,msgToLoad))
 
-    })
-    
-    console.log("Akol tov")
-}
 ChatMessage = ({ item }) => {
     let date = item.date.toDate()
     return (
@@ -84,6 +69,22 @@ GenericChat = ({ navigation, route }) => {
         //if (initializing) setInitializing(false);
       }
 
+    function loadMore(chat_data,from,to) {
+        from=from+10;
+        to=to+10;
+        firestore().collection('chats').doc('reporters')
+        .onSnapshot(doc => {
+            if (!doc)
+                return;
+            
+            let reversed = doc.data().messages.reverse()
+            chat_data.push(reversed)
+            console.log(chat_data)
+
+
+        })
+    }
+
     
     useEffect(() => {
         //
@@ -115,7 +116,7 @@ GenericChat = ({ navigation, route }) => {
                         {chat_id}
                     </Text>
                 </View>
-                <FlatList style={styles.list} inverted data={chat_data} onEndReachedThreshold={0.5} onEndReached={()=> console.log("end")}  ref={ref => flat_list_ref = ref} keyExtractor={(item, index) => index}
+                <FlatList style={styles.list} inverted data={chat_data} onEndReachedThreshold={0.5} onEndReached={()=> loadMore(chat_data,msgToStart,msgToLoad)}  ref={ref => flat_list_ref = ref} keyExtractor={(item, index) => index}
                     renderItem={({ item }) => <ChatMessage item={item} />} />
                 {user?  <View style={styles.inputContainer}>
                     <TextInput placeholder="הכנס את ההודעה.." style={styles.input} value={newMessage}
