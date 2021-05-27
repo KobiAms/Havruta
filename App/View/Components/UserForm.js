@@ -92,7 +92,6 @@ export default function UserForm({ setUser, navigation, setLoading }) {
         reference
           .getDownloadURL()
           .then(url => {
-            console.log(url);
             setUserAvatar({ uri: url });
             setLoading(false);
           })
@@ -114,37 +113,35 @@ export default function UserForm({ setUser, navigation, setLoading }) {
 
   return (
     <View style={styles.main}>
-      <View style={styles.backline} >
-        <TouchableOpacity onPress={() => { setToEditable(); }}>
-          {editable ?
-            <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-              <IconFeather
-                name={'check-square'}
-                color={'#008800'}
-                size={18}
-                style={{ margin: 5 }} />
-              <Text>Click to save changes</Text>
-            </View>
-            :
-            <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-              <IconFAW5
-                name={'edit'}
-                color={'#000000'}
-                size={18}
-                style={{ margin: 5 }} />
-              <Text>Click to edit</Text>
-            </View>}
+      <View style={styles.backline} />
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
+        <TouchableOpacity onPress={() => setToEditable()}>
+          <View style={{ alignItems: 'center', flexDirection: 'row', backgroundColor: '#fff', padding: 5, borderRadius: 20, borderWidth: 1, borderColor: editable ? '#008800' : '#000000' }}>
+            <IconFeather
+              name={editable ? 'check-square' : 'edit'}
+              color={editable ? '#008800' : '#000000'}
+              size={30}
+              style={{ margin: 5 }} />
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.aview} onPress={() => uploadNewAvatar()}>
+          {
+            userAvatar ?
+              <Image source={userAvatar} style={{ width: '100%', height: '100%' }} />
+              :
+              <ActivityIndicator color={'#007fff'} size={'large'} />
+          }
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => editable ? setEditable(false) : null}>
+          <View style={{ alignItems: 'center', flexDirection: 'row', backgroundColor: '#fff', padding: 5, borderRadius: 20, borderWidth: 1, borderColor: '#990000', opacity: editable ? 1 : 0 }}>
+            <IconFeather
+              name={'x-square'}
+              color={'#990000'}
+              size={30}
+              style={{ margin: 5 }} />
+          </View>
         </TouchableOpacity>
       </View>
-
-      <TouchableOpacity style={styles.aview} onPress={() => uploadNewAvatar()}>
-        {
-          userAvatar ?
-            <Image source={userAvatar} style={{ width: '100%', height: '100%' }} />
-            :
-            <ActivityIndicator color={'#007fff'} size={'large'} />
-        }
-      </TouchableOpacity>
       <View style={styles.row}>
         {
           editable ?
@@ -163,6 +160,7 @@ export default function UserForm({ setUser, navigation, setLoading }) {
             <TextInput
               style={[styles.editable, { fontSize: 18 }]}
               value={editDate}
+              pla
               onChangeText={setEditDate} />
             :
             <Text style={{ fontSize: 18 }}>{userDOB}</Text>
@@ -202,7 +200,7 @@ export default function UserForm({ setUser, navigation, setLoading }) {
           <IconFeather name={'log-out'} color={'#ff0000'} size={20} />
         </TouchableOpacity>
       </View>
-    </View>
+    </View >
   );
 }
 
@@ -235,7 +233,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.32,
     shadowRadius: 5.46,
     elevation: 6,
-    padding: -4,
+    padding: 4,
   },
   chose: {
     alignItems: 'flex-end',

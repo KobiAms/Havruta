@@ -1,5 +1,6 @@
 /* eslint-disable semi */
 import React from 'react';
+import { SafeAreaView } from 'react-native';
 import {
   View,
   Text,
@@ -13,19 +14,22 @@ function MainScreen({ navigation, route }) {
   const feed_type = route.name;
   return (
     <View style={styles.main}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.register}
-          onPress={() => navigation.navigate('Registration')}>
-          <Icon name={'user-alt'} size={20} />
-        </TouchableOpacity>
-        <Text style={styles.screen_title}>Havruta</Text>
-        <View
-          style={[styles.register, { backgroundColor: 'rgba(0,0,0,0)' }]}></View>
-      </View>
-      <View style={styles.body}>
-        <Text style={styles.headline}>{feed_type}</Text>
-      </View>
+      <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
+      <SafeAreaView style={styles.main}>
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.register}
+            onPress={() => navigation.navigate('Registration')}>
+            <Icon name={'user-alt'} size={20} />
+          </TouchableOpacity>
+          <Text style={styles.screen_title}>Havruta</Text>
+          <View
+            style={[styles.register, { backgroundColor: 'rgba(0,0,0,0)' }]}></View>
+        </View>
+        <View style={styles.body}>
+          <Text style={styles.headline}>{feed_type}</Text>
+        </View>
+      </SafeAreaView>
     </View>
   );
 };
@@ -64,9 +68,9 @@ const styles = StyleSheet.create({
     color: 'rgb(0,127,255)',
   },
   register: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     backgroundColor: '#ffffff',
     alignItems: 'center',
     justifyContent: 'center',

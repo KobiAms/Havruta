@@ -1,15 +1,15 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react';
-import { Dimensions, Text, StyleSheet, View, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { Dimensions, Text, StyleSheet, View, ActivityIndicator, TouchableOpacity, SafeAreaView } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import PostInFeed from './PostInFeed';
-import artiTest from './test/articles.json';
 import firestore from '@react-native-firebase/firestore';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import { createStackNavigator } from '@react-navigation/stack';
+
+const Stack = createStackNavigator();
 
 function SubjectArticles({ navigation, route }) {
-  const feed_type = route.name;
-  const [data_fb, setDataFB] = useState([]);
   const [fullArticles, setFullArticles] = useState({ articles: [], temp: [], recevied: 0 });
 
   function articlesUpdater(art, index, length) {
@@ -17,15 +17,11 @@ function SubjectArticles({ navigation, route }) {
     fullArticles.recevied++;
     if (fullArticles.recevied == length) {
       setFullArticles({ articles: fullArticles.temp, recevied: length });
-      // console.log({ articles: fullArticles.temp, recevied: length })
     }
   }
 
 
   useEffect(() => {
-    // async func to get the articles from the WP server
-    //
-    // -------- //
 
     let articles_wp = [{
       "id": "arti1",
@@ -70,31 +66,31 @@ function SubjectArticles({ navigation, route }) {
 
   return (
     <View style={styles.main}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.register}
-          onPress={() => navigation.navigate('Registration')}>
-          <Icon name={'user-alt'} size={20} />
-        </TouchableOpacity>
-        <Text style={styles.screen_title}>Havruta</Text>
-        <View
-          style={[styles.register, { backgroundColor: 'rgba(0,0,0,0)' }]}></View>
-      </View>
-      {
-        fullArticles.articles.length == 0 ?
-          <ActivityIndicator size={'large'} color={'#000'} />
-          :
-          <FlatList
-            data={fullArticles.articles}
-            renderItem={({ item }) => (
-              <PostInFeed
-                onPress={() => navigation.navigate('ArticleScreen', { data: item })}
-                data={item}
-              />
-            )}
-            keyExtractor={item => item.id}
-          />
-      }
+      <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
+      <SafeAreaView style={styles.main}>
+        <View style={styles.header}>
+          <View
+            style={[styles.register, { backgroundColor: 'rgba(0,0,0,0)' }]}></View>
+          <Text style={styles.screen_title}>Havruta</Text>
+          <View
+            style={[styles.register, { backgroundColor: 'rgba(0,0,0,0)' }]}></View>
+        </View>
+        {
+          fullArticles.articles.length == 0 ?
+            <ActivityIndicator style={{ marginTop: '30%' }} size={'large'} color={'#000'} />
+            :
+            <FlatList
+              data={fullArticles.articles}
+              renderItem={({ item }) => (
+                <PostInFeed
+                  onPress={() => navigation.navigate('ArticleScreen', { data: item })}
+                  data={item}
+                />
+              )}
+              keyExtractor={(item, idx) => idx}
+            />
+        }
+      </SafeAreaView>
     </View>
   );
 }
@@ -103,7 +99,6 @@ const styles = StyleSheet.create({
   main: {
     flex: 1,
     backgroundColor: '#ffffff',
-    //paddingHorizontal: 5,
   },
   headline: {
     fontSize: 20,
@@ -134,9 +129,9 @@ const styles = StyleSheet.create({
   },
 
   register: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     backgroundColor: '#ffffff',
     alignItems: 'center',
     justifyContent: 'center',

@@ -13,6 +13,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import firestore from '@react-native-firebase/firestore';
 import IconAw from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/AntDesign';
+import { SafeAreaView } from 'react-native';
 
 export default ManageUsers = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
@@ -64,55 +65,58 @@ export default ManageUsers = ({ navigation }) => {
 
   return (
     <View style={styles.main}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.back_button}
-          onPress={() => navigation.goBack()}>
-          <Icon name={'arrow-left'} size={20} />
-        </TouchableOpacity>
-        <Text style={styles.screen_title}>Havruta</Text>
-        <View
-          style={[
-            styles.back_button,
-            { backgroundColor: 'rgba(0,0,0,0)' },
-          ]}></View>
-      </View>
-      <View style={styles.body}>
-        <View style={styles.search_container}>
-          <TextInput
-            placeholder="Search Here"
-            style={styles.search_box}
-            onChangeText={text => {
-              setShow(
-                users.filter(item =>
-                  item.name.toLowerCase().includes(text.toLowerCase()),
-                ),
-              );
-              setFilter(text);
-            }}
-            value={filter}
-          />
+      <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
+      <SafeAreaView style={styles.main}>
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.back_button}
+            onPress={() => navigation.goBack()}>
+            <Icon name={'arrow-left'} size={20} />
+          </TouchableOpacity>
+          <Text style={styles.screen_title}>Havruta</Text>
+          <View
+            style={[
+              styles.back_button,
+              { backgroundColor: 'rgba(0,0,0,0)' },
+            ]}></View>
         </View>
-        <View style={styles.list_container}>
-          {loading ? (
-            <ActivityIndicator size="large" color="dodgerblue" />
-          ) : (
-            <FlatList
-              style={styles.list}
-              data={list_to_show}
-              renderItem={({ item }) => (
-                <UserItem
-                  headline={item.name}
-                  color={item.color}
-                  onPress={() =>
-                    navigation.navigate('Manage User', { data: item })
-                  }
-                />
-              )}
+        <View style={styles.body}>
+          <View style={styles.search_container}>
+            <TextInput
+              placeholder="Search Here"
+              style={styles.search_box}
+              onChangeText={text => {
+                setShow(
+                  users.filter(item =>
+                    item.name.toLowerCase().includes(text.toLowerCase()),
+                  ),
+                );
+                setFilter(text);
+              }}
+              value={filter}
             />
-          )}
+          </View>
+          <View style={styles.list_container}>
+            {loading ? (
+              <ActivityIndicator size="large" color="dodgerblue" />
+            ) : (
+              <FlatList
+                style={styles.list}
+                data={list_to_show}
+                renderItem={({ item }) => (
+                  <UserItem
+                    headline={item.name}
+                    color={item.color}
+                    onPress={() =>
+                      navigation.navigate('Manage User', { data: item })
+                    }
+                  />
+                )}
+              />
+            )}
+          </View>
         </View>
-      </View>
+      </SafeAreaView>
     </View>
   );
 };
@@ -121,11 +125,11 @@ const styles = StyleSheet.create({
   main: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: 'rgb(200,200,220)',
+    backgroundColor: '#fff',
   },
   header: {
     width: '100%',
-    height: Dimensions.get('window').height / 10,
+    height: '10%',
     backgroundColor: 'rgb(120,90,140)',
     flexDirection: 'row',
     alignItems: 'center',
@@ -154,7 +158,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   body: {
-    height: Dimensions.get('window').height * (8.1 / 10),
+    height: '90%',
     width: '100%',
   },
   search_container: {

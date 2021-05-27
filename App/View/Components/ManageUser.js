@@ -1,6 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react';
+import { SafeAreaView } from 'react-native';
 import {
     View,
     StyleSheet,
@@ -39,65 +40,68 @@ export default ManageUser = ({ navigation, route }) => {
     }, [setuserDOB])
     return (
         <View style={styles.main}>
-            <View style={styles.header}>
-                <TouchableOpacity
-                    style={styles.back_button}
-                    onPress={() => navigation.goBack()}>
-                    <Icon name={'arrow-left'} size={20} />
+            <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
+            <View style={styles.main}>
+                <View style={styles.header}>
+                    <TouchableOpacity
+                        style={styles.back_button}
+                        onPress={() => navigation.goBack()}>
+                        <Icon name={'arrow-left'} size={20} />
+                    </TouchableOpacity>
+                    <Text style={styles.screen_title}>Havruta</Text>
+                    <View
+                        style={[styles.back_button, { backgroundColor: 'rgba(0,0,0,0)' }]}
+                    />
+                </View>
+
+
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <View style={styles.aview}>
+                        <Image source={userAvatar} style={{ width: '100%', height: '100%' }} />
+                    </View>
+                    <View>
+                        <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{userName}</Text>
+                        <Text style={{ fontSize: 16 }}>{userDOB}</Text>
+                    </View>
+                </View>
+                <View style={{ padding: 10 }}>
+                    <Text style={{ fontWeight: 'bold', fontSize: 18 }}>About {userName}:</Text><Text style={{ fontSize: 16 }}> {userAbout}</Text>
+                </View>
+
+
+                <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
+                    <View style={[styles.switch, { marginLeft: 0 }]}>
+                        {isBlocked ? <Text>
+                            Block</Text> : <Text>Block</Text>}
+                        <Switch
+                            style={{ transform: [{ scaleX: 2 }, { scaleY: 2 }], margin: 10 }}
+                            trackColor={{ false: '#000000', true: '#007fff' }}
+                            thumbColor={isBlocked ? '#00ffff' : '#999999'}
+                            ios_backgroundColor="#3e3e3e"
+                            onValueChange={toggleBlock}
+                            value={isBlocked}
+                        />
+                    </View>
+                    <View style={[styles.switch, { marginRight: 0 }]}>
+                        {isAdmin ? <Text>Admin</Text> : <Text>Admin</Text>}
+                        <Switch
+                            style={{ transform: [{ scaleX: 2 }, { scaleY: 2 }], margin: 10 }}
+                            trackColor={{ false: '#000000', true: '#007fff' }}
+                            thumbColor={isAdmin ? '#00ffff' : '#999999'}
+                            ios_backgroundColor="#3e3e3e"
+                            onValueChange={toggleAdmin}
+                            value={isAdmin}
+                        />
+                    </View>
+                </View >
+                <TouchableOpacity style={styles.delete} onPress={() => { console.log('deleting the user ' + userName) }}>
+                    <Text style={{
+                        color: 'rgb(255,255,255)',
+                        fontSize: 18,
+                        fontWeight: 'bold',
+                    }}>Delete this user</Text>
                 </TouchableOpacity>
-                <Text style={styles.screen_title}>Havruta</Text>
-                <View
-                    style={[styles.back_button, { backgroundColor: 'rgba(0,0,0,0)' }]}
-                />
-            </View>
-
-
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <View style={styles.aview}>
-                    <Image source={userAvatar} style={{ width: '100%', height: '100%' }} />
-                </View>
-                <View>
-                    <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{userName}</Text>
-                    <Text style={{ fontSize: 16 }}>{userDOB}</Text>
-                </View>
-            </View>
-            <View style={{ padding: 10 }}>
-                <Text style={{ fontWeight: 'bold', fontSize: 18 }}>About {userName}:</Text><Text style={{ fontSize: 16 }}> {userAbout}</Text>
-            </View>
-
-
-            <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
-                <View style={[styles.switch, { marginLeft: 0 }]}>
-                    {isBlocked ? <Text>
-                        Block</Text> : <Text>Block</Text>}
-                    <Switch
-                        style={{ transform: [{ scaleX: 2 }, { scaleY: 2 }], margin: 10 }}
-                        trackColor={{ false: '#000000', true: '#007fff' }}
-                        thumbColor={isBlocked ? '#00ffff' : '#999999'}
-                        ios_backgroundColor="#3e3e3e"
-                        onValueChange={toggleBlock}
-                        value={isBlocked}
-                    />
-                </View>
-                <View style={[styles.switch, { marginRight: 0 }]}>
-                    {isAdmin ? <Text>Admin</Text> : <Text>Admin</Text>}
-                    <Switch
-                        style={{ transform: [{ scaleX: 2 }, { scaleY: 2 }], margin: 10 }}
-                        trackColor={{ false: '#000000', true: '#007fff' }}
-                        thumbColor={isAdmin ? '#00ffff' : '#999999'}
-                        ios_backgroundColor="#3e3e3e"
-                        onValueChange={toggleAdmin}
-                        value={isAdmin}
-                    />
-                </View>
             </View >
-            <TouchableOpacity style={styles.delete} onPress={() => { console.log('deleting the user ' + userName) }}>
-                <Text style={{
-                    color: 'rgb(255,255,255)',
-                    fontSize: 18,
-                    fontWeight: 'bold',
-                }}>Delete this user</Text>
-            </TouchableOpacity>
         </View >
     );
 };

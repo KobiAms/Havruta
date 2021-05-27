@@ -15,6 +15,7 @@ import IconFAW5 from 'react-native-vector-icons/FontAwesome5';
 import { Avatar } from 'react-native-elements';
 import { FlatList } from 'react-native-gesture-handler';
 import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
+import { SafeAreaView } from 'react-native';
 
 
 function timePassParser(time) {
@@ -48,90 +49,84 @@ function ArticleScreen({ navigation, route }) {
 
   const [comInput, setcomInput] = useState();
   return (
-    <ScrollView style={{ backgroundColor: 'rgb(220,220,240)' }}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.back_button}
-          onPress={() => navigation.goBack()}>
-          <IconFAW5 name={'arrow-left'} size={20} />
-        </TouchableOpacity>
-        <Text style={styles.screen_title}>Havruta</Text>
-        <View
-          style={[styles.back_button, { backgroundColor: 'rgba(0,0,0)' }]}></View>
-      </View>
-      <ScrollView style={styles.main}>
-        <View
-          style={styles.row} /** user info - icon, name and date of publish */
-        >
-          {/* <Avatar
-          size="small"
-          rounded
-          source={{
-            uri:
-              'https://post.medicalnewstoday.com/wp-content/uploads/sites/3/2020/03/GettyImages-1092658864_hero-1024x575.jpg',
-          }}
-        /> */}
-          <View>
-            <Text style={styles.autor}>{autor}</Text>
-            <Text>{date}</Text>
-          </View>
-        </View>
-        <Text style={styles.headline}>
-          {headline}
-          {'\n'}
-        </Text>
-        <Text>{contant}</Text>
-        <View style={styles.line} />
-        <View
-          style={styles.response} /** displays the amount of likes and comments */
-        >
-          <TouchableOpacity style={styles.row}>
-            <Icon name={'like1'} size={20} style={styles.pad} />
-            <Text>likes: {likes.length}</Text>
-          </TouchableOpacity>
-          <Text>comments: {comments ? comments.length : 0}</Text>
-        </View>
-        <View style={styles.rower} /** text input to add new comment */>
-          <AutoGrowingTextInput
-            placeholder={'    Add your comment...'}
-            style={styles.input}
-            onChangeText={setcomInput}
-            ref={inputRef}
-          />
+    <View style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
+      <View style={{ flex: 1, backgroundColor: 'rgb(220,220,240)' }}>
+        <View style={styles.header}>
           <TouchableOpacity
-            onPress={() => {
-              console.log(comInput);
-              clearText();
-            }}>
-            <Icons name={'send'} size={25} />
+            style={styles.back_button}
+            onPress={() => navigation.goBack()}>
+            <IconFAW5 name={'arrow-left'} size={20} />
           </TouchableOpacity>
+          <Text style={styles.screen_title}>Havruta</Text>
+          <View
+            style={[styles.back_button, { backgroundColor: 'rgba(0,0,0)' }]}></View>
         </View>
-        <FlatList
-          data={route.params.data.comments}
-          renderItem={({ item }) => (
-            <View style={styles.combox}>
-              <Avatar
-                size="small"
-                rounded
-                title={item.user_name[0]}
-                containerStyle={{ backgroundColor: 'rgb(140,150,180)' }}
-                onPress={() => { console.log(item.user_name) }}
-              />
-              <View style={styles.comment}>
-                <View>
-                  <Text style={styles.autor}>{item.user_name}</Text>
-                  <Text>{item.comment}</Text>
-                </View>
-                <View>
-                  <Text>{timePassParser(item.timestamp.seconds)}</Text>
+        <ScrollView style={styles.main}>
+          <View
+            style={styles.row} /** user info - icon, name and date of publish */>
+            <View>
+              <Text style={styles.autor}>{autor}</Text>
+              <Text>{date}</Text>
+            </View>
+          </View>
+          <Text style={styles.headline}>
+            {headline}
+            {'\n'}
+          </Text>
+          <Text>{contant}</Text>
+          <View style={styles.line} />
+          <View
+            style={styles.response} /** displays the amount of likes and comments */
+          >
+            <TouchableOpacity style={styles.row}>
+              <Icon name={'like1'} size={20} style={styles.pad} />
+              <Text>likes: {likes.length}</Text>
+            </TouchableOpacity>
+            <Text>comments: {comments ? comments.length : 0}</Text>
+          </View>
+          <View style={styles.rower} /** text input to add new comment */>
+            <AutoGrowingTextInput
+              placeholder={'    Add your comment...'}
+              style={styles.input}
+              onChangeText={setcomInput}
+              ref={inputRef}
+            />
+            <TouchableOpacity
+              onPress={() => {
+                console.log(comInput);
+                clearText();
+              }}>
+              <Icons name={'send'} size={25} />
+            </TouchableOpacity>
+          </View>
+          <FlatList
+            data={route.params.data.comments}
+            renderItem={({ item }) => (
+              <View style={styles.combox}>
+                <Avatar
+                  size="small"
+                  rounded
+                  title={item.user_name[0]}
+                  containerStyle={{ backgroundColor: 'rgb(140,150,180)' }}
+                  onPress={() => { console.log(item.user_name) }}
+                />
+                <View style={styles.comment}>
+                  <View>
+                    <Text style={styles.autor}>{item.user_name}</Text>
+                    <Text>{item.comment}</Text>
+                  </View>
+                  <View>
+                    <Text>{timePassParser(item.timestamp.seconds)}</Text>
+                  </View>
                 </View>
               </View>
-            </View>
-          )}
-          keyExtractor={item => item.comKey}
-        />
-      </ScrollView>
-    </ScrollView>
+            )}
+            keyExtractor={(item, idx) => idx}
+          />
+        </ScrollView>
+      </View>
+    </View>
   );
 }
 
@@ -160,9 +155,9 @@ const styles = StyleSheet.create({
     color: 'rgb(255,255,255)',
   },
   back_button: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     backgroundColor: '#ffffff',
     alignItems: 'center',
     justifyContent: 'center',

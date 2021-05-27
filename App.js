@@ -6,15 +6,15 @@ import {
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StyleSheet } from 'react-native';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import GenericFeed from './App/View/Screens/GenericFeed';
 import OtherScreen from './App/View/Screens/OtherScreen';
 import GenericChat from './App/View/Screens/GenericChat';
 import MainScreen from './App/View/Screens/MainScreen';
+import RegistrationScreen from './App/View/Screens/RegistrationScreen';
 import ManageUsers from './App/View/Components/ManageUsers';
 import ManageUser from './App/View/Components/ManageUser';
-import RegistrationScreen from './App/View/Screens/RegistrationScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -37,62 +37,22 @@ App = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaProvider style={{ flex: 1 }}>
       <NavigationContainer>
         <Tab.Navigator>
-          <Tab.Screen
-            name="MainScreen"
-            component={MainScreenNavigator}
-            options={({ route }) => ({
-              tabBarVisible: getTabBarVisibility(route),
-              tabBarIcon: ({ color }) => (
-                <Icon name="file-contract" size={25} color={color} />
-              ),
-            })}
-          />
-          <Tab.Screen
-            name="Gays"
-            component={GenericFeed}
-            options={({ route }) => ({
-              tabBarVisible: getTabBarVisibility(route),
-              tabBarIcon: ({ color }) => (
-                <Icon name="transgender" size={25} color={color} />
-              ),
-            })}
-          />
-          <Tab.Screen
-            name="Reporters"
-            component={GenericChat}
-            options={({ route }) => ({
-              tabBarVisible: getTabBarVisibility(route),
-              tabBarIcon: ({ color }) => (
-                <Icon name="comment-alt" size={25} color={color} />
-              ),
-            })}
-          />
-          <Tab.Screen
-            name="Judaism"
-            component={GenericFeed}
-            options={({ route }) => ({
-              tabBarVisible: getTabBarVisibility(route),
-              tabBarIcon: ({ color }) => (
-                <Icon name="torah" size={25} color={color} />
-              ),
-            })}
-          />
-          <Tab.Screen
-            name="Other"
-            component={OtherScreen}
-            options={({ route }) => ({
-              tabBarVisible: getTabBarVisibility(route),
-              tabBarIcon: ({ color }) => (
-                <Icon name="bars" size={25} color={color} />
-              ),
-            })}
-          />
+          <Tab.Screen name="MainScreen" component={MainScreenNavigator}
+            options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="file-contract" size={25} color={color} />), })} />
+          <Tab.Screen name="Gays" component={GenericFeed}
+            options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="transgender" size={25} color={color} />), })} />
+          <Tab.Screen name="Reporters" component={GenericChat}
+            options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="comment-alt" size={25} color={color} />), })} />
+          <Tab.Screen name="Judaism" component={GenericFeed}
+            options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="torah" size={25} color={color} />), })} />
+          <Tab.Screen name="Other" component={OtherScreen}
+            options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="bars" size={25} color={color} />), })} />
         </Tab.Navigator>
       </NavigationContainer>
-    </SafeAreaView>
+    </SafeAreaProvider>
   );
 };
 
@@ -102,65 +62,14 @@ MainScreenNavigator = () => {
       screenOptions={{
         headerShown: false,
       }}>
-      <Stack.Screen
-        name="Welcome"
-        component={MainScreen}
-        options={{
-          title: 'Havruta',
-          headerStyle: {
-            backgroundColor: 'rgb(117,25,124)',
-            borderBottomWidth: 1,
-            borderBottomColor: 'rgb(200,200,200)',
-          },
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }}
-      />
-      <Stack.Screen
-        name="Registration"
-        component={RegistrationScreen}
-        options={{
-          title: 'Registration',
-          headerStyle: {
-            borderBottomWidth: 1,
-            borderBottomColor: 'rgb(200,200,200)',
-          },
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }}
-      />
-      <Stack.Screen
-        name="Manage Users"
-        component={ManageUsers}
-        options={{
-          title: 'Manage Users',
-          headerStyle: {
-            backgroundColor: 'rgb(120,90,140)',
-            borderBottomWidth: 1,
-            borderBottomColor: 'rgb(200,200,200)',
-          },
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }}
-      />
-      <Stack.Screen
-        name="Manage User"
-        component={ManageUser}
-        options={{
-          title: 'Manage User',
-          headerStyle: {
-            backgroundColor: 'rgb(120,90,140)',
-            borderBottomWidth: 1,
-            borderBottomColor: 'rgb(200,200,200)',
-          },
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        }}
-      />
+      <Stack.Screen name="Welcome" component={MainScreen}
+        options={{ title: 'Havruta', headerStyle: { backgroundColor: 'rgb(117,25,124)', borderBottomWidth: 1, borderBottomColor: 'rgb(200,200,200)', }, headerTitleStyle: { fontWeight: 'bold', }, }} />
+      <Stack.Screen name="Registration" component={RegistrationScreen}
+        options={{ title: 'Registration', headerStyle: { borderBottomWidth: 1, borderBottomColor: 'rgb(200,200,200)', }, headerTitleStyle: { fontWeight: 'bold', }, }} />
+      <Stack.Screen name="Manage Users" component={ManageUsers}
+        options={{ title: 'Manage Users', headerStyle: { backgroundColor: 'rgb(120,90,140)', borderBottomWidth: 1, borderBottomColor: 'rgb(200,200,200)', }, headerTitleStyle: { fontWeight: 'bold', }, }} />
+      <Stack.Screen name="Manage User" component={ManageUser}
+        options={{ title: 'Manage User', headerStyle: { backgroundColor: 'rgb(120,90,140)', borderBottomWidth: 1, borderBottomColor: 'rgb(200,200,200)', }, headerTitleStyle: { fontWeight: 'bold', }, }} />
     </Stack.Navigator>
   );
 };
