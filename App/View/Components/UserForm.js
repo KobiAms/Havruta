@@ -74,7 +74,7 @@ export default function UserForm({ setUser, navigation, setLoading }) {
   }
 
   useEffect(() => {
-    setLoading(true);
+    setLoading(false);
     const subscriber = firestore()
       .collection('users')
       .doc(auth().currentUser.email)
@@ -88,10 +88,11 @@ export default function UserForm({ setUser, navigation, setLoading }) {
         const reference = storage().ref(
           '/users/' + auth().currentUser.email + '/' + 'user_image.png',
         );
+
         reference
           .getDownloadURL()
           .then(url => {
-            //console.log(url);
+            console.log(url);
             setUserAvatar({ uri: url });
             setLoading(false);
           })

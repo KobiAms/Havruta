@@ -11,3 +11,8 @@ in ManageUser.js
 7. implement changing role of admin and user.
 8. add block field in user collection in firestore.
 9. implement delele user button.
+10. get the user avatar
+
+in UserForm.js 
+11. implement the edit fucntion
+12. fix issue of keyboard hiding the about text input
