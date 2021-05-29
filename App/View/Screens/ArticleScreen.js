@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import React, {useEffect} from 'react';
+import React, { useEffect, useRef, useCallback, useState } from 'react';
 import {
   ScrollView,
   View,
@@ -7,80 +7,126 @@ import {
   StyleSheet,
   TouchableOpacity,
   LogBox,
+  Dimensions,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Icons from 'react-native-vector-icons/Ionicons';
-import {Avatar} from 'react-native-elements';
-import {FlatList} from 'react-native-gesture-handler';
-import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
+import IconFAW5 from 'react-native-vector-icons/FontAwesome5';
+import { Avatar } from 'react-native-elements';
+import { FlatList } from 'react-native-gesture-handler';
+import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
+import { SafeAreaView } from 'react-native';
 
-function ArticleScreen({navigation, route}) {
-  // const feed_type = route.name;
+
+function timePassParser(time) {
+  let now = new Date();
+  let diff = now - ((7200 + time) * 1000);
+  if (diff < 0) return ('a while ago');
+  if (diff < 1000) return (parseInt(diff) + ' milliseconds ago');
+  diff /= 1000;
+  if (diff < 60) return (parseInt(diff) + ' seconds ago');
+  diff /= 60;
+  if (diff < 60) return (parseInt(diff) + ' minutes ago');
+  diff /= 60;
+  if (diff < 24) return (parseInt(diff) + ' hours ago');
+  diff /= 24;
+  if (diff < 30) return (parseInt(diff) + ' days ago');
+  diff /= 30;
+  if (diff < 12) return (parseInt(diff) + ' months ago');
+  diff /= 12;
+  return (parseInt(diff) + ' years ago');
+}
+
+function ArticleScreen({ navigation, route }) {
   useEffect(() => {
     LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
-  }, []);
-  let {autor, date, headline, comments, likes, contant} = route.params.data;
+  }, []); //enable to render a flatlist inside a scrollview
+  let { autor, date, headline, comments, likes, contant } = route.params.data;
+  const inputRef = useRef();
+  const clearText = useCallback(() => {
+    inputRef.current.setNativeProps({ text: '' });
+  }, []); //use the clearText inorder to erase the content inside the comment text field
+
+  const [comInput, setcomInput] = useState();
   return (
-    <ScrollView style={styles.main}>
-      <View style={styles.row}>
-        <Avatar
-          size="small"
-          rounded
-          source={{
-            uri:
-              'https://post.medicalnewstoday.com/wp-content/uploads/sites/3/2020/03/GettyImages-1092658864_hero-1024x575.jpg',
-          }}
-        />
-        <View>
-          <Text style={styles.autor}>{autor}</Text>
-          <Text>{date}</Text>
+    <View style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
+      <View style={{ flex: 1, backgroundColor: 'rgb(220,220,240)' }}>
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.back_button}
+            onPress={() => navigation.goBack()}>
+            <IconFAW5 name={'arrow-left'} size={20} />
+          </TouchableOpacity>
+          <Text style={styles.screen_title}>Havruta</Text>
+          <View
+            style={[styles.back_button, { backgroundColor: 'rgba(0,0,0)' }]}></View>
         </View>
-      </View>
-      <Text style={styles.headline}>
-        {headline}
-        {'\n'}
-      </Text>
-      <Text>{contant}</Text>
-      <Text style={styles.main}>
-        ______________________________________________________{'\n'}
-      </Text>
-      <View style={styles.response}>
-        <TouchableOpacity style={styles.row}>
-          <Icon name={'like1'} size={20} style={styles.pad} />
-          <Text>likes: {likes.length}</Text>
-        </TouchableOpacity>
-        <Text>comments: {comments.length}</Text>
-      </View>
-      <View style={styles.rower}>
-        <AutoGrowingTextInput
-          placeholder={'    Add your comment...'}
-          style={styles.input}
-        />
-        <TouchableOpacity>
-          <Icons name={'send'} size={25} />
-        </TouchableOpacity>
-      </View>
-      <FlatList
-        data={route.params.data.comments}
-        renderItem={({item}) => (
-          <View style={styles.combox}>
-            <Avatar
-              size="small"
-              rounded
-              source={{
-                uri:
-                  'https://post.medicalnewstoday.com/wp-content/uploads/sites/3/2020/03/GettyImages-1092658864_hero-1024x575.jpg',
-              }}
-            />
-            <View style={styles.comment}>
-              <Text style={styles.autor}>{item.user}</Text>
-              <Text>{item.comment}</Text>
+        <ScrollView style={styles.main}>
+          <View
+            style={styles.row} /** user info - icon, name and date of publish */>
+            <View>
+              <Text style={styles.autor}>{autor}</Text>
+              <Text>{date}</Text>
             </View>
           </View>
-        )}
-        keyExtractor={item => item.comKey}
-      />
-    </ScrollView>
+          <Text style={styles.headline}>
+            {headline}
+            {'\n'}
+          </Text>
+          <Text>{contant}</Text>
+          <View style={styles.line} />
+          <View
+            style={styles.response} /** displays the amount of likes and comments */
+          >
+            <TouchableOpacity style={styles.row}>
+              <Icon name={'like1'} size={20} style={styles.pad} />
+              <Text>likes: {likes.length}</Text>
+            </TouchableOpacity>
+            <Text>comments: {comments ? comments.length : 0}</Text>
+          </View>
+          <View style={styles.rower} /** text input to add new comment */>
+            <AutoGrowingTextInput
+              placeholder={'    Add your comment...'}
+              style={styles.input}
+              onChangeText={setcomInput}
+              ref={inputRef}
+            />
+            <TouchableOpacity
+              onPress={() => {
+                console.log(comInput);
+                clearText();
+              }}>
+              <Icons name={'send'} size={25} />
+            </TouchableOpacity>
+          </View>
+          <FlatList
+            data={route.params.data.comments}
+            renderItem={({ item }) => (
+              <View style={styles.combox}>
+                <Avatar
+                  size="small"
+                  rounded
+                  title={item.user_name[0]}
+                  containerStyle={{ backgroundColor: 'rgb(140,150,180)' }}
+                  onPress={() => { console.log(item.user_name) }}
+                />
+                <View style={styles.comment}>
+                  <View>
+                    <Text style={styles.autor}>{item.user_name}</Text>
+                    <Text>{item.comment}</Text>
+                  </View>
+                  <View>
+                    <Text>{timePassParser(item.timestamp.seconds)}</Text>
+                  </View>
+                </View>
+              </View>
+            )}
+            keyExtractor={(item, idx) => idx}
+          />
+        </ScrollView>
+      </View>
+    </View>
   );
 }
 
@@ -90,6 +136,31 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     backgroundColor: 'rgb(220,220,240)',
     padding: 15,
+  },
+  header: {
+    width: '100%',
+    height: Dimensions.get('screen').height / 10,
+    backgroundColor: 'rgb(120,90,140)',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderColor: '#999',
+    borderBottomWidth: 1,
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+  screen_title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'rgb(255,255,255)',
+  },
+  back_button: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#ffffff',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   headline: {
     fontSize: 22,
@@ -137,6 +208,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 18,
+    flexDirection: 'row',
+    justifyContent: 'space-between'
   },
   combox: {
     flexDirection: 'row',
@@ -146,6 +219,11 @@ const styles = StyleSheet.create({
     borderRadius: 21,
     paddingVertical: 5,
     margin: 5,
+  },
+  line: {
+    height: 1,
+    margin: 10,
+    backgroundColor: '#000000',
   },
 });
 

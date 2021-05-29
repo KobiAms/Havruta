@@ -23,9 +23,15 @@ LoginForm = ({ setUser }) => {
                 setLoading(false)
                 setUser(auth().currentUser)
             })
-            .catch((error) => {
-                setLoading(false)
-                Alert.alert("Oops..! Some Error Just happen. Please Try Again Later\n" + error.code, [{ text: "OK", }], { cancelable: false })
+            .catch(errorType => {
+                setLoading(false);
+                let errorMsg;
+                console.log(errorType)
+                if (errorType.code == "auth/wrong-password")
+                    errorMsg = "The password is invalid";
+                else
+                    errorMsg = "Some Error just happend\n" + errorType.code;
+                Alert.alert("Oops!.. Login Failed", errorMsg, [{ text: "OK", }], { cancelable: false })
             })
     }
     return (

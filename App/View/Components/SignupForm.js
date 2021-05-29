@@ -20,6 +20,8 @@ SignupForm = ({ setUser }) => {
 
     add_user_to_db = (email, password, name) => {
         firestore().collection('users').doc(email).set({
+            about: '',
+            dob: firestore.Timestamp.fromDate(new Date()),
             email: email,
             name: name,
             photo: '',
