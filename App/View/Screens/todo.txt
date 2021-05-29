@@ -1,0 +1,18 @@
+1.fix date
+2.create new screen that create new chat
+3.scroll to bottom at first
+
+in ArticleScreen
+4.insert new comment into firestore
+5.get user avatar for each comment
+6.insert or remove user_id to likes[] onPress in ArticleScreen.js line 88
+
+in ManageUser.js
+7. implement changing role of admin and user.
+8. add block field in user collection in firestore.
+9. implement delele user button.
+10. get the user avatar
+
+in UserForm.js 
+11. implement the edit fucntion
+12. fix issue of keyboard hiding the about text input
