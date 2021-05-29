@@ -1,6 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react';
+import { ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native';
 import {
     View,
@@ -9,27 +10,84 @@ import {
     TouchableOpacity,
     Dimensions,
     Switch,
-    Image
+    Image,
+    Alert
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
+import app from '@react-native-firebase/app';
 
 export default ManageUser = ({ navigation, route }) => {
     const [isBlocked, setIsBlocked] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
     const [userName, setuserName] = useState('');
+    const [userEmail, setUserEmail] = useState('');
     const [userDOB, setuserDOB] = useState();
     const [userAbout, setUserAbout] = useState();
+    const [loading, setLoading] = useState(false);
     const [userAvatar, setUserAvatar] = useState();
-    const toggleAdmin = () => setIsAdmin(previousState => !previousState);
-
-    const toggleBlock = () => setIsBlocked(previousState => !previousState);
 
 
+    const toggleAdmin = () => {
+        if (loading)
+            return
+        setLoading(true)
+        let new_role = isAdmin ? 'user' : 'admin'
+        setIsAdmin(!isAdmin)
+        firestore().collection('users').doc(route.params.data.email).update({
+            role: new_role
+        })
+            .then(() => {
+                setLoading(false)
+            })
+            .catch(() => {
+                setIsAdmin(!isAdmin)
+                setLoading(false)
+            })
+    };
+
+    delete_user = () => {
+        Alert.alert(
+            'Delete User Permanently!',
+            'Are you sure?',
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel"
+                },
+                {
+                    text: "OK",
+                    onPress: () => {
+                        setLoading(true)
+
+                    },
+                    style: 'destructive'
+                }
+            ]
+        )
+    }
+
+    const toggleBlock = () => {
+        if (loading)
+            return
+        setLoading(true)
+        // admin.auth().updateUser(route.params.data.email, { disabled: !isBlocked })
+        //     .then(() => {
+        //         setLoading(false)
+        //     })
+        //     .catch(() => {
+        //         setIsBlocked(!isAdmin)
+        //         setLoading(false)
+        //     })
+        setIsBlocked(!isBlocked)
+    }
 
     useEffect(() => {
         setuserName(route.params.data.name);
         setUserAbout(route.params.data.about);
-        'admin' === route.params.data.role ? setIsAdmin(true) : null;
+        setUserEmail(route.params.data.email);
+        setIsAdmin(route.params.data.role === 'admin')
         if (route.params.data.dob) {
             let DAT = new Date((7200 + route.params.data.dob.seconds) * 1000);
             /*//times go by sec GMT, so in order to get the right date, need to add 2 hours and mult by 1000 in nanosec*/
@@ -37,7 +95,7 @@ export default ManageUser = ({ navigation, route }) => {
                 DAT.getDate() + '.' + (DAT.getMonth() + 1) + '.' + DAT.getFullYear();
             setuserDOB(DAT_parse);
         }
-    }, [setuserDOB])
+    }, [setuserDOB, setUserAbout, setIsAdmin, setuserDOB])
     return (
         <View style={styles.main}>
             <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
@@ -50,8 +108,14 @@ export default ManageUser = ({ navigation, route }) => {
                     </TouchableOpacity>
                     <Text style={styles.screen_title}>Havruta</Text>
                     <View
-                        style={[styles.back_button, { backgroundColor: 'rgba(0,0,0,0)' }]}
-                    />
+                        style={[styles.back_button, { backgroundColor: '#fffffff' }]}
+                    >
+                        {loading ?
+                            <ActivityIndicator size={'large'} />
+                            : null
+                        }
+                    </View>
+
                 </View>
 
 
@@ -62,28 +126,30 @@ export default ManageUser = ({ navigation, route }) => {
                     <View>
                         <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{userName}</Text>
                         <Text style={{ fontSize: 16 }}>{userDOB}</Text>
+                        <Text style={{ fontSize: 16 }}>{userEmail}</Text>
                     </View>
                 </View>
+
                 <View style={{ padding: 10 }}>
-                    <Text style={{ fontWeight: 'bold', fontSize: 18 }}>About {userName}:</Text><Text style={{ fontSize: 16 }}> {userAbout}</Text>
+                    <Text style={{ fontWeight: 'bold', fontSize: 18 }}>About {userName}:</Text>
+                    <Text style={{ fontSize: 16 }}> {userAbout}</Text>
                 </View>
 
 
                 <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
                     <View style={[styles.switch, { marginLeft: 0 }]}>
-                        {isBlocked ? <Text>
-                            Block</Text> : <Text>Block</Text>}
+                        <Text style={{ fontWeight: 'bold', fontSize: 18, padding: 5 }}>{isBlocked ? 'Block' : 'Block'}</Text>
                         <Switch
                             style={{ transform: [{ scaleX: 2 }, { scaleY: 2 }], margin: 10 }}
-                            trackColor={{ false: '#000000', true: '#007fff' }}
-                            thumbColor={isBlocked ? '#00ffff' : '#999999'}
+                            trackColor={{ false: '#000000', true: '#faa' }}
+                            thumbColor={isBlocked ? '#ff0000' : '#999999'}
                             ios_backgroundColor="#3e3e3e"
                             onValueChange={toggleBlock}
                             value={isBlocked}
                         />
                     </View>
                     <View style={[styles.switch, { marginRight: 0 }]}>
-                        {isAdmin ? <Text>Admin</Text> : <Text>Admin</Text>}
+                        <Text style={{ fontWeight: 'bold', fontSize: 18, padding: 5 }}>Admin</Text>
                         <Switch
                             style={{ transform: [{ scaleX: 2 }, { scaleY: 2 }], margin: 10 }}
                             trackColor={{ false: '#000000', true: '#007fff' }}
@@ -94,7 +160,7 @@ export default ManageUser = ({ navigation, route }) => {
                         />
                     </View>
                 </View >
-                <TouchableOpacity style={styles.delete} onPress={() => { console.log('deleting the user ' + userName) }}>
+                <TouchableOpacity style={styles.delete} onPress={() => delete_user()}>
                     <Text style={{
                         color: 'rgb(255,255,255)',
                         fontSize: 18,
@@ -144,7 +210,6 @@ const styles = StyleSheet.create({
     switch: {
         margin: 10,
         alignItems: 'center',
-        justifyContent: 'center',
     },
     aview: {
         alignSelf: 'center',
