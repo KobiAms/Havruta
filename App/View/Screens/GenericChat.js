@@ -1,6 +1,6 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity, Image,ScrollView } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TextInput,ActivityIndicator,TouchableOpacity , RefreshControl, Image, ScrollView } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -8,27 +8,37 @@ import { resolvePreset } from '@babel/core';
 
 
 
+let msgToLoad = 15
+let msgToStart = 0
+let endReached=false;
+let flag = false
 
-let flag=false
-ChatMessage=({item})=>{
+const ListFooterComponent = ()=>{
+    return(
+        <ActivityIndicator size="large" color="rainbow" />
+    )
+}
+//this function dicompose the doc of the coplete chat into small object where as any object represent one msg item inside our chat
+//
+ChatMessage = ({ item }) => {
     let date = item.date.toDate()
     return (
-        <View style={styles.userIdDate}>
+        <View style={auth().currentUser && (auth().currentUser.email === item.user_id)? styles.myItemElement:styles.ItemElement}>
             <View>
-                <Image style={styles.userPhoto} source={{uri: 'https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-ios7-contact-512.png'}}>
+                <Image style={styles.userPhoto} source={{ uri: 'https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-ios7-contact-512.png' }}>
 
-                </Image> 
+                </Image>
             </View>
-            <View style ={styles.item}>
+            <View style={auth().currentUser && (auth().currentUser.email === item.user_id)? styles.myMessageBox:styles.messageBox}>
                 <Text style={styles.messageStyle}>
                     {item.message}
-                </Text>                
-                <View style = {styles.messageDetails}>
+                </Text>
+                <View style={styles.messageDetails}>
                     <Text style={styles.userId}>
-                       {" " + item.user_id + " "}
+                        {" " + item.user_nick + " "}
                     </Text>
                     <Text style={styles.date}>
-                        {" "+(date.getDate()) + '/' + (date.getMonth()+1)+" "+date.getHours()+":"+("0" + (date.getMinutes())).slice(-2)+" "}
+                        {" " + (date.getDate()) + '/' + (date.getMonth() + 1) + " " + date.getHours() + ":" + ("0" + (date.getMinutes())).slice(-2) + " "}
                     </Text>
                 </View>
             </View>
@@ -37,159 +47,239 @@ ChatMessage=({item})=>{
 }
 
 GenericChat = ({ navigation, route }) => {
-    const [newMessage,setNewMessage]=useState("")
-    const [chat_data,set_chat_data]=useState({})
+    const [newMessage, setNewMessage] = useState("")
+    const [chat_data, set_chat_data] = useState({})
+    const [user, setUser] = useState();
+    const [chat_name , set_chat_name] =useState(""); 
+    const [loadingMore,set_loading_more] = useState(false);
     let flat_list_ref
     const feed_type = route.name
-    const chat_id="example_chat_id"
-    sendMessage=()=>{
+    const chat_id ="test"
+    const [refreshing, setRefreshing] = React.useState(false);
 
-        let tempMessage = {user_id:"אבי" , message:newMessage , date:new Date()}
-        console.log("this is message "+tempMessage.message)
-        if (!tempMessage.message.replace(/\s/g, '').length){
+    const onRefresh = React.useCallback(() => {
+        console.log("im here")
+    setRefreshing(true);
+    wait(1000).then(() => setRefreshing(false));
+     }, []);
+
+    //this function is used when we wanna send msg on the chat. first we check the the msg content exist in order the prevent from sending 
+    // empty msgs to the server.
+    // after we verify that the msg is decent we update our data base with the new msgs
+    sendMessage = () => {
+
+        let tempMessage = {user_id: user.email,user_nick: user.name, message: newMessage, date: new Date()}
+        setNewMessage("")
+        if (!tempMessage.message.replace(/\s/g, '').length || !auth().currentUser) {
             setNewMessage("")
         }
-        else{
-            firestore().collection('chats').doc('example_chat_id').update({
-                messages:firestore.FieldValue.arrayUnion(tempMessage)
-            }).then(()=>{
-                setNewMessage("")
-            }).catch(error=>{
+        else {
+            firestore().collection('chats').doc('reporters').update({
+                messages: firestore.FieldValue.arrayUnion(tempMessage)
+            }).catch(error => {
                 console.log(error.toString())
             })
         }
+
+    }
+
+    function onAuthStateChanged(user) {
+        setUser(user);
+      }
+      // we call that function on reaching to the end of the screen 
+      // this function updates the displayed msgs list.
+      // we read all the chat list from the chat and we slice it into the amount of messages we want to see.
+    function loadMore(chat_data) {
+        set_loading_more(true)
+        msgToLoad=msgToLoad+7
+        firestore().collection('chats').doc('reporters')
+        .onSnapshot(doc => {
+            if (!doc)
+                return;
             
-        }
+            
+            let reversed = doc.data().messages.reverse()
+            if(reversed.length < msgToLoad)
+            {
+                endReached=true
+                set_chat_data(reversed.slice(msgToStart,reversed.length))
+            }else{
+                set_chat_data(reversed.slice(msgToStart,msgToLoad))
+            }
+            console.log(chat_data.length)
+            if(chat_data.length === doc.data().messages.length){
+                endReached=true
+            }
+        })
+        set_loading_more(false)
+    }
+
+    
     useEffect(() => {
         //
-        if (flag==false){
-            flag=true
-            firestore().collection('chats').doc('example_chat_id')
+        const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+            if(auth().currentUser){
+                firestore().collection('users').doc(auth().currentUser.email).onSnapshot(email => {
+                    let userDetails = email.data()
+                    setUser(userDetails)
+                })
+                    
+            } 
+            firestore().collection('chats').doc('reporters')
                 .onSnapshot(doc => {
                     if (!doc)
                         return;
-                    set_chat_data(doc.data())
-                })
-            
-        }
-    }, [])
-    
-    return (
-        <View style={styles.main}>
-            <View style ={styles.header}>
-                <Text style={styles.headline}>
-                {chat_id}
-                </Text>
-            </View>
-            {/* <ScrollView> */}
-            <FlatList style={styles.list} inverted data={chat_data.messages} ref = {ref => flat_list_ref=ref} keyExtractor={(item,index)=>index}
-                renderItem={({item})=><ChatMessage item={item}/>}/>
-            {/* </ScrollView>     */}
-            <View style={styles.inputContainer}>    
-                <TextInput placeholder="your message.." style={styles.input} value={newMessage}
-                  onChangeText={setNewMessage}/>
+                    
+                    let reversed = doc.data().messages.reverse()
+                    set_chat_data(reversed.slice(0,msgToLoad))
 
-                <TouchableOpacity onPress={()=>sendMessage()} style={newMessage.length == 0 ? styles.sendButtonEmpty:styles.sendButtonFull}>
-                    <Icon name={"md-send"} size={20} color={"#ffffff"}/>
-                </TouchableOpacity>  
-            </View>       
-        </View>
-    )
+                })
+
+         return subscriber; // unsubscribe on unmount
+        
+    }, [])
+        return (
+            <View style={styles.main}>
+                <View style={styles.header}>
+                    <Text style={styles.headline}>
+                        {chat_id}
+                    </Text>
+                </View>
+                
+                <FlatList style={styles.list} inverted data={chat_data}  onEndReachedThreshold={0.2} onEndReached={()=> loadMore(chat_data)}  ref={ref => flat_list_ref = ref} keyExtractor={(item, index) => index}
+                    ListFooterComponent={()=>!endReached && <ListFooterComponent/>} renderItem={({ item }) => <ChatMessage item={item} 
+                    refreshControl={
+                        <RefreshControl
+                          refreshing={refreshing}
+                          onRefresh={onRefresh}
+                        />}/>}/>
+                {user?  <View style={styles.inputContainer}>
+                    <TextInput placeholder="הכנס את ההודעה.." style={styles.input} value={newMessage}
+                        onChangeText={setNewMessage} />
+                    <TouchableOpacity onPress={() => sendMessage()} style={newMessage.length == 0 ? styles.sendButtonEmpty : styles.sendButtonFull}>
+                        <Icon name={"md-send"} size={20} color={"#ffffff"} />
+                    </TouchableOpacity>
+                </View>:null}
+            </View>
+        )
+    
+    
 }
 
 const styles = StyleSheet.create({
     main: {
         flex: 1,
-        alignItems: 'center',
         justifyContent: 'center',
     },
     headline: {
-        padding:15,
+        padding: 15,
         fontSize: 20,
         fontWeight: 'bold',
         color: "#fff"
     },
-    inputContainer:{
-        padding:2,
-        backgroundColor:"#999999",
-        width:"100%",
-        alignItems:"center",
-        justifyContent:"space-evenly",
-        flexDirection:'row',
+    inputContainer: {
+        padding: 2,
+        backgroundColor: "#999999",
+        width: "100%",
+        alignItems: "center",
+        justifyContent: "space-evenly",
+        flexDirection: 'row',
     },
     input: {
-        borderColor:"black",
-        borderWidth:1,
-        backgroundColor:"#ffffff",
-        width:"88%",
-        borderRadius:30,
-        paddingLeft:15,
-        height:"75%",
+        borderColor: "black",
+        borderWidth: 1,
+        backgroundColor: "#ffffff",
+        width: "88%",
+        borderRadius: 30,
+        paddingLeft: 15,
+        height: "75%",
     },
     sendButtonEmpty: {
-        padding:8,
-        backgroundColor:"#555555",
-        alignItems:"center",
-        justifyContent:"center",
-        borderRadius:100,
+        padding: 8,
+        backgroundColor: "#555555",
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: 100,
     },
     sendButtonFull: {
-        padding:8,
-        backgroundColor:"#007fff",
-        alignItems:"center",
-        justifyContent:"center",
-        borderRadius:100,
+        padding: 8,
+        backgroundColor: "#007fff",
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: 100,
     },
     header: {
-        width:"100%",
-        backgroundColor:"purple",
-        alignItems:"center",
-        justifyContent:"center",
+        width: "100%",
+        backgroundColor: "lightblue",
+        alignItems: "center",
+        justifyContent: "center",
     },
-    list:{
-        backgroundColor:"white",
-        width:"100%",
-        
-        
+    list: {
+        backgroundColor: "white",
+        flex: 1
     },
-    userId:{
-        fontSize:16,
-        fontWeight:'bold'
+    userId: {
+        fontSize: 11,
+       
     },
-    
-    date:{
-        fontSize:16,
+
+    date: {
+        fontSize: 11,
     },
-    item:{
-        margin:5,
-        paddingLeft:5,
-        backgroundColor:"dodgerblue",
-        borderColor:"black",
-        borderWidth:1,
-        borderRadius:7,
-        alignSelf:'flex-start',
+    messageBox: {
+        margin: 5,
+        paddingLeft: 5,
+        backgroundColor: "rgb(200,200,220)",
+        borderColor: "black",
+        borderWidth: 1,
+        borderRadius: 7,
+        alignSelf: 'flex-start',
         maxWidth: "83%",
         
+
+
+    },
+    myMessageBox: {
+        margin: 5,
+        paddingLeft: 5,
+        backgroundColor: "rgb(200,240,240)",
+        borderColor: "black",
+        borderWidth: 1,
+        borderRadius: 7,
+        alignSelf: 'flex-start',
+        maxWidth: "83%",
         
+
+
     },
-    userIdDate:{
-        flexDirection:'row',
-        flex:1,
-        alignContent:'flex-end',
-         
+    ItemElement: {
+        flexDirection: 'row',
+        flex: 1,
+        alignContent: 'flex-end',
+        flexDirection:'row-reverse'
+
+
     },
-    messageStyle:{
-        color:"white",
-        fontSize: 17.5
-    }, 
-    userPhoto:{
-        width:50,
-        height:50,
-        borderRadius:25,
+    myItemElement:{
+        flexDirection: 'row',
+        flex: 1,
+        alignContent: 'flex-end'
+
     },
-    messageDetails:{
-        flexDirection:'row',
-        justifyContent:"space-between"
+    messageStyle: {
+        color: "black",
+        fontSize: 17,
+        paddingLeft:4
+    },
+    userPhoto: {
+        
+        width: 40,
+        height: 40,
+        borderRadius: 25,
+    },
+    messageDetails: {
+        flexDirection: 'row',
+        justifyContent: "space-between"
     }
 
 });

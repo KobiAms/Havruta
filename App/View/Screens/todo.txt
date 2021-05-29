@@ -1,3 +1,11 @@
+
+toDo:
+1. load only 20 messages every time
+2.cannot write in chat if the user not logged in
+3.set sides for this and other messages
+4.fix the clock problem
+5.how to delete messages
+
 1.fix date
 2.create new screen that create new chat
 3.scroll to bottom at first
@@ -16,3 +24,4 @@ in ManageUser.js
 in UserForm.js 
 11. implement the edit fucntion
 12. fix issue of keyboard hiding the about text input
+
