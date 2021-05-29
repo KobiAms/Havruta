@@ -255,10 +255,9 @@ const styles = StyleSheet.create({
   },
   backline: {
     backgroundColor: 'rgb(160,160,200)',
-    height: Dimensions.get('screen').height / 10,
-    marginBottom: -Dimensions.get('screen').height / 15,
-    justifyContent: "flex-start"
-
+    height: Dimensions.get('screen').height / 8,
+    marginBottom: -Dimensions.get('screen').height / 10,
+    justifyContent: "flex-start",
   },
   aview: {
     alignSelf: 'center',
