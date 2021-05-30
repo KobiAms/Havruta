@@ -4,20 +4,12 @@ import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { Avatar } from 'react-native-elements';
 
-function PostInFeed({ onPress, data }) {
+function PostInFeed({ onPress, data, onPressLike }) {
   let { autor, date, headline, comments, likes, contant } = data;
 
   return (
     <View style={styles.main}>
       <View style={styles.row}>
-        {/* <Avatar
-          size="small"
-          rounded
-          source={{
-            uri:
-              'https://post.medicalnewstoday.com/wp-content/uploads/sites/3/2020/03/GettyImages-1092658864_hero-1024x575.jpg',
-          }}
-        /> */}
         <View>
           <Text style={styles.autor}>{autor}</Text>
           <Text>{date}</Text>
@@ -33,7 +25,7 @@ function PostInFeed({ onPress, data }) {
       </Text>
       <View style={styles.line} />
       <View style={styles.response}>
-        <TouchableOpacity style={styles.row}>
+        <TouchableOpacity style={styles.row} onPress={onPressLike}>
           <Icon name={'like1'} size={20} style={styles.pad} />
           <Text>likes: {likes.length}</Text>
         </TouchableOpacity>

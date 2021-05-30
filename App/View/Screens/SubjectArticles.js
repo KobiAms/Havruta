@@ -4,7 +4,7 @@ import { Dimensions, Text, StyleSheet, View, ActivityIndicator, TouchableOpacity
 import { FlatList } from 'react-native-gesture-handler';
 import PostInFeed from './PostInFeed';
 import firestore from '@react-native-firebase/firestore';
-import Icon from 'react-native-vector-icons/FontAwesome5';
+import auth from '@react-native-firebase/auth';
 import { createStackNavigator } from '@react-navigation/stack';
 
 const Stack = createStackNavigator();
@@ -53,7 +53,7 @@ function SubjectArticles({ navigation, route }) {
         .doc(val.id)
         .get()
         .then(doc => {
-          let art = { ...val, likes: doc.data().likes, comments: doc.data().comments }
+          let art = { ...val, likes: doc.data().likes, comments: doc.data().comments, art_id: val.id }
           articlesUpdater(art, i, arr.length)
         })
         .catch(err => {
@@ -85,6 +85,12 @@ function SubjectArticles({ navigation, route }) {
                 <PostInFeed
                   onPress={() => navigation.navigate('ArticleScreen', { data: item })}
                   data={item}
+                  onPressLike={() => {
+                    if (auth().currentUser) {
+                      // firestore().collection('article').doc(item.art_id)
+                      // .update({'likes'})
+                    }
+                  }}
                 />
               )}
               keyExtractor={(item, idx) => idx}

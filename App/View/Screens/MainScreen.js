@@ -9,9 +9,42 @@ import {
   Dimensions,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import HTMLView from 'react-native-htmlview';
+import { useState, useEffect } from 'react';
+import axios from 'axios'
+import { useWindowDimensions } from 'react-native';
+import { ActivityIndicator } from 'react-native';
+
+let baseURL = 'https://havruta.org.il/wp-json'
 
 function MainScreen({ navigation, route }) {
-  const feed_type = route.name;
+  const [news, setNews] = useState('');
+
+  function Post() {
+    let api = axios.create({ baseURL });
+    getArticles = async () => {
+      let articles = await api.get('/wp/v2/posts?categories=388');
+      // console.log(articles.data[0].id)
+      // console.log(articles.data[0].excerpt.rendered)
+      setNews(articles.data[0].content.rendered);
+      // console.log(articles.data[0].content.rendered);
+    }
+
+    useEffect(() => {
+      getArticles();
+    }, [])
+
+    const contentwidth = useWindowDimensions().width;
+
+    return (
+      <View>
+        <Text>Alice</Text>
+        <HTMLView value={news} contentWidth={contentwidth} />
+      </View>
+    )
+  }
+
+
   return (
     <View style={styles.main}>
       <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
@@ -24,15 +57,23 @@ function MainScreen({ navigation, route }) {
           </TouchableOpacity>
           <Text style={styles.screen_title}>Havruta</Text>
           <View
-            style={[styles.register, { backgroundColor: 'rgba(0,0,0,0)' }]}></View>
+            style={[styles.back_button, { backgroundColor: '#fffffff' }]}
+          >
+            {!news ?
+              <ActivityIndicator color={'black'} size={'large'} />
+              : null
+            }
+          </View>
         </View>
         <View style={styles.body}>
-          <Text style={styles.headline}>{feed_type}</Text>
+          <Post />
         </View>
       </SafeAreaView>
     </View>
   );
 };
+
+
 
 const styles = StyleSheet.create({
   main: {
@@ -68,6 +109,14 @@ const styles = StyleSheet.create({
     color: 'rgb(0,127,255)',
   },
   register: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#ffffff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  back_button: {
     width: 50,
     height: 50,
     borderRadius: 25,

@@ -19,6 +19,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { SafeAreaView } from 'react-native';
 import { resolvePreset } from '@babel/core';
 import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
+import { KeyboardAvoidingView } from 'react-native';
+import { StatusBar } from 'react-native';
 
 let msgToLoad = 15;
 let msgToStart = 0;
@@ -75,7 +77,7 @@ ChatMessage = ({ item }) => {
 
 GenericChat = ({ navigation, route }) => {
     const [newMessage, setNewMessage] = useState('');
-    const [chat_data, set_chat_data] = useState({});
+    const [chat_data, set_chat_data] = useState([]);
     const [user, setUser] = useState();
     const [chat_name, set_chat_name] = useState('');
     const [loadingMore, set_loading_more] = useState(false);
@@ -173,11 +175,10 @@ GenericChat = ({ navigation, route }) => {
     return (
         <View style={styles.main}>
             <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
-            <SafeAreaView style={styles.main}>
+            <View style={styles.main}>
                 <View style={styles.header}>
                     <Text style={styles.headline}>{chat_id}</Text>
                 </View>
-
                 <FlatList
                     style={styles.list}
                     inverted
@@ -196,14 +197,16 @@ GenericChat = ({ navigation, route }) => {
                     )}
                 />
                 {user ? (
-                    <View style={styles.inputContainer}>
+                    <KeyboardAvoidingView
+                        keyboardVerticalOffset={Dimensions.get('screen').height / 12}
+                        behavior={Platform.OS == "ios" ? 'padding' : null}
+                        style={styles.inputContainer}>
                         <TextInput
                             placeholder=" Add your message..."
                             style={styles.input}
                             value={newMessage}
                             onChangeText={setNewMessage}
                             autoCorrect={false}
-
                         />
                         <TouchableOpacity
                             onPress={() => sendMessage()}
@@ -214,9 +217,9 @@ GenericChat = ({ navigation, route }) => {
                             }>
                             <Icon name={'md-send'} size={20} color={'#ffffff'} />
                         </TouchableOpacity>
-                    </View>
+                    </KeyboardAvoidingView >
                 ) : null}
-            </SafeAreaView>
+            </View>
         </View>
 
     );
@@ -235,20 +238,21 @@ const styles = StyleSheet.create({
         color: '#fff',
     },
     inputContainer: {
-        padding: 2,
+        padding: 5,
         backgroundColor: 'rgb(180,180,200)',
         width: '100%',
         alignItems: 'center',
         justifyContent: 'space-evenly',
         flexDirection: 'row',
+
     },
     input: {
         borderColor: 'black',
-        borderWidth: 1,
         backgroundColor: '#ffffff',
         width: '88%',
         borderRadius: 30,
         paddingLeft: 15,
+        fontSize: 15,
         height: '75%',
         shadowColor: '#000',
         shadowOffset: {
@@ -258,6 +262,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.32,
         shadowRadius: 5.46,
         elevation: 6,
+        padding: 8,
     },
     sendButtonEmpty: {
         padding: 8,
@@ -280,7 +285,6 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.25,
         shadowRadius: 3.80,
-
         elevation: 2,
     },
     header: {
