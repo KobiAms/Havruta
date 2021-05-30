@@ -79,7 +79,6 @@ GenericChat = ({ navigation, route }) => {
     const [user, setUser] = useState();
     const [chat_name, set_chat_name] = useState('');
     const [loadingMore, set_loading_more] = useState(false);
-    let flat_list_ref;
     const feed_type = route.name;
     const chat_id = 'test';
     const [refreshing, setRefreshing] = React.useState(false);
@@ -153,17 +152,18 @@ GenericChat = ({ navigation, route }) => {
             firestore()
                 .collection('users')
                 .doc(auth().currentUser.email)
-                .onSnapshot(email => {
-                    let userDetails = email.data();
+                .get().then(doc => {
+                    if (!doc) return;
+                    let userDetails = doc.data();
                     setUser(userDetails);
-                });
+                })
+                .catch()
         }
         firestore()
             .collection('chats')
             .doc('reporters')
             .onSnapshot(doc => {
                 if (!doc) return;
-
                 let reversed = doc.data().messages.reverse();
                 set_chat_data(reversed.slice(0, msgToLoad));
             });
@@ -184,7 +184,6 @@ GenericChat = ({ navigation, route }) => {
                     data={chat_data}
                     onEndReachedThreshold={0.2}
                     onEndReached={() => loadMore(chat_data)}
-                    ref={ref => (flat_list_ref = ref)}
                     keyExtractor={(item, index) => index}
                     ListFooterComponent={() => !endReached && <ListFooterComponent />}
                     renderItem={({ item }) => (
@@ -199,10 +198,11 @@ GenericChat = ({ navigation, route }) => {
                 {user ? (
                     <View style={styles.inputContainer}>
                         <TextInput
-                            placeholder="    Add your message..."
+                            placeholder=" Add your message..."
                             style={styles.input}
                             value={newMessage}
                             onChangeText={setNewMessage}
+                            autoCorrect={false}
 
                         />
                         <TouchableOpacity
@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
         padding: 5,
         backgroundColor: '#fff',
         borderColor: 'black',
-        borderWidth: 1,
+        // borderWidth: 1,
         borderRadius: 15,
         alignSelf: 'flex-start',
         maxWidth: '83%',
@@ -322,7 +322,7 @@ const styles = StyleSheet.create({
         padding: 5,
         backgroundColor: 'rgb(205,255,230)',
         borderColor: 'black',
-        borderWidth: 1,
+        // borderWidth: 1,
         borderRadius: 15,
         alignSelf: 'flex-start',
         maxWidth: '83%',

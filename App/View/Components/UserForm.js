@@ -147,7 +147,7 @@ export default function UserForm({ setUser, navigation, setLoading }) {
       <View style={styles.backline} />
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
         <TouchableOpacity onPress={() => setToEditable()}>
-          <View style={{ alignItems: 'center', flexDirection: 'row', backgroundColor: '#fff', padding: 5, borderRadius: 20, borderWidth: 1, borderColor: editable ? '#008800' : '#000000' }}>
+          <View style={{ alignItems: 'center', flexDirection: 'row', backgroundColor: '#fff', padding: 5, borderRadius: 20, borderColor: editable ? '#008800' : '#000000' }}>
             <IconFeather
               name={editable ? 'check-square' : 'edit'}
               color={editable ? '#008800' : '#000000'}
@@ -164,7 +164,7 @@ export default function UserForm({ setUser, navigation, setLoading }) {
           }
         </TouchableOpacity>
         <TouchableOpacity onPress={() => editable ? setEditable(false) : null}>
-          <View style={{ alignItems: 'center', flexDirection: 'row', backgroundColor: '#fff', padding: 5, borderRadius: 20, borderWidth: 1, borderColor: '#990000', opacity: editable ? 1 : 0 }}>
+          <View style={{ alignItems: 'center', flexDirection: 'row', backgroundColor: '#fff', padding: 5, borderRadius: 20, borderColor: '#990000', opacity: editable ? 1 : 0 }}>
             <IconFeather
               name={'x-square'}
               color={'#990000'}
@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.32,
     shadowRadius: 5.46,
     elevation: 6,
-    padding: 4,
+    padding: 8,
   },
   chose: {
     alignItems: 'flex-end',
@@ -280,7 +280,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     flexDirection: 'row',
     padding: 15,
-    borderWidth: 1,
     borderRadius: 50,
     margin: 5,
   },

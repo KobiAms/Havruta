@@ -21,7 +21,6 @@ const Tab = createBottomTabNavigator();
 
 const hide_tab_bar_screens = [
   'Registration',
-  'Reporters',
   'Manage Users',
   'Manage User',
   'ArticleScreen',
@@ -37,7 +36,7 @@ App = () => {
   };
 
   return (
-    <SafeAreaProvider style={{ flex: 1 }}>
+    <SafeAreaProvider style={{ height: '100%', width: '100%' }}>
       <NavigationContainer>
         <Tab.Navigator>
           <Tab.Screen name="MainScreen" component={MainScreenNavigator}

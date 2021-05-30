@@ -1,4 +1,35 @@
-1. fix ios safe area views
+toDo:
+
+in GenericChat
+1. load only 20 messages every time
+2.cannot write in chat if the user not logged in
+3.set sides for this and other messages
+4.fix the clock problem
+5.how to delete messages
+1.fix date 
 2.create new screen that create new chat
 3.scroll to bottom at first
-4.
+
+in ArticleScreen
+4.insert new comment into firestore
+5.get user avatar for each comment
+6.insert or remove user_id to likes[] onPress in ArticleScreen.js line 88
+
+in ManageUser.js
+7. implement changing role of admin and user. - V
+8. add block field in user collection in firestore. - using bulidin fb block server side - fb function - X
+9. implement delele user button. - using bulidin fb delete server side fb function - X
+10. get the user avatar
+
+in UserForm.js 
+11. implement the edit fucntion - V
+12. fix issue of keyboard hiding the about text input
+
+in Other Screen 
+
+13. more chats section
+14. more subject articles section
+15. about section
+
+
+
