@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   View,
+  ScrollView,
   Text,
   StyleSheet,
   TouchableOpacity,
@@ -146,78 +147,82 @@ export default function UserForm({ setUser, navigation, setLoading }) {
   }, [setUserAbout, setUserRole, setDefaultStyle, setuserName, setuserDOB]);
 
   return (
-    <View style={styles.main}>
-      <DateTimePickerModal
-        isVisible={isDatePickerVisible}
-        mode="date"
-        date={editDate}
-        onConfirm={handleDateConfirm}
-        onCancel={() => setDatePickerVisibility(false)}
-      />
-      <View style={styles.backline} />
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
-        <TouchableOpacity onPress={() => setToEditable()}>
-          <View style={{ alignItems: 'center', flexDirection: 'row', backgroundColor: '#fff', padding: 5, borderRadius: 20, borderColor: editable ? '#008800' : '#000000' }}>
-            <IconFeather
-              name={editable ? 'check-square' : 'edit'}
-              color={editable ? '#008800' : '#000000'}
-              size={30}
-              style={{ margin: 5 }} />
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.aview} onPress={() => uploadNewAvatar()}>
-          <Image source={userAvatar} style={{ width: '100%', height: '100%' }} onLoadEnd={() => setLoadingAvatar(false)} />
+    <View style={{ flex: 1 }}>
+      <ScrollView style={styles.main}>
+        <DateTimePickerModal
+          isVisible={isDatePickerVisible}
+          mode="date"
+          date={editDate}
+          onConfirm={handleDateConfirm}
+          onCancel={() => setDatePickerVisibility(false)}
+        />
+        <View style={styles.backline} />
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
+          <TouchableOpacity onPress={() => setToEditable()}>
+            <View style={{ alignItems: 'center', flexDirection: 'row', backgroundColor: '#ffffff80', padding: 5, borderRadius: 20 }}>
+              <IconFeather
+                name={editable ? 'check-square' : 'edit'}
+                color={editable ? '#008800' : '#000000'}
+                size={30}
+                style={{ margin: 5 }} />
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.aview} onPress={() => uploadNewAvatar()}>
+            <Image source={userAvatar} style={{ width: '100%', height: '100%' }} onLoadEnd={() => setLoadingAvatar(false)} />
+            {
+              loadingAvatar ?
+                <ActivityIndicator style={{ position: 'absolute' }} color={'#007fff'} size={'large'} />
+                : null
+            }
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => editable ? setEditable(false) : null}>
+            <View style={{ alignItems: 'center', flexDirection: 'row', backgroundColor: '#ffffff80', padding: 5, borderRadius: 20, borderColor: '#990000', opacity: editable ? 1 : 0 }}>
+              <IconFeather
+                name={'x-square'}
+                color={'#990000'}
+                size={30}
+                style={{ margin: 5 }} />
+            </View>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.row}>
           {
-            loadingAvatar ?
-              <ActivityIndicator style={{ position: 'absolute' }} color={'#007fff'} size={'large'} />
-              : null
+            editable ?
+              <TextInput
+                style={[styles.name, styles.editable]}
+                value={editName}
+                onChangeText={setEditName} />
+              :
+              <Text style={[styles.name, styles.editcont]}>{userName}</Text>
           }
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => editable ? setEditable(false) : null}>
-          <View style={{ alignItems: 'center', flexDirection: 'row', backgroundColor: '#fff', padding: 5, borderRadius: 20, borderColor: '#990000', opacity: editable ? 1 : 0 }}>
-            <IconFeather
-              name={'x-square'}
-              color={'#990000'}
-              size={30}
-              style={{ margin: 5 }} />
-          </View>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.row}>
-        {
-          editable ?
-            <TextInput
-              style={[styles.name, styles.editable]}
-              value={editName}
-              onChangeText={setEditName} />
-            :
-            <Text style={styles.name}>{userName}</Text>
-        }
-      </View>
-      <View style={styles.row}>
-        <Text style={{ fontWeight: 'bold', fontSize: 21 }}>Date of Birth:</Text>
-        {
-          editable ?
-            <TouchableOpacity onPress={() => setDatePickerVisibility(true)} style={styles.editable}>
-              <Text style={{ fontSize: 18 }}>{userDOB}</Text>
-            </TouchableOpacity>
-            :
-            <Text style={{ fontSize: 18, padding: 4 }}>{userDOB}</Text>
-        }
-      </View>
-      <View style={{ padding: 20 }}>
-        <Text style={{ fontWeight: 'bold', fontSize: 21 }}>About Me:</Text>
-        {
-          editable ?
-            <AutoGrowingTextInput
-              style={[styles.editable, { fontSize: 17 }]}
-              value={editAbout}
-              onChangeText={setEditAbout} />
-            :
-            <Text style={{ fontSize: 17, padding: 4 }}>{userAbout}</Text>
-        }
-      </View>
+        </View>
+        <View style={styles.row}>
+          <Text style={{ fontWeight: 'bold', fontSize: 21 }}>Date of Birth:</Text>
+          {
+            editable ?
+              <TouchableOpacity onPress={() => setDatePickerVisibility(true)} style={styles.editable}>
+                <Text style={{ fontSize: 18 }}>{userDOB}</Text>
+              </TouchableOpacity>
+              :
+              <Text style={[{ fontSize: 18, padding: 4 }, styles.editcont]}>{userDOB}</Text>
+          }
+        </View>
+        <View style={{ padding: 20 }}>
+          <Text style={{ fontWeight: 'bold', fontSize: 21, paddingLeft: 8 }}>About Me:</Text>
+          {
+            editable ?
+              <AutoGrowingTextInput
+                style={[styles.editable, { fontSize: 17 }]}
+                value={editAbout}
+                onChangeText={setEditAbout} />
+              :
+              <Text style={[{ fontSize: 17, padding: 4 }, styles.editcont]}>{userAbout}</Text>
+          }
+        </View>
 
+
+
+      </ScrollView >
       {/*the following view contain the logout / manage users buttons*/}
       <View style={styles.chose}>
         {userRole && userRole == 'admin' ? (
@@ -238,9 +243,7 @@ export default function UserForm({ setUser, navigation, setLoading }) {
           <Text style={{ color: '#ff0000', fontSize: 20 }}>Log Out</Text>
           <IconFeather name={'log-out'} color={'#ff0000'} size={20} />
         </TouchableOpacity>
-      </View>
-
-    </View >
+      </View></View>
   );
 }
 
@@ -248,6 +251,7 @@ const styles = StyleSheet.create({
   main: {
     flex: 1,
     backgroundColor: 'rgb(200,200,220)',
+    marginBottom: 5 + Dimensions.get('screen').height / 10,
   },
   row: {
     flexDirection: 'row',
@@ -276,12 +280,23 @@ const styles = StyleSheet.create({
     elevation: 6,
     padding: 8,
   },
+  editcont: {
+    borderWidth: 1,
+    borderRadius: 10,
+    borderColor: '#00000000',
+    backgroundColor: '#FFFFFF00',
+    padding: 8,
+  },
   chose: {
     alignItems: 'flex-end',
     flex: 1,
     alignContent: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
+    margin: Dimensions.get('screen').width / 50,
+    zIndex: 1,
+    position: 'absolute',
+    bottom: 0,
   },
   option: {
     flex: 1,
@@ -292,6 +307,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 50,
     margin: 5,
+
   },
   backline: {
     backgroundColor: 'rgb(160,160,200)',
@@ -305,7 +321,7 @@ const styles = StyleSheet.create({
     width: 12 + Dimensions.get('screen').width / 3,
     borderRadius: Dimensions.get('screen').width / 1.5,
     backgroundColor: 'rgb(200,200,220)',
-    borderColor: '#000',
+    borderColor: 'rgb(160,160,200)',
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
