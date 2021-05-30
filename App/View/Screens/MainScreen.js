@@ -50,12 +50,6 @@ function MainScreen({ navigation, route }) {
       <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
       <SafeAreaView style={styles.main}>
         <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.register}
-            onPress={() => navigation.navigate('Registration')}>
-            <Icon name={'user-alt'} size={20} />
-          </TouchableOpacity>
-          <Text style={styles.screen_title}>Havruta</Text>
           <View
             style={[styles.back_button, { backgroundColor: '#fffffff' }]}
           >
@@ -64,6 +58,12 @@ function MainScreen({ navigation, route }) {
               : null
             }
           </View>
+          <Text style={styles.screen_title}>Havruta</Text>
+          <TouchableOpacity
+            style={styles.register}
+            onPress={() => navigation.navigate('Registration')}>
+            <Icon name={'user-alt'} size={20} />
+          </TouchableOpacity>
         </View>
         <View style={styles.body}>
           <Post />

@@ -26,10 +26,14 @@ in UserForm.js
 12. fix issue of keyboard hiding the about text input
 
 in Other Screen 
-
 13. more chats section
 14. more subject articles section
 15. about section
 
+in MainScreen
+14. show the top 5 from any subject required
+15. 
 
+in subjectArticle
+16. admin can lock & unlock article likes/comment 
 

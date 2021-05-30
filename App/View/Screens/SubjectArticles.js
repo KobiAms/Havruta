@@ -5,12 +5,15 @@ import { FlatList } from 'react-native-gesture-handler';
 import PostInFeed from './PostInFeed';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-import { createStackNavigator } from '@react-navigation/stack';
-
-const Stack = createStackNavigator();
 
 function SubjectArticles({ navigation, route }) {
   const [fullArticles, setFullArticles] = useState({ articles: [], temp: [], recevied: 0 });
+  const [user, setUser] = useState();
+
+  function onAuthStateChanged(user) {
+    setUser(user);
+  }
+
 
   function articlesUpdater(art, index, length) {
     fullArticles.temp[index] = art;
@@ -20,9 +23,7 @@ function SubjectArticles({ navigation, route }) {
     }
   }
 
-
   useEffect(() => {
-
     let articles_wp = [{
       "id": "arti1",
       "headline": "Daimonds in the sky",
@@ -61,6 +62,20 @@ function SubjectArticles({ navigation, route }) {
         });
     })
 
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    if (auth().currentUser) {
+      firestore()
+        .collection('users')
+        .doc(auth().currentUser.email)
+        .get().then(doc => {
+          if (!doc) return;
+          let userDetails = doc.data();
+          console.log(userDetails)
+          setUser(userDetails);
+        })
+        .catch()
+    }
+    return subscriber;
   }, [])
 
 
@@ -85,12 +100,6 @@ function SubjectArticles({ navigation, route }) {
                 <PostInFeed
                   onPress={() => navigation.navigate('ArticleScreen', { data: item })}
                   data={item}
-                  onPressLike={() => {
-                    if (auth().currentUser) {
-                      // firestore().collection('article').doc(item.art_id)
-                      // .update({'likes'})
-                    }
-                  }}
                 />
               )}
               keyExtractor={(item, idx) => idx}

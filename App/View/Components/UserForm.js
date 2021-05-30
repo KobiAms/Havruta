@@ -68,6 +68,9 @@ export default function UserForm({ setUser, navigation, setLoading }) {
         await reference.putFile(response.uri);
         reference.getDownloadURL().then(url => {
           setUserAvatar({ uri: url });
+          firestore().collection('users').doc(auth().currentUser.email)
+            .update({ photo: url })
+            .catch(() => console.log('error updtae imageurl'))
           auth().currentUser.updateProfile({ photoURL: url })
             .catch(() => console.log('error updtae imageurl'))
           setLoading(false);
@@ -87,18 +90,25 @@ export default function UserForm({ setUser, navigation, setLoading }) {
       // show loading indicator
       setLoading(true)
       // update at firestore users collection the new data
-      firestore().collection('users').doc(auth().currentUser.email)
-        .update({
-          about: editAbout,
-          name: editName,
-          dob: firestore.Timestamp.fromDate(editDate)
-        })
+      auth().currentUser.updateProfile({ displayName: editName })
         .then(() => {
-          // updates the relevant views
-          setuserName(editName)
-          setUserAbout(editAbout)
-          setEditable(false);
-          setLoading(false);
+
+          firestore().collection('users').doc(auth().currentUser.email)
+            .update({
+              about: editAbout,
+              name: editName,
+              dob: firestore.Timestamp.fromDate(editDate)
+            })
+            .then(() => {
+              // updates the relevant views
+              setuserName(editName)
+              setUserAbout(editAbout)
+              setEditable(false);
+              setLoading(false);
+            })
+        })
+        .catch((error) => {
+          console.log(error.code)
         })
     } else {
       // discrad changes

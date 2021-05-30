@@ -16,6 +16,8 @@ import { Avatar } from 'react-native-elements';
 import { FlatList } from 'react-native-gesture-handler';
 import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 import { SafeAreaView } from 'react-native';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 
 
 function timePassParser(time) {
@@ -41,13 +43,75 @@ function ArticleScreen({ navigation, route }) {
   useEffect(() => {
     LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
   }, []); //enable to render a flatlist inside a scrollview
-  let { autor, date, headline, comments, likes, contant } = route.params.data;
-  const inputRef = useRef();
-  const clearText = useCallback(() => {
-    inputRef.current.setNativeProps({ text: '' });
-  }, []); //use the clearText inorder to erase the content inside the comment text field
-
+  const [data, setData] = useState(route.params.data)
+  const [isLiked, setIsLiked] = useState(auth().currentUser ? route.params.data.likes.includes(auth().currentUser.email) : false)
   const [comInput, setcomInput] = useState();
+
+  updateLikes = () => {
+    if (auth().currentUser) {
+      if (isLiked) {
+        firestore().collection('article').doc(data.art_id).update({
+          likes: firestore.FieldValue.arrayRemove(auth().currentUser.email)
+        }).then(() => {
+          setData(prev => {
+            var index = prev.likes.indexOf(auth().currentUser.email);
+            if (index !== -1)
+              prev.likes.splice(index, 1);
+            return prev;
+          })
+          setIsLiked(false)
+        })
+          .catch(() => {
+            console.log('unlike failed')
+          })
+      } else {
+        firestore().collection('article').doc(data.art_id).update({
+          likes: firestore.FieldValue.arrayUnion(auth().currentUser.email)
+        }).then(() => {
+          setData(prev => {
+            prev.likes.push(auth().currentUser.email)
+            return prev;
+          })
+          setIsLiked(true)
+        })
+          .catch(() => {
+            console.log('like failed')
+          })
+      }
+    }
+  }
+
+  addComment = () => {
+    if (comInput.length < 5)
+      return
+    console.log('addComment')
+    if (auth().currentUser) {
+      console.log(data.art_id)
+      let new_comment = {
+        comment: comInput,
+        user_id: auth().currentUser.email,
+        user_name: auth().currentUser.displayName,
+        timestamp: firestore.Timestamp.fromDate(new Date())
+      }
+      console.log('addComment to firestore')
+      firestore().collection('article').doc(data.art_id).update({
+        comments: firestore.FieldValue.arrayUnion(new_comment),
+      }).then(() => {
+        setData(prev => {
+          console.log('addComment to firestore success')
+          prev.comments.push(new_comment);
+          return prev;
+        })
+        setcomInput('')
+      })
+        .catch(() => {
+          console.log('addComment failed')
+        })
+    }
+  }
+
+
+
   return (
     <View style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
@@ -64,56 +128,56 @@ function ArticleScreen({ navigation, route }) {
         </View>
         <ScrollView style={styles.main}>
           <View
-            style={styles.row} /** user info - icon, name and date of publish */>
+            style={[styles.row, { padding: 10 }]} /** user info - icon, name and date of publish */>
             <View>
-              <Text style={styles.autor}>{autor}</Text>
-              <Text>{date}</Text>
+              <Text style={styles.autor}>{data.autor}</Text>
+              <Text>{data.date}</Text>
+              <Text style={styles.headline}>
+                {data.headline}
+                {'\n'}
+              </Text>
+              <Text>{data.contant}</Text>
             </View>
           </View>
-          <Text style={styles.headline}>
-            {headline}
-            {'\n'}
-          </Text>
-          <Text>{contant}</Text>
           <View style={styles.line} />
           <View
-            style={styles.response} /** displays the amount of likes and comments */
+            style={[styles.response, { padding: 5 }]} /** displays the amount of likes and comments */
           >
-            <TouchableOpacity style={styles.row}>
-              <Icon name={'like1'} size={20} style={styles.pad} />
-              <Text>likes: {likes.length}</Text>
+            <TouchableOpacity style={styles.row} onPress={() => updateLikes()}>
+              <Icon name={isLiked ? 'dislike1' : 'like1'} size={20} style={styles.pad} color={isLiked ? 'rgb(120,90,140)' : '#000'} />
+              <Text style={{ color: isLiked ? 'rgb(120,90,140)' : '#000' }}>likes: {data.likes.length}</Text>
             </TouchableOpacity>
-            <Text>comments: {comments ? comments.length : 0}</Text>
+            <Text>comments: {data.comments ? data.comments.length : 0}</Text>
           </View>
           <View style={styles.rower} /** text input to add new comment */>
             <AutoGrowingTextInput
-              placeholder={'    Add your comment...'}
+              placeholder={'Add your comment...'}
               style={styles.input}
               onChangeText={setcomInput}
-              ref={inputRef}
+              onSubmitEd
+              value={comInput}
             />
             <TouchableOpacity
-              onPress={() => {
-                console.log(comInput);
-                clearText();
-              }}>
+              onPress={() => addComment()}>
               <Icons name={'send'} size={25} />
             </TouchableOpacity>
           </View>
           <FlatList
-            data={route.params.data.comments}
+            style={{ padding: 5, paddingBottom: 30 }}
+            data={route.params.data.comments.reverse()}
             renderItem={({ item }) => (
               <View style={styles.combox}>
                 <Avatar
                   size="small"
                   rounded
-                  title={item.user_name[0]}
+                  title={item.user_name ? item.user_name[0] : 'M'}
+                  // source={}
                   containerStyle={{ backgroundColor: 'rgb(140,150,180)' }}
                   onPress={() => { console.log(item.user_name) }}
                 />
                 <View style={styles.comment}>
                   <View>
-                    <Text style={styles.autor}>{item.user_name}</Text>
+                    <Text style={styles.autor}>{item.user_name ? item.user_name : 'man with no name'}</Text>
                     <Text>{item.comment}</Text>
                   </View>
                   <View>
@@ -135,7 +199,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignSelf: 'center',
     backgroundColor: 'rgb(220,220,240)',
-    padding: 15,
   },
   header: {
     width: '100%',
@@ -195,6 +258,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.32,
     shadowRadius: 5.46,
     elevation: 6,
+    padding: 7
   },
   rower: {
     flexDirection: 'row',
