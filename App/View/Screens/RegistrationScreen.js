@@ -9,6 +9,7 @@ import UserForm from '../Components/UserForm';
 import LoadingComponent from '../Components/LoadingComponent'
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { SafeAreaView } from 'react-native';
+import { ActivityIndicator } from 'react-native';
 
 GoogleSignin.configure({
   webClientId: '',
@@ -18,7 +19,6 @@ RegistrationScreen = ({ navigation }) => {
   const [login_mode, setLogin_mode] = useState(true);
   const [user, setUser] = useState(auth().currentUser);
   const [loading, setLoading] = useState(false)
-
   async function signInGoogle() {
     return;
     const { idToken } = await GoogleSignin.signIn();
@@ -32,9 +32,6 @@ RegistrationScreen = ({ navigation }) => {
     <View style={styles.main}>
       <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
       <SafeAreaView style={styles.main}>
-        {
-          loading ? <LoadingComponent /> : null
-        }
         <View style={styles.header}>
           <TouchableOpacity
             style={styles.back_button}
@@ -43,7 +40,13 @@ RegistrationScreen = ({ navigation }) => {
           </TouchableOpacity>
           <Text style={styles.screen_title}>Havruta</Text>
           <View
-            style={[styles.back_button, { backgroundColor: 'rgba(0,0,0)' }]}></View>
+            style={[styles.back_button, { backgroundColor: '#fffffff' }]}
+          >
+            {loading ?
+              <ActivityIndicator color={'black'} size={'large'} />
+              : null
+            }
+          </View>
         </View>
         {user ? (
           <UserForm style={{ flex: 1 }} setUser={setUser} navigation={navigation} setLoading={setLoading} />

@@ -59,8 +59,6 @@ export default ManageUser = ({ navigation, route }) => {
                 {
                     text: "OK",
                     onPress: () => {
-                        setLoading(true)
-
                     },
                     style: 'destructive'
                 }
@@ -69,17 +67,8 @@ export default ManageUser = ({ navigation, route }) => {
     }
 
     const toggleBlock = () => {
-        if (loading)
-            return
-        setLoading(true)
-        // admin.auth().updateUser(route.params.data.email, { disabled: !isBlocked })
-        //     .then(() => {
-        //         setLoading(false)
-        //     })
-        //     .catch(() => {
-        //         setIsBlocked(!isAdmin)
-        //         setLoading(false)
-        //     })
+
+        setLoading(!loading)
         setIsBlocked(!isBlocked)
     }
 
@@ -111,7 +100,7 @@ export default ManageUser = ({ navigation, route }) => {
                         style={[styles.back_button, { backgroundColor: '#fffffff' }]}
                     >
                         {loading ?
-                            <ActivityIndicator size={'large'} />
+                            <ActivityIndicator color={'black'} size={'large'} />
                             : null
                         }
                     </View>

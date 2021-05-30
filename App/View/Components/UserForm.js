@@ -17,7 +17,7 @@ import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
 import IconFeather from 'react-native-vector-icons/Feather';
 import IconFAW5 from 'react-native-vector-icons/FontAwesome5';
-import IconAnt from 'react-native-vector-icons/AntDesign';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { launchImageLibrary } from 'react-native-image-picker';
 import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 
@@ -28,11 +28,23 @@ export default function UserForm({ setUser, navigation, setLoading }) {
   const [userDOB, setuserDOB] = useState();
   const [userAbout, setUserAbout] = useState();
   const [userAvatar, setUserAvatar] = useState();
+  const [loadingAvatar, setLoadingAvatar] = useState(true);
   const [editable, setEditable] = useState(false);
   const [editName, setEditName] = useState();
   const [editDate, setEditDate] = useState();
   const [editAbout, setEditAbout] = useState();
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
+
+  // create a readble date dd.mm.yyyy from Date obj
+  dateToReadbleFormat = (date) => date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear();
+
+  // gets the date from date alert after confirm date
+  const handleDateConfirm = (date) => {
+    setEditDate(date)
+    setuserDOB(dateToReadbleFormat(date))
+    setDatePickerVisibility(false);
+  };
 
   // this function upload the avatar image into the storage
   function uploadNewAvatar() {
@@ -56,25 +68,51 @@ export default function UserForm({ setUser, navigation, setLoading }) {
         await reference.putFile(response.uri);
         reference.getDownloadURL().then(url => {
           setUserAvatar({ uri: url });
+          auth().currentUser.updateProfile({ photoURL: url })
+            .catch(() => console.log('error updtae imageurl'))
           setLoading(false);
         });
       }
     });
   }
+
   /** function activated by pressing the edit icon. allow changes in the user name, date of birth, about */
   function setToEditable() {
     if (editable) {
-      setEditable(false);
+      // the length of the new name < 5 Discard Changes
+      if (editName.length < 5) {
+        setEditName(userName);
+        return
+      }
+      // show loading indicator
+      setLoading(true)
+      // update at firestore users collection the new data
+      firestore().collection('users').doc(auth().currentUser.email)
+        .update({
+          about: editAbout,
+          name: editName,
+          dob: firestore.Timestamp.fromDate(editDate)
+        })
+        .then(() => {
+          // updates the relevant views
+          setuserName(editName)
+          setUserAbout(editAbout)
+          setEditable(false);
+          setLoading(false);
+        })
     } else {
+      // discrad changes
       setEditName(userName);
-      setEditDate(userDOB);
       setEditAbout(userAbout);
       setEditable(true);
     }
   }
 
   useEffect(() => {
-    setLoading(false);
+    setLoading(true);
+    // set the avatar to the one related to the user
+    setUserAvatar({ uri: auth().currentUser.photoURL });
+    // gets the user data from the db 
     const subscriber = firestore()
       .collection('users')
       .doc(auth().currentUser.email)
@@ -83,29 +121,15 @@ export default function UserForm({ setUser, navigation, setLoading }) {
         if (!doc.data()) {
           return;
         }
+        // updates the relevant states to shoe the received data
         setUserAbout(doc.data().about);
         setUserRole(doc.data().role);
-        const reference = storage().ref(
-          '/users/' + auth().currentUser.email + '/' + 'user_image.png',
-        );
-
-        reference
-          .getDownloadURL()
-          .then(url => {
-            setUserAvatar({ uri: url });
-            setLoading(false);
-          })
-          .catch(() => {
-            setUserAvatar(require('../../Assets/POWERPNT_frXVLHdxnI.png'));
-            setLoading(false);
-          });
         doc.data().role === 'user' ? setDefaultStyle(!defaultStyle) : null;
-        let DAT = new Date((7200 + doc.data().dob.seconds) * 1000);
         /*//times go by sec GMT, so in order to get the right date, need to add 2 hours and mult by 1000 in nanosec*/
-        let DAT_parse =
-          DAT.getDate() + '.' + (DAT.getMonth() + 1) + '.' + DAT.getFullYear();
-        setuserDOB(DAT_parse);
+        setuserDOB(dateToReadbleFormat(doc.data().dob.toDate()));
+        setEditDate(doc.data().dob.toDate())
         setuserName(doc.data().name);
+        setLoading(false);
       })
       .catch(() => { });
     return subscriber;
@@ -113,6 +137,13 @@ export default function UserForm({ setUser, navigation, setLoading }) {
 
   return (
     <View style={styles.main}>
+      <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="date"
+        date={editDate}
+        onConfirm={handleDateConfirm}
+        onCancel={() => setDatePickerVisibility(false)}
+      />
       <View style={styles.backline} />
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
         <TouchableOpacity onPress={() => setToEditable()}>
@@ -125,11 +156,11 @@ export default function UserForm({ setUser, navigation, setLoading }) {
           </View>
         </TouchableOpacity>
         <TouchableOpacity style={styles.aview} onPress={() => uploadNewAvatar()}>
+          <Image source={userAvatar} style={{ width: '100%', height: '100%' }} onLoadEnd={() => setLoadingAvatar(false)} />
           {
-            userAvatar ?
-              <Image source={userAvatar} style={{ width: '100%', height: '100%' }} />
-              :
-              <ActivityIndicator color={'#007fff'} size={'large'} />
+            loadingAvatar ?
+              <ActivityIndicator style={{ position: 'absolute' }} color={'#007fff'} size={'large'} />
+              : null
           }
         </TouchableOpacity>
         <TouchableOpacity onPress={() => editable ? setEditable(false) : null}>
@@ -154,16 +185,14 @@ export default function UserForm({ setUser, navigation, setLoading }) {
         }
       </View>
       <View style={styles.row}>
-        <Text style={{ margin: 5 }}>Date of Birth:</Text>
+        <Text style={{ fontWeight: 'bold', fontSize: 21 }}>Date of Birth:</Text>
         {
           editable ?
-            <TextInput
-              style={[styles.editable, { fontSize: 18 }]}
-              value={editDate}
-              pla
-              onChangeText={setEditDate} />
+            <TouchableOpacity onPress={() => setDatePickerVisibility(true)} style={styles.editable}>
+              <Text style={{ fontSize: 18 }}>{userDOB}</Text>
+            </TouchableOpacity>
             :
-            <Text style={{ fontSize: 18 }}>{userDOB}</Text>
+            <Text style={{ fontSize: 18, padding: 4 }}>{userDOB}</Text>
         }
       </View>
       <View style={{ padding: 20 }}>
@@ -175,7 +204,7 @@ export default function UserForm({ setUser, navigation, setLoading }) {
               value={editAbout}
               onChangeText={setEditAbout} />
             :
-            <Text style={{ fontSize: 17 }}>{userAbout}</Text>
+            <Text style={{ fontSize: 17, padding: 4 }}>{userAbout}</Text>
         }
       </View>
 
@@ -200,6 +229,7 @@ export default function UserForm({ setUser, navigation, setLoading }) {
           <IconFeather name={'log-out'} color={'#ff0000'} size={20} />
         </TouchableOpacity>
       </View>
+
     </View >
   );
 }
@@ -220,6 +250,7 @@ const styles = StyleSheet.create({
     fontSize: 34,
     fontWeight: 'bold',
     margin: 5,
+    padding: 4,
   },
   editable: {
     borderWidth: 1,
