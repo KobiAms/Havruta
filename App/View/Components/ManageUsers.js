@@ -30,11 +30,13 @@ export default ManageUsers = ({ navigation }) => {
         querySnapshot.forEach(documentSnapshot => {
           let colorTmp;
           if (documentSnapshot.data().role == 'admin') {
-            colorTmp = '#007fff';
+            colorTmp = '#15B525';
           } else if (documentSnapshot.data().role == 'user') {
             colorTmp = '#666666';
+          } else if (documentSnapshot.data().role == 'reporter') {
+            colorTmp = '#007fff';
           } else {
-            colorTmp = '#f00';
+            colorTmp = '#f00'
           }
           users.push({
             ...documentSnapshot.data(),
@@ -51,7 +53,7 @@ export default ManageUsers = ({ navigation }) => {
   UserItem = ({ headline, color, onPress }) => {
     return (
       <TouchableOpacity style={styles.item} onPress={onPress}>
-        <IconAw style={styles.dot} name={'circle'} size={10} color={color} />
+        <IconAw style={styles.dot} name={'circle'} size={16} color={color} />
         <Text>{headline}</Text>
         <Icon2
           style={styles.arrow_right}
@@ -165,7 +167,7 @@ const styles = StyleSheet.create({
     width: '100%',
     // height: Dimensions.get('screen').height / 16,
     height: 50,
-    backgroundColor: 'rgba(255, 255, 255, 1)',
+    backgroundColor: 'rgba(180,180,200, 1)',
     alignItems: 'center',
     justifyContent: 'space-evenly',
     flexDirection: 'row',
@@ -201,8 +203,16 @@ const styles = StyleSheet.create({
     padding: 20,
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height / 10,
-    backgroundColor: 'rgb(255,255,255)',
-    borderBottomColor: 'rgba(111,111,111,0.5)',
-    borderBottomWidth: 1,
+    backgroundColor: 'rgb(230,230,250)',
+    marginBottom: 5,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.20,
+    shadowRadius: 1.41,
+
+    elevation: 2,
   },
 });
