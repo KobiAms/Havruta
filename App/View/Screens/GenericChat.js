@@ -16,6 +16,7 @@ import {
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { SafeAreaView } from 'react-native';
 import { resolvePreset } from '@babel/core';
 import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 
@@ -171,49 +172,53 @@ GenericChat = ({ navigation, route }) => {
     }, []);
     return (
         <View style={styles.main}>
-            <View style={styles.header}>
-                <Text style={styles.headline}>{chat_id}</Text>
-            </View>
-
-            <FlatList
-                style={styles.list}
-                inverted
-                data={chat_data}
-                onEndReachedThreshold={0.2}
-                onEndReached={() => loadMore(chat_data)}
-                ref={ref => (flat_list_ref = ref)}
-                keyExtractor={(item, index) => index}
-                ListFooterComponent={() => !endReached && <ListFooterComponent />}
-                renderItem={({ item }) => (
-                    <ChatMessage
-                        item={item}
-                        refreshControl={
-                            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                        }
-                    />
-                )}
-            />
-            {user ? (
-                <View style={styles.inputContainer}>
-                    <TextInput
-                        placeholder="    Add your message..."
-                        style={styles.input}
-                        value={newMessage}
-                        onChangeText={setNewMessage}
-
-                    />
-                    <TouchableOpacity
-                        onPress={() => sendMessage()}
-                        style={
-                            newMessage.length == 0
-                                ? styles.sendButtonEmpty
-                                : styles.sendButtonFull
-                        }>
-                        <Icon name={'md-send'} size={20} color={'#ffffff'} />
-                    </TouchableOpacity>
+            <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
+            <SafeAreaView style={styles.main}>
+                <View style={styles.header}>
+                    <Text style={styles.headline}>{chat_id}</Text>
                 </View>
-            ) : null}
+
+                <FlatList
+                    style={styles.list}
+                    inverted
+                    data={chat_data}
+                    onEndReachedThreshold={0.2}
+                    onEndReached={() => loadMore(chat_data)}
+                    ref={ref => (flat_list_ref = ref)}
+                    keyExtractor={(item, index) => index}
+                    ListFooterComponent={() => !endReached && <ListFooterComponent />}
+                    renderItem={({ item }) => (
+                        <ChatMessage
+                            item={item}
+                            refreshControl={
+                                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                            }
+                        />
+                    )}
+                />
+                {user ? (
+                    <View style={styles.inputContainer}>
+                        <TextInput
+                            placeholder="    Add your message..."
+                            style={styles.input}
+                            value={newMessage}
+                            onChangeText={setNewMessage}
+
+                        />
+                        <TouchableOpacity
+                            onPress={() => sendMessage()}
+                            style={
+                                newMessage.length == 0
+                                    ? styles.sendButtonEmpty
+                                    : styles.sendButtonFull
+                            }>
+                            <Icon name={'md-send'} size={20} color={'#ffffff'} />
+                        </TouchableOpacity>
+                    </View>
+                ) : null}
+            </SafeAreaView>
         </View>
+
     );
 };
 
