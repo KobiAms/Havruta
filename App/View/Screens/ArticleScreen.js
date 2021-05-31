@@ -152,7 +152,7 @@ function ArticleScreen({ navigation, route }) {
           {loading ? <ActivityIndicator color={'black'} size={'small'} /> : null}
         </View>
       </View>
-      <View style={{ flex: 10, paddingTop: 0 }}>
+      <View style={{ flex: 10, paddingTop: 0, backgroundColor: 'rgb(220,220,240)' }}>
         <FlatList
           scrollIndicatorInsets={{ right: 1 }}
           data={[route.params.data, ...comments]}
