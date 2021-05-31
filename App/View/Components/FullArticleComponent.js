@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native'
 import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 import Icon from 'react-native-vector-icons/AntDesign';
 import IconIos from 'react-native-vector-icons/Ionicons';
@@ -12,7 +12,7 @@ export default function FullArticleComponent({ data, addComment, likeUpdate, isL
             <View
                 style={[styles.row, { padding: 10 }]} /** user info - icon, name and date of publish */>
                 <View>
-                    <Text style={styles.autor}>{data.autor}</Text>
+                    <Text style={{ fontWeight: 'bold' }}>{data.autor}</Text>
                     <Text>{data.date}</Text>
                     <Text style={styles.headline}>
                         {data.headline}
@@ -44,7 +44,9 @@ export default function FullArticleComponent({ data, addComment, likeUpdate, isL
                             return;
                         addComment(commentInput)
                         setCommentInput('')
-                    }}>
+                    }}
+                    style={{ marginLeft: 10 }}
+                >
                     <IconIos name={'send'} size={25} />
                 </TouchableOpacity>
             </View>
@@ -69,7 +71,7 @@ const styles = StyleSheet.create({
         paddingRight: 5,
     },
     input: {
-        width: '85%',
+        width: Dimensions.get('screen').width * (85 / 100),
         height: 40,
         borderWidth: 1,
         borderRadius: 10,
@@ -86,11 +88,10 @@ const styles = StyleSheet.create({
     },
     new_comment_box: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         alignItems: 'center',
         padding: 10,
-        paddingRight: 15,
-        paddingLeft: 15,
+        paddingHorizontal: Dimensions.get('screen').width / 3
     },
     line: {
         height: 1,
