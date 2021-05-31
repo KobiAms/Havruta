@@ -17,6 +17,7 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { SafeAreaView } from 'react-native';
+import Hyperlink from 'react-native-hyperlink'
 import { resolvePreset } from '@babel/core';
 import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 
@@ -53,7 +54,9 @@ ChatMessage = ({ item }) => {
                         ? styles.myMessageBox
                         : styles.messageBox
                 }>
+                <Hyperlink linkDefault={ true } linkStyle={ { color: '#2980b9'} }>
                 <Text style={styles.messageStyle}>{item.message}</Text>
+                </Hyperlink>
                 <View style={styles.messageDetails}>
                     <Text style={styles.userId}>{' ' + item.user_nick + ' '}</Text>
                     <Text style={styles.date}>
@@ -103,6 +106,7 @@ GenericChat = ({ navigation, route }) => {
         if (!tempMessage.message.replace(/\s/g, '').length || !auth().currentUser) {
             setNewMessage('');
         } else {
+            
             firestore()
                 .collection('chats')
                 .doc('reporters')
