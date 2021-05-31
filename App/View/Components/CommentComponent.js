@@ -21,7 +21,7 @@ export default function CommentComponent({ data, art_id, isAdmin, deleteComment 
                 let autorDetailes = doc.data();
                 setName(autorDetailes.name)
                 if (autorDetailes.photo)
-                    setImageUrl({ uri: autorDetailes.photo, cache: 'force-cache' })
+                    setImageUrl({ uri: autorDetailes.photo })
             })
             .catch(error => {
                 console.log('error loading comment details', error)

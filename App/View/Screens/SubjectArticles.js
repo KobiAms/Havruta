@@ -21,17 +21,23 @@ export default function SubjectArticles({ navigation }) {
   }
 
   function articlesUpdater(art, index, length) {
-    if (!fullArticles.temp)
-      return
+    // console.log(fullArticles)
+    // if (!fullArticles.temp)
+    //   return
     fullArticles.temp[index] = art;
     fullArticles.recevied++;
     if (fullArticles.recevied == length) {
-      setFullArticles({ articles: fullArticles.temp, recevied: length });
+      setFullArticles({ articles: fullArticles.temp, temp: [], recevied: 0 });
     }
   }
 
   function getArticles(articles_from_wp) {
-    setLoading(true)
+    // setLoading(true)
+    // let promises = [];
+    // articles_from_wp.forEach(val => {
+    //   promises.push(firestore().collection('article').doc(val.id).get())
+    // })
+    // Promise.all(promises).then()
     articles_from_wp.forEach((val, i, arr) => {
       firestore()
         .collection('article')
@@ -90,8 +96,6 @@ export default function SubjectArticles({ navigation }) {
             :
             <FlatList
               data={fullArticles.articles}
-              // onEndReachedThreshold={0.2}
-              // onEndReached={() => refresh()}
               refreshControl={
                 <RefreshControl
                   refreshing={false}

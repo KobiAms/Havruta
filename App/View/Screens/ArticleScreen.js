@@ -11,6 +11,7 @@ import auth from '@react-native-firebase/auth';
 function ArticleScreen({ navigation, route }) {
   // const [data, setData] = useState([route.params.data, ...route.params.data.comments.slice().reverse()])
   const [comments, setComments] = useState(route.params.data.comments)
+  const [likes, setLikes] = useState(route.params.data.likes)
   const [loading, setLoading] = useState(false)
   const [isLiked, setIsLiked] = useState(auth().currentUser ? route.params.data.likes.includes(auth().currentUser.email) : false)
 
@@ -19,28 +20,28 @@ function ArticleScreen({ navigation, route }) {
     if (auth().currentUser) {
       setLoading(true)
       if (isLiked) {
-        firestore().collection('article').doc(data[0].art_id).update({
+        firestore().collection('article').doc(route.params.data.art_id).update({
           likes: firestore.FieldValue.arrayRemove(auth().currentUser.email)
         }).then(() => {
-          setData(prev => {
-            var index = prev[0].likes.indexOf(auth().currentUser.email);
+          setLikes(prev => {
+            var index = prev.indexOf(auth().currentUser.email);
             if (index !== -1)
-              prev[0].likes.splice(index, 1);
+              prev.splice(index, 1);
             return prev;
           })
           setIsLiked(false)
           setLoading(false)
         })
-          .catch(() => {
-            console.log('unlike failed')
+          .catch(error => {
+            console.log('unlike failed', error)
             setLoading(false)
           })
       } else {
-        firestore().collection('article').doc(data[0].art_id).update({
+        firestore().collection('article').doc(route.params.data.art_id).update({
           likes: firestore.FieldValue.arrayUnion(auth().currentUser.email)
         }).then(() => {
-          setData(prev => {
-            prev[0].likes.push(auth().currentUser.email)
+          setLikes(prev => {
+            prev.push(auth().currentUser.email)
             return prev;
           })
           setIsLiked(true)
@@ -56,8 +57,6 @@ function ArticleScreen({ navigation, route }) {
 
   // this function add comment into firestore 
   addComment = (comInput) => {
-    if (comInput.length < 5)
-      return
     if (auth().currentUser) {
       setLoading(true)
       let new_comment = {
@@ -65,6 +64,7 @@ function ArticleScreen({ navigation, route }) {
         user_id: auth().currentUser.email,
         timestamp: firestore.Timestamp.fromDate(new Date())
       }
+      console.log('add comment: ', comInput)
       firestore().collection('article').doc(route.params.data.art_id).update({
         comments: firestore.FieldValue.arrayUnion(new_comment),
       }).then(() => {
@@ -78,6 +78,8 @@ function ArticleScreen({ navigation, route }) {
           console.log('addComment failed', error)
           setLoading(false)
         })
+    } else {
+      Alert.alert('this option open only to registreted users', '', []);
     }
   }
 
@@ -117,24 +119,22 @@ function ArticleScreen({ navigation, route }) {
     firestore().collection('article').doc(route.params.data.art_id).get()
       .then(doc => {
         let likes_tmp = doc.data().likes
-        if (likes_tmp.length != data[0].likes.length || doc.data().comments.length > data[0].comments.length) {
-          console.log('thre was a changes')
-          setData(prev => {
-            prev[0].likes = likes_tmp
-            let new_comments_tmp = doc.data().comments.slice(data[0].comments.length - 1).reverse()
-            let prev_cpy = prev.slice(1, 0, new_comments_tmp)
-            return prev
-          })
+        let comments_tmp = doc.data().comments
+        if (likes_tmp.length != likes.length) {
+          setLikes(likes_tmp)
+        }
+        if (comments_tmp.length != comments.length) {
+          setComments(comments_tmp)
         }
         setLoading(false)
       })
-      .catch(() => {
+      .catch(error => {
+        console.log(error)
         setLoading(false)
       })
   }
 
   useEffect(() => {
-    // when entering to the article lets check if is there any updates in the comment/likes
     refresh()
   }, [])
 
@@ -164,7 +164,7 @@ function ArticleScreen({ navigation, route }) {
           }
           renderItem={({ item, index }) => {
             if (index == 0)
-              return (<FullArticleComponent data={item} likeUpdate={updateLikes} addComment={addComment} isLiked={isLiked} />)
+              return (<FullArticleComponent data={item} likes={likes} likeUpdate={updateLikes} addComment={addComment} isLiked={isLiked} />)
             return (<CommentComponent data={item} setLoading={setLoading} art_id={route.params.data.art_id} isAdmin={route.params.user ? route.params.user.role : false} deleteComment={() => deleteComment(item, index)} />)
           }}
           keyExtractor={(item, idx) => idx}

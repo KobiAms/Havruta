@@ -5,7 +5,7 @@ import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 import Icon from 'react-native-vector-icons/AntDesign';
 import IconIos from 'react-native-vector-icons/Ionicons';
 
-export default function FullArticleComponent({ data, addComment, likeUpdate, isLiked }) {
+export default function FullArticleComponent({ data, addComment, likeUpdate, isLiked, likes }) {
     const [commentInput, setCommentInput] = useState('')
     return (
         <View>
@@ -27,7 +27,7 @@ export default function FullArticleComponent({ data, addComment, likeUpdate, isL
             >
                 <TouchableOpacity style={styles.row} onPress={() => likeUpdate()}>
                     <Icon name={isLiked ? 'dislike1' : 'like1'} size={20} style={styles.pad} color={isLiked ? 'rgb(120,90,140)' : '#000'} />
-                    <Text style={{ color: isLiked ? 'rgb(120,90,140)' : '#000' }}>likes: {data.likes.length}</Text>
+                    <Text style={{ color: isLiked ? 'rgb(120,90,140)' : '#000' }}>likes: {likes.length}</Text>
                 </TouchableOpacity>
                 <Text>comments: {data.comments ? data.comments.length : 0}</Text>
             </View>
@@ -40,6 +40,8 @@ export default function FullArticleComponent({ data, addComment, likeUpdate, isL
                 />
                 <TouchableOpacity
                     onPress={() => {
+                        if (commentInput.length == 0)
+                            return;
                         addComment(commentInput)
                         setCommentInput('')
                     }}>
