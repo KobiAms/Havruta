@@ -75,7 +75,7 @@ ChatMessage = ({ item }) => {
 
 GenericChat = ({ navigation, route }) => {
     const [newMessage, setNewMessage] = useState('');
-    const [chat_data, set_chat_data] = useState({});
+    const [chat_data, set_chat_data] = useState([]);
     const [user, setUser] = useState();
     const [chat_name, set_chat_name] = useState('');
     const [loadingMore, set_loading_more] = useState(false);
