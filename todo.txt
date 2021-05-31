@@ -11,19 +11,20 @@ in GenericChat
 3.scroll to bottom at first
 
 in ArticleScreen
-4.insert new comment into firestore
-5.get user avatar for each comment
-6.insert or remove user_id to likes[] onPress in ArticleScreen.js line 88
+4.insert new comment into firestore - V
+5.get user avatar for each comment - V
+6.insert or remove user_id to likes[] onPress in ArticleScreen.js line 88 - V
+7. comment delete by admin
 
 in ManageUser.js
 7. implement changing role of admin and user. - V
 8. add block field in user collection in firestore. - using bulidin fb block server side - fb function - X
 9. implement delele user button. - using bulidin fb delete server side fb function - X
-10. get the user avatar
+10. get the user avatar - V
 
 in UserForm.js 
 11. implement the edit fucntion - V
-12. fix issue of keyboard hiding the about text input
+12. fix issue of keyboard hiding the about text input - V
 
 in Other Screen 
 13. more chats section

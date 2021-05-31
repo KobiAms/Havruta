@@ -29,7 +29,7 @@ export default ManageUser = ({ navigation, route }) => {
     const [userDOB, setuserDOB] = useState();
     const [userAbout, setUserAbout] = useState();
     const [loading, setLoading] = useState(false);
-    const [userAvatar, setUserAvatar] = useState();
+    const [userAvatar, setUserAvatar] = useState(route.params.data.photo ? { uri: route.params.data.photo } : require('../../Assets/POWERPNT_frXVLHdxnI.png'));
     const [userRole, setuserRole] = useState('');
 
     const toggleAdmin = () => {
