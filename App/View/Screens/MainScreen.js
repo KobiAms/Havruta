@@ -7,6 +7,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Dimensions,
+  ScrollView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import HTMLView from 'react-native-htmlview';
@@ -15,31 +16,50 @@ import axios from 'axios'
 import { useWindowDimensions } from 'react-native';
 import { ActivityIndicator } from 'react-native';
 
-let baseURL = 'https://havruta.org.il/wp-json'
+
 
 function MainScreen({ navigation, route }) {
-  const [news, setNews] = useState('');
+
+  // const [len, setLen] = useState(0);
+  const [newser, setNewser] = useState([]);
+  const [news, setNews] = useState();
 
   function Post() {
-    let api = axios.create({ baseURL });
-    getArticles = async () => {
-      let articles = await api.get('/wp/v2/posts?categories=388');
-      // console.log(articles.data[0].id)
-      // console.log(articles.data[0].excerpt.rendered)
-      setNews(articles.data[0].content.rendered);
-      // console.log(articles.data[0].content.rendered);
-    }
+    // const [news, setNews] = useState();
+    // const baseURL = 'https://havruta.org.il/wp-json'
+    // let api = axios.create({ baseURL });
 
-    useEffect(() => {
-      getArticles();
-    }, [])
+    // async function getArticles() {
+    //   let articles = await api.get('/wp/v2/posts?categories=388');
+    //   let arr = [];
+    //   for (let i = 0; i < articles.data.length; i++) {
+    //     let obj = {
+    //       id: articles.data[i].id,
+    //       content: articles.data[i].content.rendered,
+    //       short: articles.data[i].excerpt.rendered,
+    //       date: articles.data[i].date,
+    //       autor: articles.data[i].author,
+    //       headline: articles.data[i].title.rendered,
+    //     }
+    //     arr.push(obj)
+    //   }
+    //   setNews(arr);
+    //   return;
+    // };
+
+    // useEffect(() => {
+    //   getArticles()
+    // }, [setNews])
 
     const contentwidth = useWindowDimensions().width;
 
     return (
       <View>
-        <Text>Alice</Text>
+        {/* <TouchableOpacity onPress={() => console.log(news)}><Text>Alice</Text></TouchableOpacity>
         <HTMLView value={news} contentWidth={contentwidth} />
+        <Text>{news}</Text> */}
+        {/* <TouchableOpacity style={{ width: 100, height: 100, backgroundColor: '#0f5' }}
+          onPress={console.log(news)}></TouchableOpacity> */}
       </View>
     )
   }
