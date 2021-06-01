@@ -6,11 +6,15 @@ import PostInFeed from './PostInFeed';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import { RefreshControl } from 'react-native';
+import axios from 'axios'
 
 export default function SubjectArticles({ navigation }) {
   const [fullArticles, setFullArticles] = useState({ articles: [], temp: [], recevied: 0 });
   const [user, setUser] = useState();
   const [loading, setLoading] = useState(false)
+  const [news, setNews] = useState();
+  const baseURL = 'https://havruta.org.il/wp-json'
+  let api = axios.create({ baseURL });
 
   function onAuthStateChanged(user) {
     setUser(user);
@@ -55,22 +59,50 @@ export default function SubjectArticles({ navigation }) {
     })
   }
 
-  useEffect(() => {
-    getArticles(articles_wp)
-    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    if (auth().currentUser) {
-      firestore()
-        .collection('users')
-        .doc(auth().currentUser.email)
-        .get().then(doc => {
-          if (!doc) return;
-          let userDetails = doc.data();
-          setUser(userDetails);
-        })
-        .catch()
+  /****================ wordpress async start here ==============*******/
+
+  async function getArticlesAsync() {
+    let articles = await api.get('/wp/v2/posts?categories=388');
+    let arr = [];
+    for (let i = 0; i < articles.data.length; i++) {
+      let obj = {
+        id: articles.data[i].id,
+        content: articles.data[i].content.rendered,
+        short: articles.data[i].excerpt.rendered,
+        date: articles.data[i].date,
+        autor: articles.data[i].author,
+        headline: articles.data[i].title.rendered,
+      }
+      arr.push(obj)
     }
-    return subscriber;
+    setNews(arr);
+    return;
+  };
+
+  useEffect(() => {
+    getArticlesAsync()
   }, [])
+
+  /*******===== async ends here =============*************** */
+
+  useEffect(() => {
+    if (news) {
+      getArticles(news)
+      const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+      if (auth().currentUser) {
+        firestore()
+          .collection('users')
+          .doc(auth().currentUser.email)
+          .get().then(doc => {
+            if (!doc) return;
+            let userDetails = doc.data();
+            setUser(userDetails);
+          })
+          .catch()
+      }
+      return subscriber;
+    }
+  }, [setNews])
 
 
   return (
