@@ -79,7 +79,7 @@ export default ManageUser = ({ navigation, route }) => {
             })
     };
 
-    delete_user = () => {
+    function delete_user() {
         Alert.alert(
             'Delete User Permanently!',
             'Are you sure?',
@@ -110,6 +110,7 @@ export default ManageUser = ({ navigation, route }) => {
         setUserEmail(route.params.data.email);
         setuserRole(route.params.data.role);
         setIsAdmin(route.params.data.role === 'admin')
+        setIsRepoter(route.params.data.role === 'reporter')
         if (route.params.data.dob) {
             let DAT = new Date((7200 + route.params.data.dob.seconds) * 1000);
             /*//times go by sec GMT, so in order to get the right date, need to add 2 hours and mult by 1000 in nanosec*/
