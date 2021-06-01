@@ -4,14 +4,20 @@ import { Avatar } from 'react-native-elements';
 import firestore from '@react-native-firebase/firestore';
 import { TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/EvilIcons'
-import { Alert } from 'react-native';
+
+const colors = ['#fff', '#f99', '#9ff', '#f9f', '#ff9', '#9f9', '#99f', '#999', '#fff'];
+
+function getRandomColor() {
+    let rand = Math.floor(Math.random() * 8);
+    return colors[rand]
+}
 
 
-
-export default function CommentComponent({ data, art_id, isAdmin, deleteComment }) {
+export default function CommentComponent({ data, isAdmin, deleteComment }) {
     // const [autorData, setAutorData] = useState(data)
     const [name, setName] = useState('Loading...')
-    const [imageUrl, setImageUrl] = useState(require('../../Assets/POWERPNT_frXVLHdxnI.png'))
+    const [imageUrl, setImageUrl] = useState(require('../../Assets/logo.png'))
+
 
 
 
@@ -20,8 +26,8 @@ export default function CommentComponent({ data, art_id, isAdmin, deleteComment 
             .then(doc => {
                 let autorDetailes = doc.data();
                 setName(autorDetailes.name)
-                if (autorDetailes.photo)
-                    setImageUrl({ uri: autorDetailes.photo })
+                // if (autorDetailes.photo)
+                //     setImageUrl({ uri: autorDetailes.photo })
             })
             .catch(error => {
                 console.log('error loading comment details', error)
@@ -36,7 +42,7 @@ export default function CommentComponent({ data, art_id, isAdmin, deleteComment 
                     rounded
                     title={name[0]}
                     source={imageUrl}
-                    containerStyle={{ backgroundColor: 'rgb(140,150,180)' }}
+                    containerStyle={{ backgroundColor: getRandomColor() }}
                     onPress={() => { console.log(name) }}
                 />
             </View>

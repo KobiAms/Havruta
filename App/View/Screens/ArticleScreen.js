@@ -94,7 +94,6 @@ function ArticleScreen({ navigation, route }) {
       {
         text: "OK",
         onPress: () => {
-          console.log(comment_to_delete)
           setLoading(true)
           firestore().collection('article').doc(route.params.data.art_id).update({
             comments: firestore.FieldValue.arrayRemove(comment_to_delete)
@@ -102,7 +101,8 @@ function ArticleScreen({ navigation, route }) {
             .then(() => {
               setLoading(false)
               setComments(prev => {
-                prev.splice(index, 1)
+                delete prev[index]
+                console.log(prev)
                 return prev
               })
             })
@@ -164,7 +164,7 @@ function ArticleScreen({ navigation, route }) {
           }
           renderItem={({ item, index }) => {
             if (index == 0)
-              return (<FullArticleComponent data={item} likes={likes} likeUpdate={updateLikes} addComment={addComment} isLiked={isLiked} />)
+              return (<FullArticleComponent data={item} likes={likes} likeUpdate={updateLikes} addComment={addComment} isLiked={isLiked} isRegister={auth().currentUser} />)
             return (<CommentComponent data={item} setLoading={setLoading} art_id={route.params.data.art_id} isAdmin={route.params.user ? route.params.user.role : false} deleteComment={() => deleteComment(item, index)} />)
           }}
           keyExtractor={(item, idx) => idx}

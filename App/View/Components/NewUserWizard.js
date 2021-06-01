@@ -5,6 +5,8 @@ import {
     StyleSheet,
     TouchableOpacity,
     Dimensions,
+    Keyboard,
+    TouchableWithoutFeedback
 } from 'react-native';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import firestore from '@react-native-firebase/firestore';
@@ -60,37 +62,41 @@ export default function NewUserWizard() {
         return subscriber
     }, [setuserName])
     return (
-        <View style={styles.main}>
-            <DateTimePickerModal
-                isVisible={isDatePickerVisible}
-                mode="date"
-                date={editDate}
-                onConfirm={handleDateConfirm}
-                onCancel={() => setDatePickerVisibility(false)}
-            />
-            <Text style={{ fontSize: 24, fontWeight: 'bold', margin: 10 }}>Welcome {userName}!</Text>
-            <Text style={{ fontSize: 18, alignSelf: 'center' }}>It is great having you in our comunity. please fill in your information so we can get to know you better.</Text>
-            <View style={{ margin: 10, alignItems: 'center' }}>
-                <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>Please chose your date of birth:</Text>
-                <TouchableOpacity onPress={() => setDatePickerVisibility(true)} style={styles.editable}>
-                    <Text style={{ fontSize: 18 }}>{userDOB}</Text>
-                </TouchableOpacity>
-            </View>
 
-            <View style={{ margin: 10, alignSelf: 'center' }}>
-                <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>Please tell us about yourself. note that other users can see it.</Text>
-                <AutoGrowingTextInput
-                    style={styles.editable}
-                    value={editAbout}
-                    onChangeText={setEditAbout}
-                    placeholder={'Add your about here...'} />
-            </View>
-            <TouchableOpacity
-                style={styles.submit}
-                onPress={() => setSubmit()}>
-                <Text style={{ fontSize: 22, color: '#000', fontWeight: 'bold' }}>Submit</Text>
-            </TouchableOpacity>
-        </View >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+
+            <View style={styles.main}>
+                <DateTimePickerModal
+                    isVisible={isDatePickerVisible}
+                    mode="date"
+                    date={editDate}
+                    onConfirm={handleDateConfirm}
+                    onCancel={() => setDatePickerVisibility(false)}
+                />
+                <Text style={{ fontSize: 24, fontWeight: 'bold', margin: 10 }}>Welcome {userName}!</Text>
+                <Text style={{ fontSize: 18, alignSelf: 'center' }}>It is great having you in our comunity. please fill in your information so we can get to know you better.</Text>
+                <View style={{ margin: 10, alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>Please chose your date of birth:</Text>
+                    <TouchableOpacity onPress={() => setDatePickerVisibility(true)} style={styles.editable}>
+                        <Text style={{ fontSize: 18 }}>{userDOB}</Text>
+                    </TouchableOpacity>
+                </View>
+
+                <View style={{ margin: 10, alignSelf: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>Please tell us about yourself. note that other users can see it.</Text>
+                    <AutoGrowingTextInput
+                        style={styles.editable}
+                        value={editAbout}
+                        onChangeText={setEditAbout}
+                        placeholder={'Add your about here...'} />
+                </View>
+                <TouchableOpacity
+                    style={styles.submit}
+                    onPress={() => setSubmit()}>
+                    <Text style={{ fontSize: 22, color: '#000', fontWeight: 'bold' }}>Submit</Text>
+                </TouchableOpacity>
+            </View >
+        </TouchableWithoutFeedback>
     )
 }
 const styles = StyleSheet.create({

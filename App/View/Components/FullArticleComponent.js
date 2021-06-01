@@ -5,7 +5,7 @@ import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 import Icon from 'react-native-vector-icons/AntDesign';
 import IconIos from 'react-native-vector-icons/Ionicons';
 
-export default function FullArticleComponent({ data, addComment, likeUpdate, isLiked, likes }) {
+export default function FullArticleComponent({ data, addComment, likeUpdate, isLiked, likes, isRegister }) {
     const [commentInput, setCommentInput] = useState('')
     return (
         <View>
@@ -25,7 +25,9 @@ export default function FullArticleComponent({ data, addComment, likeUpdate, isL
             <View
                 style={[styles.response, { padding: 15, paddingTop: 5, paddingBottom: 5 }]} /** displays the amount of likes and comments */
             >
-                <TouchableOpacity style={styles.row} onPress={() => likeUpdate()}>
+                <TouchableOpacity
+                    style={styles.row}
+                    onPress={isRegister ? () => likeUpdate() : null}>
                     <Icon name={isLiked ? 'dislike1' : 'like1'} size={20} style={styles.pad} color={isLiked ? 'rgb(120,90,140)' : '#000'} />
                     <Text style={{ color: isLiked ? 'rgb(120,90,140)' : '#000' }}>likes: {likes.length}</Text>
                 </TouchableOpacity>
@@ -33,10 +35,11 @@ export default function FullArticleComponent({ data, addComment, likeUpdate, isL
             </View>
             <View style={styles.new_comment_box} /** text input to add new comment */>
                 <AutoGrowingTextInput
-                    placeholder={'Add your comment...'}
-                    style={styles.input}
+                    placeholder={isRegister ? 'Add your comment...' : 'comments avilable to register users only'}
+                    style={[styles.input, isRegister ? null : { backgroundColor: '#ddd' }]}
                     onChangeText={setCommentInput}
                     value={commentInput}
+                    editable={isRegister ? true : false}
                 />
                 <TouchableOpacity
                     onPress={() => {
