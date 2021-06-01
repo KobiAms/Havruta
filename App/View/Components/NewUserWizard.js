@@ -64,7 +64,6 @@ export default function NewUserWizard() {
     return (
 
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-
             <View style={styles.main}>
                 <DateTimePickerModal
                     isVisible={isDatePickerVisible}
@@ -122,7 +121,7 @@ const styles = StyleSheet.create({
         padding: 8,
     },
     submit: {
-        backgroundColor: 'rgb(0,240,50)',
+        backgroundColor: 'rgb(90,180,255)',
         width: Dimensions.get('screen').width * (85 / 100),
         alignItems: 'center',
         borderRadius: 50,
