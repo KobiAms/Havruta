@@ -19,7 +19,8 @@ in MainScreen
     show the top 5 from any subject required
 
 in subjectArticle
-    admin can lock & unlock article likes/comment 
+    fix load from wordpress and display on screen.
+    admin can lock & unlock article likes/comment.
 
 
 ---------- ========== done ========== ----------:
@@ -30,6 +31,7 @@ in UserForm:
 in ManageUser:
     implement changing role of admin and user. - V
     get the user avatar - V
+    fix issue when entering to a reporter profile, the reporter button is off - V
 
 in ArticleScreen
     insert new comment into firestore - V
