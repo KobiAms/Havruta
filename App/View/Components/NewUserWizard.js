@@ -92,7 +92,7 @@ export default function NewUserWizard() {
                 <TouchableOpacity
                     style={styles.submit}
                     onPress={() => setSubmit()}>
-                    <Text style={{ fontSize: 22, color: '#000', fontWeight: 'bold' }}>Submit</Text>
+                    <Text style={{ fontSize: 22, color: '#fff', fontWeight: 'bold' }}>Submit</Text>
                 </TouchableOpacity>
             </View >
         </TouchableWithoutFeedback>
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
         padding: 8,
     },
     submit: {
-        backgroundColor: 'rgb(90,180,255)',
+        backgroundColor: 'rgb(40,120,190)',
         width: Dimensions.get('screen').width * (85 / 100),
         alignItems: 'center',
         borderRadius: 50,
