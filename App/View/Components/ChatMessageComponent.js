@@ -22,8 +22,8 @@ export default function ChatMessageComponent({item}){
         .then(doc => {
             let autorDetailes = doc.data();
             setName(autorDetailes.name)
-            if (autorDetailes.photo)
-                setImageUrl({ uri: autorDetailes.photo })
+            // if (autorDetailes.photo)
+            //     setImageUrl({ uri: autorDetailes.photo })
         })
         .catch(error => {
             console.log('error loading comment details', error)

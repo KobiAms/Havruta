@@ -10,7 +10,8 @@ import {
     ActivityIndicator,
     TouchableOpacity,
     RefreshControl,
-    Dimensions
+    Dimensions,
+    Alert
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
@@ -46,7 +47,31 @@ GenericChat = ({ navigation, route }) => {
         setRefreshing(true);
         wait(1000).then(() => setRefreshing(false));
     }, []);
-
+    
+    deleteMsg = (item) => {
+        if(auth().currentUser.email === item.user_id || user.role === "admin"){
+        Alert.alert(
+            "Alert Title",
+            "My Alert Msg",
+            [
+              {
+                text:"DELETE",
+                onPress: () => {firestore().collection('chats').doc('reporters').update({ messages: firestore.FieldValue.arrayRemove(item)})
+                Alert.alert("Message Deleted")},
+                style:"accept",
+                },
+              {
+                text: "Cancel",
+                style: "cancel",
+              },
+            ],
+            {
+              cancelable: true,
+            }
+          );
+        }
+            
+    },
     //this function is used when we wanna send msg on the chat. first we check the the msg content exist in order the prevent from sending
     // empty msgs to the server.
     // after we verify that the msg is decent we update our data base with the new msgs
@@ -145,12 +170,14 @@ GenericChat = ({ navigation, route }) => {
                     keyExtractor={(item, index) => index}
                     ListFooterComponent={() => !endReached && <ListFooterComponent />}
                     renderItem={({ item }) => (
+                        <TouchableOpacity onLongPress={()=>deleteMsg(item)}>
                         <ChatMessage
                             item={item}
                             refreshControl={
                                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                             }
                         />
+                        </TouchableOpacity>
                     )}
                 />
                 {user ? (
