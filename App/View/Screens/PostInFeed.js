@@ -2,78 +2,58 @@
 import React, { useEffect, useState } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
-import firestore from '@react-native-firebase/firestore';
+import IconF from 'react-native-vector-icons/Fontisto';
 import auth from '@react-native-firebase/auth';
+import { TouchableWithoutFeedback } from 'react-native';
 
 
-function PostInFeed({ onPress, data }) {
+function PostInFeed({ onPress, data, isAdmin }) {
   const [postData, setPostData] = useState(data)
   const [isLiked, setIsLiked] = useState(auth().currentUser ? data.likes.includes(auth().currentUser.email) : false)
-  // let { autor, date, headline, comments, likes, contant } = data;
 
   return (
-    <View style={styles.main}>
-      <View style={styles.row}>
-        <View>
-          <Text style={styles.autor}>{postData.autor}</Text>
-          <Text>{postData.date}</Text>
+    <TouchableWithoutFeedback onPress={() => onPress()} data={postData}>
+      <View style={styles.main}>
+        <View style={styles.row}>
+          <View>
+            {/* <Text style={styles.autor}>{postData.autor}</Text> */}
+            <Text>{postData.date}</Text>
+          </View>
+          {
+            isAdmin ?
+              <TouchableOpacity>
+                <IconF name={data.lock ? 'locked' : 'unlocked'} color={data.lock ? 'red' : 'green'} size={20} />
+              </TouchableOpacity>
+              :
+              null
+          }
         </View>
-      </View>
 
-      <Text onPress={() => onPress()} data={postData} style={styles.headline}>
-        {postData.headline}
-        {'\n'}
-      </Text>
-      <Text onPress={() => onPress()} data={postData}>
-        {postData.contant}
-      </Text>
-      <View style={styles.line} />
-      <View style={styles.response}>
-        <TouchableOpacity style={styles.row} onPress={() => {
-          onPress()
-          // if (auth().currentUser) {
-          //   console.log(postData.art_id)
-          //   if (isLiked) {
-          //     console.log('unlike')
-          //     firestore().collection('article').doc(postData.art_id).update({
-          //       likes: firestore.FieldValue.arrayRemove(auth().currentUser.email)
-          //     }).then(() => {
-          //       setPostData(prev => {
-          //         var index = prev.likes.indexOf(auth().currentUser.email);
-          //         if (index !== -1)
-          //           prev.likes.splice(index, 1);
-          //         return prev;
-          //       })
-          //       setIsLiked(false)
-          //     })
-          //       .catch(() => {
-          //         console.log('unlike failed')
-          //       })
-          //   } else {
-          //     console.log('like')
-          //     firestore().collection('article').doc(postData.art_id).update({
-          //       likes: firestore.FieldValue.arrayUnion(auth().currentUser.email)
-          //     }).then(() => {
-          //       setPostData(prev => {
-          //         prev.likes.push(auth().currentUser.email)
-          //         return prev;
-          //       })
-          //       setIsLiked(true)
-          //     })
-          //       .catch(() => {
-          //         console.log('like failed')
-          //       })
-          //   }
-          // }
-        }}>
-          <Icon name={isLiked ? 'dislike1' : 'like1'} size={20} style={styles.pad} color={isLiked ? 'rgb(120,90,140)' : '#000'} />
-          <Text style={{ color: isLiked ? 'rgb(120,90,140)' : '#000' }}>likes: {postData.likes.length}</Text>
-        </TouchableOpacity>
-        <Text onPress={() => onPress()} data={postData}>
-          comments: {postData.comments ? postData.comments.length : 0}
+        <Text style={styles.headline}>
+          {postData.headline}
+          {'\n'}
         </Text>
+        <Text >
+          {postData.contant}
+        </Text>
+        {
+          postData.full ?
+            <View>
+              <View style={styles.line} />
+              <View style={styles.response}>
+                <View style={styles.row}>
+                  <Icon name={'like1'} size={20} style={styles.pad} color={isLiked ? 'rgb(120,90,140)' : '#000'} />
+                  <Text style={{ color: isLiked ? 'rgb(120,90,140)' : '#000' }}>likes: {postData.likes.length}</Text>
+                </View>
+                <Text >
+                  comments: {postData.comments ? postData.comments.length : 0}
+                </Text>
+              </View>
+            </View>
+            : null
+        }
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -108,6 +88,7 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
+    justifyContent: 'space-between'
   },
   response: {
     flexDirection: 'row',

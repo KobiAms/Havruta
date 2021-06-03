@@ -73,10 +73,10 @@ function MainScreen({ navigation, route }) {
           <View
             style={[styles.back_button, { backgroundColor: '#fffffff' }]}
           >
-            {!news ?
+            {/* {!news ?
               <ActivityIndicator color={'black'} size={'large'} />
               : null
-            }
+            } */}
           </View>
           <Text style={styles.screen_title}>Havruta</Text>
           <TouchableOpacity

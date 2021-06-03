@@ -5,6 +5,7 @@ import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 import Icon from 'react-native-vector-icons/AntDesign';
 import IconIos from 'react-native-vector-icons/Ionicons';
 
+
 export default function FullArticleComponent({ data, addComment, likeUpdate, isLiked, likes, isRegister }) {
     const [commentInput, setCommentInput] = useState('')
     return (
@@ -21,38 +22,43 @@ export default function FullArticleComponent({ data, addComment, likeUpdate, isL
                     <Text>{data.contant}</Text>
                 </View>
             </View>
-            <View style={styles.line} />
-            <View
-                style={[styles.response, { padding: 15, paddingTop: 5, paddingBottom: 5 }]} /** displays the amount of likes and comments */
-            >
-                <TouchableOpacity
-                    style={styles.row}
-                    onPress={isRegister ? () => likeUpdate() : null}>
-                    <Icon name={isLiked ? 'dislike1' : 'like1'} size={20} style={styles.pad} color={isLiked ? 'rgb(120,90,140)' : '#000'} />
-                    <Text style={{ color: isLiked ? 'rgb(120,90,140)' : '#000' }}>likes: {likes.length}</Text>
-                </TouchableOpacity>
-                <Text>comments: {data.comments ? data.comments.length : 0}</Text>
-            </View>
-            <View style={styles.new_comment_box} /** text input to add new comment */>
-                <AutoGrowingTextInput
-                    placeholder={isRegister ? 'Add your comment...' : 'comments avilable to register users only'}
-                    style={[styles.input, isRegister ? null : { backgroundColor: '#ddd' }]}
-                    onChangeText={setCommentInput}
-                    value={commentInput}
-                    editable={isRegister ? true : false}
-                />
-                <TouchableOpacity
-                    onPress={() => {
-                        if (commentInput.length == 0)
-                            return;
-                        addComment(commentInput)
-                        setCommentInput('')
-                    }}
-                    style={{ marginLeft: 10 }}
-                >
-                    <IconIos name={'send'} size={25} />
-                </TouchableOpacity>
-            </View>
+            {
+                data.full ?
+
+                    <View>
+                        <View style={styles.line} />
+                        <View
+                            style={[styles.response, { padding: 15, paddingTop: 5, paddingBottom: 5 }]} /** displays the amount of likes and comments */
+                        >
+                            <TouchableOpacity
+                                style={styles.row}
+                                onPress={isRegister ? () => likeUpdate() : null}>
+                                <Icon name={'like1'} size={20} style={styles.pad} color={isLiked ? 'rgb(120,90,140)' : '#000'} />
+                                <Text style={{ color: isLiked ? 'rgb(120,90,140)' : '#000' }}>likes: {likes.length}</Text>
+                            </TouchableOpacity>
+                            <Text>comments: {data.comments ? data.comments.length : 0}</Text>
+                        </View>
+                        <View style={styles.new_comment_box} /** text input to add new comment */>
+                            <AutoGrowingTextInput
+                                placeholder={isRegister ? 'Add your comment...' : 'comments avilable to register users only'}
+                                style={[styles.input, isRegister ? null : { backgroundColor: '#ddd' }]}
+                                onChangeText={setCommentInput}
+                                value={commentInput}
+                                editable={isRegister ? true : false}
+                            />
+                            <TouchableOpacity
+                                onPress={() => {
+                                    if (commentInput.length == 0)
+                                        return;
+                                    addComment(commentInput)
+                                    setCommentInput('')
+                                }}
+                                style={{ marginLeft: 10 }}
+                            >
+                                <IconIos name={'send'} size={25} />
+                            </TouchableOpacity>
+                        </View>
+                    </View> : null}
         </View>
     )
 }

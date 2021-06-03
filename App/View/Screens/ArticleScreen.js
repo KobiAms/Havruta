@@ -20,7 +20,7 @@ function ArticleScreen({ navigation, route }) {
     if (auth().currentUser) {
       setLoading(true)
       if (isLiked) {
-        firestore().collection('article').doc(route.params.data.art_id).update({
+        firestore().collection('article').doc(route.params.data.id).update({
           likes: firestore.FieldValue.arrayRemove(auth().currentUser.email)
         }).then(() => {
           setLikes(prev => {
@@ -37,7 +37,7 @@ function ArticleScreen({ navigation, route }) {
             setLoading(false)
           })
       } else {
-        firestore().collection('article').doc(route.params.data.art_id).update({
+        firestore().collection('article').doc(route.params.data.id).update({
           likes: firestore.FieldValue.arrayUnion(auth().currentUser.email)
         }).then(() => {
           setLikes(prev => {
@@ -65,7 +65,7 @@ function ArticleScreen({ navigation, route }) {
         timestamp: firestore.Timestamp.fromDate(new Date())
       }
       console.log('add comment: ', comInput)
-      firestore().collection('article').doc(route.params.data.art_id).update({
+      firestore().collection('article').doc(route.params.data.id).update({
         comments: firestore.FieldValue.arrayUnion(new_comment),
       }).then(() => {
         setComments(prev => {
@@ -95,7 +95,7 @@ function ArticleScreen({ navigation, route }) {
         text: "OK",
         onPress: () => {
           setLoading(true)
-          firestore().collection('article').doc(route.params.data.art_id).update({
+          firestore().collection('article').doc(route.params.data.id).update({
             comments: firestore.FieldValue.arrayRemove(comment_to_delete)
           })
             .then(() => {
@@ -116,8 +116,10 @@ function ArticleScreen({ navigation, route }) {
 
   function refresh() {
     setLoading(true)
-    firestore().collection('article').doc(route.params.data.art_id).get()
+    firestore().collection('article').doc(route.params.data.id).get()
       .then(doc => {
+        if (!doc.data())
+          return
         let likes_tmp = doc.data().likes
         let comments_tmp = doc.data().comments
         if (likes_tmp.length != likes.length) {
@@ -165,7 +167,7 @@ function ArticleScreen({ navigation, route }) {
           renderItem={({ item, index }) => {
             if (index == 0)
               return (<FullArticleComponent data={item} likes={likes} likeUpdate={updateLikes} addComment={addComment} isLiked={isLiked} isRegister={auth().currentUser} />)
-            return (<CommentComponent data={item} setLoading={setLoading} art_id={route.params.data.art_id} isAdmin={route.params.user ? route.params.user.role : false} deleteComment={() => deleteComment(item, index)} />)
+            return (<CommentComponent data={item} setLoading={setLoading} id={route.params.data.id} isAdmin={route.params.user ? route.params.user.role : false} deleteComment={() => deleteComment(item, index)} />)
           }}
           keyExtractor={(item, idx) => idx}
         />
