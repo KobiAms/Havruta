@@ -123,25 +123,6 @@ export default ManageUser = ({ navigation, route }) => {
         <View style={styles.main}>
             <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
             <View style={styles.main}>
-                <View style={styles.header}>
-                    <TouchableOpacity
-                        style={styles.back_button}
-                        onPress={() => navigation.goBack()}>
-                        <Icon name={'arrow-left'} size={20} />
-                    </TouchableOpacity>
-                    <Text style={styles.screen_title}>Havruta</Text>
-                    <View
-                        style={[styles.back_button, { backgroundColor: '#fffffff' }]}
-                    >
-                        {loading ?
-                            <ActivityIndicator color={'black'} size={'large'} />
-                            : null
-                        }
-                    </View>
-
-                </View>
-
-
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <View style={styles.aview}>
                         <Image source={userAvatar} style={{ width: '100%', height: '100%' }} />

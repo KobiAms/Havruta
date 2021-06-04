@@ -35,31 +35,36 @@ export default function NewUserWizard() {
             firestore().collection('users').doc(auth().currentUser.email)
                 .update({
                     about: editAbout,
-                    dob: firestore.Timestamp.fromDate(editDate)
+                    dob: firestore.Timestamp.fromDate(editDate),
+                    isNew: false
                 })
-                .then()
+                .then(() => {
+                    console.log("old user")
+                })
                 .catch(err => {
                     console.log(err.code);
                 })
         }
     }
-    useEffect(() => {
-        const subscriber = firestore()
-            .collection('users')
-            .doc(auth().currentUser.email)
-            .get()
-            .then(doc => {
-                if (!doc.data()) {
-                    return;
-                }
-                setuserName(doc.data().name);
-                setuserDOB(dateToReadbleFormat(doc.data().dob.toDate()))
-                setEditDate(doc.data().dob.toDate())
-                auth().currentUser.updateProfile({ displayName: userName })
-            })
-            .catch(err => console.log(err.code))
 
-        return subscriber
+    useEffect(() => {
+        if (auth().currentUser) {
+            const subscriber = firestore()
+                .collection('users')
+                .doc(auth().currentUser.email)
+                .get()
+                .then(doc => {
+                    if (!doc.data()) {
+                        return;
+                    }
+                    setuserName(doc.data().name);
+                    setuserDOB(dateToReadbleFormat(doc.data().dob.toDate()))
+                    setEditDate(doc.data().dob.toDate())
+                    auth().currentUser.updateProfile({ displayName: userName })
+                })
+                .catch(err => console.log(err.code))
+            return subscriber
+        }
     }, [setuserName])
     return (
 

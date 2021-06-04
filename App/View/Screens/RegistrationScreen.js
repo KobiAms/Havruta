@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import IconIC from 'react-native-vector-icons/Ionicons';
@@ -28,27 +28,26 @@ RegistrationScreen = ({ navigation }) => {
     return auth().signInWithCredential(googleCredential);
   };
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <View
+          style={[styles.loading_comp, { backgroundColor: '#fffffff' }]}
+        >
+          {loading ?
+            <ActivityIndicator color={'black'} size={'small'} />
+            : null
+          }
+        </View>
+      ),
+    });
+  }, [navigation])
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.main}>
         <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
         <SafeAreaView style={styles.main}>
-          <View style={styles.header}>
-            <TouchableOpacity
-              style={styles.back_button}
-              onPress={() => navigation.goBack()}>
-              <Icon name={'arrow-left'} size={20} />
-            </TouchableOpacity>
-            <Text style={styles.screen_title}>Havruta</Text>
-            <View
-              style={[styles.back_button, { backgroundColor: '#fffffff' }]}
-            >
-              {loading ?
-                <ActivityIndicator color={'black'} size={'large'} />
-                : null
-              }
-            </View>
-          </View>
           {user ? (
             <UserForm style={{ flex: 1 }} setUser={setUser} navigation={navigation} setLoading={setLoading} />
           ) : (
@@ -135,13 +134,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'rgb(0,127,255)',
   },
-  back_button: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#ffffff',
-    alignItems: 'center',
-    justifyContent: 'center',
+  loading_comp: {
+    padding: 5,
+    paddingRight: 20,
+    paddingLeft: 20,
+    borderRadius: 15,
+    overflow: 'hidden'
   },
   body: {
     height: Dimensions.get('screen').height * (9 / 10),

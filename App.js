@@ -5,16 +5,26 @@ import {
 } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import GenericFeed from './App/View/Screens/GenericFeed';
+// import GenericFeed from './App/View/Screens/GenericFeed';
 import OtherScreen from './App/View/Screens/OtherScreen';
 import GenericChat from './App/View/Screens/GenericChat';
 import MainScreen from './App/View/Screens/MainScreen';
+
+
+import Wizard from './App/View/Components/NewUserWizard'
+import SubjectArticles from './App/View/Screens/SubjectArticles'
+import ArticleScreen from './App/View/Screens/ArticleScreen'
+import auth from '@react-native-firebase/auth'
+
+
 import RegistrationScreen from './App/View/Screens/RegistrationScreen';
 import ManageUsers from './App/View/Components/ManageUsers';
 import ManageUser from './App/View/Components/ManageUser';
+import { View } from 'react-native';
+import { Image } from 'react-native';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -26,7 +36,7 @@ const hide_tab_bar_screens = [
   'ArticleScreen',
 ];
 
-App = () => {
+MainScreenNavigator = () => {
   const getTabBarVisibility = route => {
     const routeName = getFocusedRouteNameFromRoute(route);
     if (hide_tab_bar_screens.includes(routeName)) {
@@ -34,42 +44,76 @@ App = () => {
     }
     return true;
   };
-
   return (
-    <SafeAreaProvider style={{ height: '100%', width: '100%' }}>
-      <NavigationContainer>
-        <Tab.Navigator>
-          <Tab.Screen name="MainScreen" component={MainScreenNavigator}
-            options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="file-contract" size={25} color={color} />), })} />
-          <Tab.Screen name="Gays" component={GenericFeed}
-            options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="transgender" size={25} color={color} />), })} />
-          <Tab.Screen name="Reporters" component={GenericChat}
-            options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="comment-alt" size={25} color={color} />), })} />
-          <Tab.Screen name="Judaism" component={GenericFeed}
-            options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="torah" size={25} color={color} />), })} />
-          <Tab.Screen name="Other" component={OtherScreen}
-            options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="bars" size={25} color={color} />), })} />
-        </Tab.Navigator>
-      </NavigationContainer>
-    </SafeAreaProvider>
+    <Tab.Navigator>
+      <Tab.Screen name="MainScreen" component={MainScreen}
+        options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="file-contract" size={25} color={color} />), })} />
+      <Tab.Screen name="Gays" component={SubjectArticles}
+        options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="transgender" size={25} color={color} />), })} />
+      <Tab.Screen name="Reporters" component={GenericChat}
+        options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="comment-alt" size={25} color={color} />), })} />
+      <Tab.Screen name="Judaism" component={SubjectArticles}
+        options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="torah" size={25} color={color} />), })} />
+      <Tab.Screen name="Other" component={OtherScreen}
+        options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="bars" size={25} color={color} />), })} />
+    </Tab.Navigator>
   );
 };
 
-MainScreenNavigator = () => {
+App = () => {
   return (
-    <Stack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}>
-      <Stack.Screen name="Welcome" component={MainScreen}
-        options={{ title: 'Havruta', headerStyle: { backgroundColor: 'rgb(117,25,124)', borderBottomWidth: 1, borderBottomColor: 'rgb(200,200,200)', }, headerTitleStyle: { fontWeight: 'bold', }, }} />
-      <Stack.Screen name="Registration" component={RegistrationScreen}
-        options={{ title: 'Registration', headerStyle: { borderBottomWidth: 1, borderBottomColor: 'rgb(200,200,200)', }, headerTitleStyle: { fontWeight: 'bold', }, }} />
-      <Stack.Screen name="Manage Users" component={ManageUsers}
-        options={{ title: 'Manage Users', headerStyle: { backgroundColor: 'rgb(120,90,140)', borderBottomWidth: 1, borderBottomColor: 'rgb(200,200,200)', }, headerTitleStyle: { fontWeight: 'bold', }, }} />
-      <Stack.Screen name="Manage User" component={ManageUser}
-        options={{ title: 'Manage User', headerStyle: { backgroundColor: 'rgb(120,90,140)', borderBottomWidth: 1, borderBottomColor: 'rgb(200,200,200)', }, headerTitleStyle: { fontWeight: 'bold', }, }} />
-    </Stack.Navigator>
+    <SafeAreaProvider style={{ height: '100%', width: '100%' }}>
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={{
+            headerStyle: styles.stack_header,
+            headerTitleStyle: styles.stack_title,
+            headerTintColor: '#fff'
+          }}>
+          <Stack.Screen
+            name="MainScreenNavigator"
+            component={MainScreenNavigator}
+            options={({ navigation }) => ({
+              title: 'Havruta',
+              headerRight: () => (
+                <TouchableOpacity
+                  style={styles.register}
+                  onPress={() => navigation.navigate('Registration')}>
+                  {auth().currentUser && auth().currentUser.photoURL ?
+                    <Image style={styles.user_image} source={{ uri: auth().currentUser.photoURL }} />
+                    :
+                    <Icon color={'#fff'} name={'user-alt'} size={20} />
+                  }
+                </TouchableOpacity>
+              )
+            })} />
+          <Stack.Screen
+            name="Registration"
+            component={RegistrationScreen}
+            options={{ title: 'Registration', }} />
+          <Stack.Screen
+            name="Manage Users"
+            component={ManageUsers}
+            options={{ title: 'Manage Users', }} />
+          <Stack.Screen
+            name="Manage User"
+            component={ManageUser}
+            options={{ title: 'Manage User', }} />
+          <Stack.Screen
+            name="Wizard"
+            component={Wizard}
+            options={{ title: 'Welcome', }} />
+          <Stack.Screen
+            name="SubjectArticles"
+            component={SubjectArticles}
+          />
+          <Stack.Screen
+            name="ArticleScreen"
+            component={ArticleScreen}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 };
 
@@ -80,6 +124,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  stack_header: {
+    backgroundColor: 'rgb(120,90,140)',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgb(200,200,200)',
+  },
+  stack_title: {
+    color: "#fff"
+  },
+  register: {
+    padding: 5,
+    paddingRight: 20,
+    paddingLeft: 20,
+    borderRadius: 15,
+    overflow: 'hidden'
+  },
+  user_image: {
+    height: 30,
+    width: 30,
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: '#fffa',
+    overflow: 'hidden'
+  }
 });
 
 export default App;

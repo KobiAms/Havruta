@@ -4,8 +4,10 @@ import Wizard from '../Components/NewUserWizard';
 OtherScreen = ({ navigation, route }) => {
     const feed_type = route.name
     return (
+        <View style={{ flex: 1 }}>
 
-        <Wizard />
+            <Wizard />
+        </View>
 
     )
 }

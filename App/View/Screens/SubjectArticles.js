@@ -104,19 +104,6 @@ export default function SubjectArticles({ navigation }) {
     <View style={styles.main}>
       <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
       <SafeAreaView style={styles.main}>
-        <View style={styles.header}>
-          <View
-            style={[styles.back_button, { backgroundColor: '#fffffff' }]}></View>
-          <Text style={styles.screen_title}>Havruta</Text>
-          <View
-            style={[styles.back_button, { backgroundColor: '#fffffff' }]}
-          >
-            {loading ?
-              <ActivityIndicator color={'black'} size={'small'} />
-              : null
-            }
-          </View>
-        </View>
         {
           fullArticles.length == 0 ?
             <ActivityIndicator style={{ marginTop: '30%' }} size={'large'} color={'#000'} />
@@ -131,9 +118,9 @@ export default function SubjectArticles({ navigation }) {
               }
               renderItem={({ item }) => (
                 <PostInFeed
-                  onPress={() => navigation.navigate('ArticleScreen', { data: item, user: user, idAdmin: user.role == 'admin' })}
+                  onPress={() => navigation.navigate('ArticleScreen', { data: item, user: user, idAdmin: auth().currentUser ? user.role == 'admin' : false })}
                   data={item}
-                  idAdmin={user.role == 'admin'}
+                  idAdmin={auth().currentUser ? user.role == 'admin' : false}
                 />
               )}
               keyExtractor={(item, idx) => idx}

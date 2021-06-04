@@ -1,7 +1,6 @@
 /* eslint-disable prettier/prettier */
-import React, { useEffect, useRef, useCallback, useState } from 'react';
-import { Alert, View, Text, StyleSheet, TouchableOpacity, FlatList, SafeAreaView, ActivityIndicator, RefreshControl } from 'react-native';
-import IconFAW5 from 'react-native-vector-icons/FontAwesome5';
+import React, { useEffect, useState } from 'react';
+import { Alert, View, StyleSheet, FlatList, SafeAreaView, RefreshControl } from 'react-native';
 import CommentComponent from '../Components/CommentComponent';
 import FullArticleComponent from '../Components/FullArticleComponent'
 import firestore from '@react-native-firebase/firestore';
@@ -143,17 +142,6 @@ function ArticleScreen({ navigation, route }) {
   return (
     <View style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
-      <View style={styles.header} >
-        <TouchableOpacity
-          style={styles.back_button}
-          onPress={() => navigation.goBack()}>
-          <IconFAW5 name={'arrow-left'} size={20} />
-        </TouchableOpacity>
-        <Text style={styles.screen_title}>Havruta</Text>
-        <View style={[styles.back_button, { backgroundColor: '#fffffff' }]}>
-          {loading ? <ActivityIndicator color={'black'} size={'small'} /> : null}
-        </View>
-      </View>
       <View style={{ flex: 10, paddingTop: 0, backgroundColor: 'rgb(220,220,240)' }}>
         <FlatList
           scrollIndicatorInsets={{ right: 1 }}

@@ -26,6 +26,7 @@ SignupForm = ({ setUser }) => {
             name: name,
             photo: '',
             role: 'user',
+            isNew: true
         }).then(() => {
             auth().createUserWithEmailAndPassword(email, password)
                 .then(() => {

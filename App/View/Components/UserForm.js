@@ -21,6 +21,7 @@ import IconFAW5 from 'react-native-vector-icons/FontAwesome5';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { launchImageLibrary } from 'react-native-image-picker';
 import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
+import NewUserWizard from './NewUserWizard';
 
 export default function UserForm({ setUser, navigation, setLoading }) {
   const [userRole, setUserRole] = useState();
@@ -34,6 +35,7 @@ export default function UserForm({ setUser, navigation, setLoading }) {
   const [editName, setEditName] = useState();
   const [editDate, setEditDate] = useState();
   const [editAbout, setEditAbout] = useState();
+  const [isNew, setIsNew] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
 
@@ -140,110 +142,115 @@ export default function UserForm({ setUser, navigation, setLoading }) {
         setuserDOB(dateToReadbleFormat(doc.data().dob.toDate()));
         setEditDate(doc.data().dob.toDate())
         setuserName(doc.data().name);
+        setIsNew(doc.data().isNew);
         setLoading(false);
       })
       .catch(() => { });
     return subscriber;
   }, [setUserAbout, setUserRole, setDefaultStyle, setuserName, setuserDOB]);
 
+
   return (
-    <View style={{ flex: 1 }}>
-      <ScrollView style={styles.main}>
-        <DateTimePickerModal
-          isVisible={isDatePickerVisible}
-          mode="date"
-          date={editDate}
-          onConfirm={handleDateConfirm}
-          onCancel={() => setDatePickerVisibility(false)}
-        />
-        <View style={styles.backline} />
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
-          <TouchableOpacity onPress={() => setToEditable()}>
-            <View style={{ alignItems: 'center', flexDirection: 'row', backgroundColor: '#ffffff80', padding: 5, borderRadius: 20 }}>
-              <IconFeather
-                name={editable ? 'check-square' : 'edit'}
-                color={editable ? '#008800' : '#000000'}
-                size={30}
-                style={{ margin: 5 }} />
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.aview} onPress={() => uploadNewAvatar()}>
-            <Image source={userAvatar} style={{ width: '100%', height: '100%' }} onLoadEnd={() => setLoadingAvatar(false)} />
+
+    isNew ?
+      <NewUserWizard />
+      :
+      <View style={{ flex: 1 }}>
+        <ScrollView style={styles.main}>
+          <DateTimePickerModal
+            isVisible={isDatePickerVisible}
+            mode="date"
+            date={editDate}
+            onConfirm={handleDateConfirm}
+            onCancel={() => setDatePickerVisibility(false)}
+          />
+          <View style={styles.backline} />
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
+            <TouchableOpacity onPress={() => setToEditable()}>
+              <View style={{ alignItems: 'center', flexDirection: 'row', backgroundColor: '#ffffff80', padding: 5, borderRadius: 20 }}>
+                <IconFeather
+                  name={editable ? 'check-square' : 'edit'}
+                  color={editable ? '#008800' : '#000000'}
+                  size={30}
+                  style={{ margin: 5 }} />
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.aview} onPress={() => uploadNewAvatar()}>
+              <Image source={userAvatar} style={{ width: '100%', height: '100%' }} onLoadEnd={() => setLoadingAvatar(false)} />
+              {
+                loadingAvatar ?
+                  <ActivityIndicator style={{ position: 'absolute' }} color={'#007fff'} size={'large'} />
+                  : null
+              }
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => editable ? setEditable(false) : null}>
+              <View style={{ alignItems: 'center', flexDirection: 'row', backgroundColor: '#ffffff80', padding: 5, borderRadius: 20, borderColor: '#990000', opacity: editable ? 1 : 0 }}>
+                <IconFeather
+                  name={'x-square'}
+                  color={'#990000'}
+                  size={30}
+                  style={{ margin: 5 }} />
+              </View>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.row}>
             {
-              loadingAvatar ?
-                <ActivityIndicator style={{ position: 'absolute' }} color={'#007fff'} size={'large'} />
-                : null
+              editable ?
+                <TextInput
+                  style={[styles.name, styles.editable]}
+                  value={editName}
+                  onChangeText={setEditName} />
+                :
+                <Text style={[styles.name, styles.editcont]}>{userName}</Text>
             }
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => editable ? setEditable(false) : null}>
-            <View style={{ alignItems: 'center', flexDirection: 'row', backgroundColor: '#ffffff80', padding: 5, borderRadius: 20, borderColor: '#990000', opacity: editable ? 1 : 0 }}>
-              <IconFeather
-                name={'x-square'}
-                color={'#990000'}
-                size={30}
-                style={{ margin: 5 }} />
-            </View>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.row}>
-          {
-            editable ?
-              <TextInput
-                style={[styles.name, styles.editable]}
-                value={editName}
-                onChangeText={setEditName} />
-              :
-              <Text style={[styles.name, styles.editcont]}>{userName}</Text>
-          }
-        </View>
-        <View style={styles.row}>
-          <Text style={{ fontWeight: 'bold', fontSize: 21 }}>Date of Birth:</Text>
-          {
-            editable ?
-              <TouchableOpacity onPress={() => setDatePickerVisibility(true)} style={styles.editable}>
-                <Text style={{ fontSize: 18 }}>{userDOB}</Text>
-              </TouchableOpacity>
-              :
-              <Text style={[{ fontSize: 18, padding: 4 }, styles.editcont]}>{userDOB}</Text>
-          }
-        </View>
-        <View style={{ padding: 20 }}>
-          <Text style={{ fontWeight: 'bold', fontSize: 21, paddingLeft: 8 }}>About Me:</Text>
-          {
-            editable ?
-              <AutoGrowingTextInput
-                style={[styles.editable, { fontSize: 17 }]}
-                value={editAbout}
-                onChangeText={setEditAbout} />
-              :
-              <Text style={[{ fontSize: 17, padding: 4 }, styles.editcont]}>{userAbout}</Text>
-          }
-        </View>
-
-
-
-      </ScrollView >
-      {/*the following view contain the logout / manage users buttons*/}
-      <View style={styles.chose}>
-        {userRole && userRole == 'admin' ? (
+          </View>
+          <View style={styles.row}>
+            <Text style={{ fontWeight: 'bold', fontSize: 21 }}>Date of Birth:</Text>
+            {
+              editable ?
+                <TouchableOpacity onPress={() => setDatePickerVisibility(true)} style={styles.editable}>
+                  <Text style={{ fontSize: 18 }}>{userDOB}</Text>
+                </TouchableOpacity>
+                :
+                <Text style={[{ fontSize: 18, padding: 4 }, styles.editcont]}>{userDOB}</Text>
+            }
+          </View>
+          <View style={{ padding: 20 }}>
+            <Text style={{ fontWeight: 'bold', fontSize: 21, paddingLeft: 8 }}>About Me:</Text>
+            {
+              editable ?
+                <AutoGrowingTextInput
+                  style={[styles.editable, { fontSize: 17 }]}
+                  value={editAbout}
+                  onChangeText={setEditAbout} />
+                :
+                <Text style={[{ fontSize: 17, padding: 4 }, styles.editcont]}>{userAbout}</Text>
+            }
+          </View>
+        </ScrollView >
+        {/*the following view contain the logout / manage users buttons*/}
+        <View style={styles.chose}>
+          {userRole && userRole == 'admin' ? (
+            <TouchableOpacity
+              style={styles.option}
+              onPress={() => navigation.navigate('Manage Users')}>
+              <Text style={{ color: '#000000', fontSize: 20 }}>Manage Users</Text>
+              <IconFAW5 name={'user-cog'} color={'#666666'} size={20} />
+            </TouchableOpacity>
+          ) : null}
           <TouchableOpacity
             style={styles.option}
-            onPress={() => navigation.navigate('Manage Users')}>
-            <Text style={{ color: '#000000', fontSize: 20 }}>Manage Users</Text>
-            <IconFAW5 name={'user-cog'} color={'#666666'} size={20} />
+            onPress={() =>
+              auth()
+                .signOut()
+                .then(() => setUser(auth().currentUser))
+            }>
+            <Text style={{ color: '#ff0000', fontSize: 20 }}>Log Out</Text>
+            <IconFeather name={'log-out'} color={'#ff0000'} size={20} />
           </TouchableOpacity>
-        ) : null}
-        <TouchableOpacity
-          style={styles.option}
-          onPress={() =>
-            auth()
-              .signOut()
-              .then(() => setUser(auth().currentUser))
-          }>
-          <Text style={{ color: '#ff0000', fontSize: 20 }}>Log Out</Text>
-          <IconFeather name={'log-out'} color={'#ff0000'} size={20} />
-        </TouchableOpacity>
-      </View></View>
+        </View>
+
+      </View>
   );
 }
 
