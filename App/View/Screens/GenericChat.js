@@ -10,19 +10,23 @@ import {
     ActivityIndicator,
     TouchableOpacity,
     RefreshControl,
-    Image,
-    Dimensions
+    Dimensions,
+    Alert
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { SafeAreaView } from 'react-native';
+
+import ChatMessage from '../Components/ChatMessageComponent'
 import { resolvePreset } from '@babel/core';
 import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 import { KeyboardAvoidingView } from 'react-native';
 import { StatusBar } from 'react-native';
 
-let msgToLoad = 15;
+
+
+let msgToLoad = 20;
 let msgToStart = 0;
 let endReached = false;
 let flag = false;
@@ -32,48 +36,7 @@ const ListFooterComponent = () => {
 };
 //this function dicompose the doc of the coplete chat into small object where as any object represent one msg item inside our chat
 //
-ChatMessage = ({ item }) => {
-    let date = item.date.toDate();
 
-    return (
-        <View
-            style={
-                auth().currentUser && auth().currentUser.email === item.user_id
-                    ? styles.myItemElement
-                    : styles.ItemElement
-            }>
-            <View>
-                <Image
-                    style={styles.userPhoto}
-                    source={{
-                        uri: 'https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-ios7-contact-512.png',
-                    }}></Image>
-            </View>
-            <View
-                style={
-                    auth().currentUser && auth().currentUser.email === item.user_id
-                        ? styles.myMessageBox
-                        : styles.messageBox
-                }>
-                <Text style={styles.messageStyle}>{item.message}</Text>
-                <View style={styles.messageDetails}>
-                    <Text style={styles.userId}>{' ' + item.user_nick + ' '}</Text>
-                    <Text style={styles.date}>
-                        {' ' +
-                            date.getDate() +
-                            '/' +
-                            (date.getMonth() + 1) +
-                            ' ' +
-                            (date.getHours() + 3) +
-                            ':' +
-                            ('0' + date.getMinutes()).slice(-2) +
-                            ' '}
-                    </Text>
-                </View>
-            </View>
-        </View>
-    );
-};
 
 GenericChat = ({ navigation, route }) => {
     const [newMessage, setNewMessage] = useState('');
@@ -90,14 +53,37 @@ GenericChat = ({ navigation, route }) => {
         setRefreshing(true);
         wait(1000).then(() => setRefreshing(false));
     }, []);
-
+    
+    deleteMsg = (item) => {
+        if(auth().currentUser.email === item.user_id || user.role === "admin"){
+        Alert.alert(
+            "Alert Title",
+            "My Alert Msg",
+            [
+              {
+                text:"DELETE",
+                onPress: () => {firestore().collection('chats').doc('reporters').update({ messages: firestore.FieldValue.arrayRemove(item)})
+                Alert.alert("Message Deleted")},
+                style:"accept",
+                },
+              {
+                text: "Cancel",
+                style: "cancel",
+              },
+            ],
+            {
+              cancelable: true,
+            }
+          );
+        }
+            
+    },
     //this function is used when we wanna send msg on the chat. first we check the the msg content exist in order the prevent from sending
     // empty msgs to the server.
     // after we verify that the msg is decent we update our data base with the new msgs
     sendMessage = () => {
         let tempMessage = {
             user_id: user.email,
-            user_nick: user.name,
             message: newMessage,
             date: new Date(),
         };
@@ -105,6 +91,7 @@ GenericChat = ({ navigation, route }) => {
         if (!tempMessage.message.replace(/\s/g, '').length || !auth().currentUser) {
             setNewMessage('');
         } else {
+            
             firestore()
                 .collection('chats')
                 .doc('reporters')
@@ -125,7 +112,7 @@ GenericChat = ({ navigation, route }) => {
     // we read all the chat list from the chat and we slice it into the amount of messages we want to see.
     function loadMore(chat_data) {
         set_loading_more(true);
-        msgToLoad = msgToLoad + 7;
+        msgToLoad = msgToLoad + 20;
         firestore()
             .collection('chats')
             .doc('reporters')
@@ -188,12 +175,14 @@ GenericChat = ({ navigation, route }) => {
                     keyExtractor={(item, index) => index}
                     ListFooterComponent={() => !endReached && <ListFooterComponent />}
                     renderItem={({ item }) => (
+                        <TouchableOpacity onLongPress={()=>deleteMsg(item)}>
                         <ChatMessage
                             item={item}
                             refreshControl={
                                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                             }
                         />
+                        </TouchableOpacity>
                     )}
                 />
                 {user ? (
@@ -311,60 +300,7 @@ const styles = StyleSheet.create({
         fontSize: 11,
         color: '#333333',
     },
-    messageBox: {
-        margin: 5,
-        padding: 5,
-        backgroundColor: '#fff',
-        borderColor: 'black',
-        // borderWidth: 1,
-        borderRadius: 15,
-        alignSelf: 'flex-start',
-        maxWidth: '83%',
-    },
-    myMessageBox: {
-        margin: 5,
-        padding: 5,
-        backgroundColor: 'rgb(205,255,230)',
-        borderColor: 'black',
-        // borderWidth: 1,
-        borderRadius: 15,
-        alignSelf: 'flex-start',
-        maxWidth: '83%',
-        shadowColor: "#00f",
-        shadowOffset: {
-            width: 0,
-            height: 5,
-        },
-        shadowOpacity: 0.36,
-        shadowRadius: 5,
-
-        elevation: 5,
-    },
-    ItemElement: {
-        flexDirection: 'row',
-        flex: 1,
-        alignContent: 'flex-end',
-        flexDirection: 'row-reverse',
-    },
-    myItemElement: {
-        flexDirection: 'row',
-        flex: 1,
-        alignContent: 'flex-end',
-    },
-    messageStyle: {
-        color: 'black',
-        fontSize: 17,
-        paddingLeft: 4,
-    },
-    userPhoto: {
-        width: 30,
-        height: 30,
-        margin: 5,
-    },
-    messageDetails: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
+    
 });
 
 export default GenericChat;
