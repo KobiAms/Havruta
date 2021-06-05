@@ -193,7 +193,8 @@ const styles = StyleSheet.create({
     main: {
         flex: 1,
         justifyContent: 'space-between',
-        backgroundColor: 'rgb(200,200,220)'
+        backgroundColor: 'rgb(200,200,220)',
+        paddingTop: Dimensions.get('screen').height / 35
     },
     header: {
         width: '100%',
