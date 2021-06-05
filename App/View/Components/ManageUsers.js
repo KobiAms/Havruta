@@ -53,7 +53,7 @@ export default ManageUsers = ({ navigation }) => {
   UserItem = ({ headline, color, onPress }) => {
     return (
       <TouchableOpacity style={styles.item} onPress={onPress}>
-        <IconAw style={styles.dot} name={'circle'} size={16} color={color} />
+        <IconAw style={styles.dot} name={'circle'} size={20} color={color} />
         <Text>{headline}</Text>
         <Icon2
           style={styles.arrow_right}
@@ -114,20 +114,9 @@ const styles = StyleSheet.create({
   main: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: '#fff',
+    backgroundColor: 'rgb(220,220,240)',
   },
-  header: {
-    width: '100%',
-    height: '10%',
-    backgroundColor: 'rgb(120,90,140)',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderColor: '#999',
-    borderBottomWidth: 1,
-    paddingLeft: 10,
-    paddingRight: 10,
-  },
+
   screen_title: {
     fontSize: 20,
     fontWeight: 'bold',
@@ -152,9 +141,8 @@ const styles = StyleSheet.create({
   },
   search_container: {
     width: '100%',
-    // height: Dimensions.get('screen').height / 16,
     height: 50,
-    backgroundColor: 'rgba(180,180,200, 1)',
+    backgroundColor: 'rgba(180,180,210, 1)',
     alignItems: 'center',
     justifyContent: 'space-evenly',
     flexDirection: 'row',
@@ -164,7 +152,7 @@ const styles = StyleSheet.create({
   search_box: {
     width: '90%',
     height: '80%',
-    backgroundColor: 'rgba(238, 238, 238, 1)',
+    backgroundColor: 'rgba(238, 238, 248, 1)',
     borderRadius: 15,
     paddingLeft: 10,
   },
@@ -187,15 +175,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 20,
+    padding: 10,
     width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height / 10,
-    backgroundColor: 'rgb(230,230,250)',
-    marginBottom: 5,
+    height: Dimensions.get('window').height / 14,
+    backgroundColor: 'rgb(250,250,255)',
+    marginBottom: 4,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 1,
+      height: 0,
     },
     shadowOpacity: 0.20,
     shadowRadius: 1.41,
