@@ -5,26 +5,19 @@ import {
 } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-// import GenericFeed from './App/View/Screens/GenericFeed';
 import OtherScreen from './App/View/Screens/OtherScreen';
 import GenericChat from './App/View/Screens/GenericChat';
 import MainScreen from './App/View/Screens/MainScreen';
-
-
 import Wizard from './App/View/Components/NewUserWizard'
 import SubjectArticles from './App/View/Screens/SubjectArticles'
 import ArticleScreen from './App/View/Screens/ArticleScreen'
 import auth from '@react-native-firebase/auth'
-
-
 import RegistrationScreen from './App/View/Screens/RegistrationScreen';
 import ManageUsers from './App/View/Components/ManageUsers';
 import ManageUser from './App/View/Components/ManageUser';
-import { View } from 'react-native';
-import { Image } from 'react-native';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
