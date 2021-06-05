@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
-import IconF from 'react-native-vector-icons/Fontisto';
+import IconIo from 'react-native-vector-icons/Ionicons';
 import auth from '@react-native-firebase/auth';
 import { TouchableWithoutFeedback } from 'react-native';
 import HTMLRend from 'react-native-render-html';
@@ -23,7 +23,7 @@ function PostInFeed({ onPress, data, isAdmin }) {
           {
             isAdmin ?
               <TouchableOpacity>
-                <IconF name={data.lock ? 'locked' : 'unlocked'} color={data.lock ? 'red' : 'green'} size={20} />
+                <IconIo name={data.lock ? 'ios-lock-closed' : 'ios-lock-open-outline'} color={data.lock ? 'red' : 'green'} size={20} />
               </TouchableOpacity>
               :
               null
@@ -59,7 +59,7 @@ function PostInFeed({ onPress, data, isAdmin }) {
             : null
         }
       </View>
-    </TouchableWithoutFeedback>
+    </TouchableWithoutFeedback >
   );
 }
 
