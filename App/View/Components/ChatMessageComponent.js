@@ -12,24 +12,24 @@ import Hyperlink from 'react-native-hyperlink'
 
 
 
-export default function ChatMessageComponent({item}){
+export default function ChatMessageComponent({ item }) {
     let date = item.date.toDate();
     const [name, setName] = useState("Loading...")
     const [imageUrl, setImageUrl] = useState(require('../../Assets/POWERPNT_frXVLHdxnI.png'))
 
-    useEffect(()=>{
+    useEffect(() => {
         firestore().collection('users').doc(item.user_id).get()
-        .then(doc => {
-            let autorDetailes = doc.data();
-            setName(autorDetailes.name)
-            // if (autorDetailes.photo)
-            //     setImageUrl({ uri: autorDetailes.photo })
-        })
-        .catch(error => {
-            console.log('error loading comment details', error)
-        })
+            .then(doc => {
+                let autorDetailes = doc.data();
+                setName(autorDetailes.name)
+                // if (autorDetailes.photo)
+                //     setImageUrl({ uri: autorDetailes.photo })
+            })
+            .catch(error => {
+                console.log('error loading comment details', error)
+            })
 
-    },[])
+    }, [])
 
     return (
         <View
@@ -41,7 +41,7 @@ export default function ChatMessageComponent({item}){
             <View>
                 <Image
                     style={styles.userPhoto}
-                    source={imageUrl}/>
+                    source={imageUrl} />
             </View>
             <View
                 style={
@@ -49,7 +49,7 @@ export default function ChatMessageComponent({item}){
                         ? styles.myMessageBox
                         : styles.messageBox
                 }>
-                <Hyperlink linkDefault={ true } linkStyle={ { color: '#2980b9'} }>
+                <Hyperlink linkDefault={true} linkStyle={{ color: '#2980b9' }}>
                     <Text style={styles.messageStyle}>{item.message}</Text>
                 </Hyperlink>
                 <View style={styles.messageDetails}>
@@ -71,10 +71,10 @@ export default function ChatMessageComponent({item}){
     );
 }
 const styles = StyleSheet.create({
-    
-    
-    
-    
+
+
+
+
     userId: {
         fontSize: 11,
         color: '#333333',
@@ -89,7 +89,6 @@ const styles = StyleSheet.create({
         padding: 5,
         backgroundColor: '#fff',
         borderColor: 'black',
-        // borderWidth: 1,
         borderRadius: 15,
         alignSelf: 'flex-start',
         maxWidth: '83%',
@@ -99,7 +98,6 @@ const styles = StyleSheet.create({
         padding: 5,
         backgroundColor: 'rgb(205,255,230)',
         borderColor: 'black',
-        // borderWidth: 1,
         borderRadius: 15,
         alignSelf: 'flex-start',
         maxWidth: '83%',
@@ -133,8 +131,8 @@ const styles = StyleSheet.create({
         width: 30,
         height: 30,
         margin: 5,
-        borderRadius:15,
-        overflow:"hidden"
+        borderRadius: 15,
+        overflow: "hidden"
     },
     messageDetails: {
         flexDirection: 'row',

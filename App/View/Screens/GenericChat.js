@@ -8,6 +8,7 @@ import {
     FlatList,
     TextInput,
     ActivityIndicator,
+    Pressable,
     TouchableOpacity,
     RefreshControl,
     Dimensions,
@@ -17,14 +18,14 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { SafeAreaView } from 'react-native';
-
 import ChatMessage from '../Components/ChatMessageComponent'
 import { resolvePreset } from '@babel/core';
 import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 import { KeyboardAvoidingView } from 'react-native';
 import { StatusBar } from 'react-native';
-
-
+import { useHeaderHeight } from '@react-navigation/stack';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import { Platform } from 'react-native';
 
 let msgToLoad = 20;
 let msgToStart = 0;
@@ -47,62 +48,67 @@ GenericChat = ({ navigation, route }) => {
     const feed_type = route.name;
     const chat_id = 'test';
     const [refreshing, setRefreshing] = React.useState(false);
+    const headerHeight = useHeaderHeight();
+    const tabBarHeight = useBottomTabBarHeight();
+    const KEYBOARD_VERTICAL_OFFSET = headerHeight + StatusBar.currentHeight;
 
     const onRefresh = React.useCallback(() => {
         console.log('im here');
         setRefreshing(true);
         wait(1000).then(() => setRefreshing(false));
     }, []);
-    
+
     deleteMsg = (item) => {
-        if(auth().currentUser.email === item.user_id || user.role === "admin"){
-        Alert.alert(
-            "Alert Title",
-            "My Alert Msg",
-            [
-              {
-                text:"DELETE",
-                onPress: () => {firestore().collection('chats').doc('reporters').update({ messages: firestore.FieldValue.arrayRemove(item)})
-                Alert.alert("Message Deleted")},
-                style:"accept",
-                },
-              {
-                text: "Cancel",
-                style: "cancel",
-              },
-            ],
-            {
-              cancelable: true,
-            }
-          );
+        if (auth().currentUser.email === item.user_id || user.role === "admin") {
+            Alert.alert(
+                "Delete Message",
+                "Are you sure?",
+                [
+                    {
+                        text: "DELETE",
+                        onPress: () => {
+                            firestore().collection('chats').doc('reporters').update({ messages: firestore.FieldValue.arrayRemove(item) })
+                            Alert.alert("Message Deleted")
+                        },
+                        style: 'destructive'
+                    },
+                    {
+                        text: "Cancel",
+                        style: "cancel",
+                    },
+                ],
+                {
+                    cancelable: true,
+                }
+            );
         }
-            
+
     },
-    //this function is used when we wanna send msg on the chat. first we check the the msg content exist in order the prevent from sending
-    // empty msgs to the server.
-    // after we verify that the msg is decent we update our data base with the new msgs
-    sendMessage = () => {
-        let tempMessage = {
-            user_id: user.email,
-            message: newMessage,
-            date: new Date(),
-        };
-        setNewMessage('');
-        if (!tempMessage.message.replace(/\s/g, '').length || !auth().currentUser) {
+        //this function is used when we wanna send msg on the chat. first we check the the msg content exist in order the prevent from sending
+        // empty msgs to the server.
+        // after we verify that the msg is decent we update our data base with the new msgs
+        sendMessage = () => {
+            let tempMessage = {
+                user_id: user.email,
+                message: newMessage,
+                date: new Date(),
+            };
             setNewMessage('');
-        } else {
-            
-            firestore()
-                .collection('chats')
-                .doc('reporters')
-                .update({
-                    messages: firestore.FieldValue.arrayUnion(tempMessage),
-                })
-                .catch(error => {
-                    console.log('error is: ' + error.toString());
-                });
-        }
-    };
+            if (!tempMessage.message.replace(/\s/g, '').length || !auth().currentUser) {
+                setNewMessage('');
+            } else {
+
+                firestore()
+                    .collection('chats')
+                    .doc('reporters')
+                    .update({
+                        messages: firestore.FieldValue.arrayUnion(tempMessage),
+                    })
+                    .catch(error => {
+                        console.log('error is: ' + error.toString());
+                    });
+            }
+        };
 
     function onAuthStateChanged(user) {
         setUser(user);
@@ -126,7 +132,7 @@ GenericChat = ({ navigation, route }) => {
                 } else {
                     set_chat_data(reversed.slice(msgToStart, msgToLoad));
                 }
-                console.log('chat data len is: ' + chat_data.length);
+                // console.log('chat data len is: ' + chat_data.length);
                 if (chat_data.length === doc.data().messages.length) {
                     endReached = true;
                 }
@@ -135,6 +141,7 @@ GenericChat = ({ navigation, route }) => {
     }
 
     useEffect(() => {
+        console.log(headerHeight, StatusBar.currentHeight)
         //
         const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
         if (auth().currentUser) {
@@ -160,12 +167,14 @@ GenericChat = ({ navigation, route }) => {
         return subscriber; // unsubscribe on unmount
     }, []);
     return (
-        <View style={styles.main}>
+        <KeyboardAvoidingView
+            behavior={Platform.OS == 'ios' ? "padding" : 'padding'}
+            style={styles.main}
+            keyboardVerticalOffset={Platform.OS == 'ios' ? KEYBOARD_VERTICAL_OFFSET : -(headerHeight + tabBarHeight)}
+        >
+            {/* <View style={styles.main}> */}
             <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
             <View style={styles.main}>
-                <View style={styles.header}>
-                    <Text style={styles.headline}>{chat_id}</Text>
-                </View>
                 <FlatList
                     style={styles.list}
                     inverted
@@ -175,20 +184,18 @@ GenericChat = ({ navigation, route }) => {
                     keyExtractor={(item, index) => index}
                     ListFooterComponent={() => !endReached && <ListFooterComponent />}
                     renderItem={({ item }) => (
-                        <TouchableOpacity onLongPress={()=>deleteMsg(item)}>
-                        <ChatMessage
-                            item={item}
-                            refreshControl={
-                                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                            }
-                        />
-                        </TouchableOpacity>
+                        <Pressable onLongPress={() => deleteMsg(item)}>
+                            <ChatMessage
+                                item={item}
+                                refreshControl={
+                                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                                }
+                            />
+                        </Pressable>
                     )}
                 />
                 {user ? (
-                    <KeyboardAvoidingView
-                        keyboardVerticalOffset={Dimensions.get('screen').height / 12}
-                        behavior={Platform.OS == "ios" ? 'padding' : null}
+                    <View
                         style={styles.inputContainer}>
                         <TextInput
                             placeholder=" Add your message..."
@@ -206,11 +213,11 @@ GenericChat = ({ navigation, route }) => {
                             }>
                             <Icon name={'md-send'} size={20} color={'#ffffff'} />
                         </TouchableOpacity>
-                    </KeyboardAvoidingView >
+                    </View>
                 ) : null}
             </View>
-        </View>
-
+            {/* </View> */}
+        </KeyboardAvoidingView>
     );
 };
 
@@ -300,7 +307,7 @@ const styles = StyleSheet.create({
         fontSize: 11,
         color: '#333333',
     },
-    
+
 });
 
 export default GenericChat;

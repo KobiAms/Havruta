@@ -7,23 +7,70 @@ import auth from '@react-native-firebase/auth';
 import { TouchableWithoutFeedback } from 'react-native';
 import HTMLRend from 'react-native-render-html';
 import { Dimensions } from 'react-native';
+import firestore from '@react-native-firebase/firestore'
 
 function PostInFeed({ onPress, data, isAdmin }) {
   const [postData, setPostData] = useState(data)
   const [isLiked, setIsLiked] = useState(auth().currentUser ? data.likes.includes(auth().currentUser.email) : false)
+
+  function lock_post() {
+    if (postData.new_post) {
+      firestore().collection('article').doc(postData.id).set({
+        comments: [],
+        likes: [],
+        lock: false
+      }).then(() => {
+        setPostData(prev => {
+          prev.lock = false
+          prev.new_post = false
+          return prev
+        })
+      })
+        .catch(err => {
+          alert('Initialise failed:\n' + err.code)
+        })
+    } else if (postData.lock) {
+      firestore().collection('article').doc(postData.id).update({
+        lock: false
+      }).then(() => {
+        setPostData(prev => {
+          prev.lock = false
+          return prev
+        })
+      })
+        .catch(err => {
+          alert('Unlock failed:\n' + err.code)
+        })
+    } else {
+      firestore().collection('article').doc(postData.id).update({
+        lock: true
+      }).then(() => {
+        setPostData(prev => {
+          prev.lock = true
+          return prev
+        })
+      })
+        .catch(err => {
+          alert('Lock failed:\n' + err.code)
+        })
+    }
+  }
 
   return (
     <TouchableWithoutFeedback onPress={() => onPress()} data={postData}>
       <View style={styles.main}>
         <View style={styles.row}>
           <View>
-            {/* <Text style={styles.autor}>{postData.autor}</Text> */}
             <Text>{postData.date}</Text>
           </View>
           {
             isAdmin ?
-              <TouchableOpacity>
-                <IconIo name={data.lock ? 'ios-lock-closed' : 'ios-lock-open-outline'} color={data.lock ? 'red' : 'green'} size={20} />
+              <TouchableOpacity onPress={() => lock_post()}>
+                {postData.new_post ?
+                  <IconIo name={'add-circle'} color={'blue'} size={20} />
+                  :
+                  <IconIo name={data.lock ? 'ios-lock-closed-outline' : 'ios-lock-open-outline'} color={data.lock ? 'red' : 'green'} size={20} />
+                }
               </TouchableOpacity>
               :
               null

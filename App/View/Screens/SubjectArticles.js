@@ -40,11 +40,13 @@ export default function SubjectArticles({ navigation }) {
             articles_from_wp[i].comments = val.data().comments
             articles_from_wp[i].lock = val.data().lock
             articles_from_wp[i].full = true
+            articles_from_wp[i].new_post = false
           } else {
             articles_from_wp[i].likes = []
             articles_from_wp[i].comments = []
             articles_from_wp[i].full = false
-            articles_from_wp[i].lock = false
+            articles_from_wp[i].lock = true
+            articles_from_wp[i].new_post = true
           }
         })
         setFullArticles(articles_from_wp)
@@ -120,7 +122,7 @@ export default function SubjectArticles({ navigation }) {
                 <PostInFeed
                   onPress={() => navigation.navigate('ArticleScreen', { data: item, user: user, idAdmin: auth().currentUser ? user.role == 'admin' : false })}
                   data={item}
-                  idAdmin={auth().currentUser ? user.role == 'admin' : false}
+                  isAdmin={auth().currentUser ? user.role == 'admin' : false}
                 />
               )}
               keyExtractor={(item, idx) => idx}

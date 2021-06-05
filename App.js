@@ -18,6 +18,8 @@ import auth from '@react-native-firebase/auth'
 import RegistrationScreen from './App/View/Screens/RegistrationScreen';
 import ManageUsers from './App/View/Components/ManageUsers';
 import ManageUser from './App/View/Components/ManageUser';
+import { KeyboardAvoidingView } from 'react-native';
+import { Platform } from 'react-native';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -111,6 +113,9 @@ App = () => {
 };
 
 const styles = StyleSheet.create({
+  keyboardAvoidingView: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: 'rgb(0, 127, 255)',
@@ -130,14 +135,20 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     paddingLeft: 20,
     borderRadius: 15,
-    overflow: 'hidden'
+    overflow: 'hidden',
+    shadowColor: '#fff',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.32,
+    shadowRadius: 5.46,
+    elevation: 6,
   },
   user_image: {
-    height: 30,
-    width: 30,
-    borderRadius: 15,
-    borderWidth: 1,
-    borderColor: '#fffa',
+    height: 35,
+    width: 35,
+    borderRadius: 20,
     overflow: 'hidden'
   }
 });
