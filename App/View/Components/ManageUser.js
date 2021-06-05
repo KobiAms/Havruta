@@ -17,23 +17,32 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import app from '@react-native-firebase/app';
+import Switcher from './MultiSwitcher';
+
 
 export default ManageUser = ({ navigation, route }) => {
     const [isBlocked, setIsBlocked] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
+    const [isReporter, setIsRepoter] = useState(false);
     const [userName, setuserName] = useState('');
     const [userEmail, setUserEmail] = useState('');
     const [userDOB, setuserDOB] = useState();
     const [userAbout, setUserAbout] = useState();
     const [loading, setLoading] = useState(false);
-    const [userAvatar, setUserAvatar] = useState();
-
+    const [userAvatar, setUserAvatar] = useState(route.params.data.photo ? { uri: route.params.data.photo } : require('../../Assets/POWERPNT_frXVLHdxnI.png'));
+    const [userRole, setuserRole] = useState('');
 
     const toggleAdmin = () => {
         if (loading)
             return
         setLoading(true)
-        let new_role = isAdmin ? 'user' : 'admin'
+        let new_role;
+        if (isAdmin) new_role = 'user'
+        else {
+            if (isReporter) setIsRepoter(false);
+            new_role = 'admin';
+        }
+
         setIsAdmin(!isAdmin)
         firestore().collection('users').doc(route.params.data.email).update({
             role: new_role
@@ -46,8 +55,31 @@ export default ManageUser = ({ navigation, route }) => {
                 setLoading(false)
             })
     };
+    const toggleReporter = () => {
+        if (loading)
+            return
+        setLoading(true)
+        if (isAdmin)
+            setIsAdmin(false)
+        let new_role;
+        if (!isReporter)
+            new_role = 'reporter';
+        if (isReporter)
+            new_role = 'user';
+        setIsRepoter(!isReporter);
+        firestore().collection('users').doc(route.params.data.email).update({
+            role: new_role
+        })
+            .then(() => {
+                setLoading(false)
+            })
+            .catch(() => {
+                setIsRepoter(!isReporter)
+                setLoading(false)
+            })
+    };
 
-    delete_user = () => {
+    function delete_user() {
         Alert.alert(
             'Delete User Permanently!',
             'Are you sure?',
@@ -76,7 +108,9 @@ export default ManageUser = ({ navigation, route }) => {
         setuserName(route.params.data.name);
         setUserAbout(route.params.data.about);
         setUserEmail(route.params.data.email);
+        setuserRole(route.params.data.role);
         setIsAdmin(route.params.data.role === 'admin')
+        setIsRepoter(route.params.data.role === 'reporter')
         if (route.params.data.dob) {
             let DAT = new Date((7200 + route.params.data.dob.seconds) * 1000);
             /*//times go by sec GMT, so in order to get the right date, need to add 2 hours and mult by 1000 in nanosec*/
@@ -89,33 +123,14 @@ export default ManageUser = ({ navigation, route }) => {
         <View style={styles.main}>
             <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
             <View style={styles.main}>
-                <View style={styles.header}>
-                    <TouchableOpacity
-                        style={styles.back_button}
-                        onPress={() => navigation.goBack()}>
-                        <Icon name={'arrow-left'} size={20} />
-                    </TouchableOpacity>
-                    <Text style={styles.screen_title}>Havruta</Text>
-                    <View
-                        style={[styles.back_button, { backgroundColor: '#fffffff' }]}
-                    >
-                        {loading ?
-                            <ActivityIndicator color={'black'} size={'large'} />
-                            : null
-                        }
-                    </View>
-
-                </View>
-
-
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <View style={styles.aview}>
                         <Image source={userAvatar} style={{ width: '100%', height: '100%' }} />
                     </View>
                     <View>
                         <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{userName}</Text>
-                        <Text style={{ fontSize: 16 }}>{userDOB}</Text>
-                        <Text style={{ fontSize: 16 }}>{userEmail}</Text>
+                        <Text style={{ fontSize: 16 }}>Date of birth: {userDOB}</Text>
+                        <Text style={{ fontSize: 16 }}>user id: {userEmail}</Text>
                     </View>
                 </View>
 
@@ -126,32 +141,45 @@ export default ManageUser = ({ navigation, route }) => {
 
 
                 <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
-                    <View style={[styles.switch, { marginLeft: 0 }]}>
-                        <Text style={{ fontWeight: 'bold', fontSize: 18, padding: 5 }}>{isBlocked ? 'Block' : 'Block'}</Text>
+                    <View style={styles.switch}>
+                        <Text style={{ fontWeight: 'bold', fontSize: 18, padding: 5 }}>{isBlocked ? 'Unblock' : 'Block'}</Text>
                         <Switch
-                            style={{ transform: [{ scaleX: 2 }, { scaleY: 2 }], margin: 10 }}
-                            trackColor={{ false: '#000000', true: '#faa' }}
-                            thumbColor={isBlocked ? '#ff0000' : '#999999'}
+                            style={{ transform: [{ scaleX: 1.5 }, { scaleY: 1.5 }], margin: 15 }}
+                            trackColor={{ false: '#444', true: '#DA0000' }}
+                            thumbColor={isBlocked ? '#F75757' : '#bbb'}
                             ios_backgroundColor="#3e3e3e"
                             onValueChange={toggleBlock}
                             value={isBlocked}
                         />
                     </View>
-                    <View style={[styles.switch, { marginRight: 0 }]}>
+                    <View style={styles.switch}>
+                        <Text style={{ fontWeight: 'bold', fontSize: 18, padding: 5 }}>Reporter</Text>
+                        <Switch
+                            style={{ transform: [{ scaleX: 1.5 }, { scaleY: 1.5 }], margin: 15 }}
+                            trackColor={{ false: '#444', true: '#0075AF' }}
+                            thumbColor={isReporter ? '#94C0D5' : '#bbb'}
+                            ios_backgroundColor="#3e3e3e"
+                            onValueChange={toggleReporter}
+                            value={isReporter}
+                        />
+                    </View>
+                    <View style={styles.switch}>
                         <Text style={{ fontWeight: 'bold', fontSize: 18, padding: 5 }}>Admin</Text>
                         <Switch
-                            style={{ transform: [{ scaleX: 2 }, { scaleY: 2 }], margin: 10 }}
-                            trackColor={{ false: '#000000', true: '#007fff' }}
-                            thumbColor={isAdmin ? '#00ffff' : '#999999'}
+                            style={{ transform: [{ scaleX: 1.5 }, { scaleY: 1.5 }], margin: 15 }}
+                            trackColor={{ false: '#444', true: '#1DAF00' }}
+                            thumbColor={isAdmin ? '#9BD5A1' : '#bbb'}
                             ios_backgroundColor="#3e3e3e"
                             onValueChange={toggleAdmin}
                             value={isAdmin}
                         />
                     </View>
                 </View >
+
+
                 <TouchableOpacity style={styles.delete} onPress={() => delete_user()}>
                     <Text style={{
-                        color: 'rgb(255,255,255)',
+                        color: 'rgb(255,40,40)',
                         fontSize: 18,
                         fontWeight: 'bold',
                     }}>Delete this user</Text>
@@ -164,7 +192,9 @@ export default ManageUser = ({ navigation, route }) => {
 const styles = StyleSheet.create({
     main: {
         flex: 1,
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        backgroundColor: 'rgb(200,200,220)',
+        paddingTop: Dimensions.get('screen').height / 35
     },
     header: {
         width: '100%',
@@ -202,11 +232,11 @@ const styles = StyleSheet.create({
     },
     aview: {
         alignSelf: 'center',
-        height: 12 + Dimensions.get('screen').width / 10,
-        width: 12 + Dimensions.get('screen').width / 10,
+        height: 12 + Dimensions.get('screen').width / 9,
+        width: 12 + Dimensions.get('screen').width / 9,
         borderRadius: Dimensions.get('screen').width / 1.5,
         backgroundColor: 'rgb(200,200,220)',
-        borderColor: '#000',
+        borderColor: '#999',
         borderWidth: 1,
         alignItems: 'center',
         justifyContent: 'center',
@@ -214,13 +244,15 @@ const styles = StyleSheet.create({
         margin: 10,
     },
     delete: {
-        backgroundColor: 'rgb(255,40,40)',
+        backgroundColor: 'rgb(240,240,255)',
         justifyContent: 'center',
-        width: Dimensions.get('screen').width * (9 / 10),
+        width: Dimensions.get('screen').width * (85 / 100),
         height: 12 + Dimensions.get('screen').width / 10,
         alignSelf: 'center',
         alignItems: 'center',
         margin: Dimensions.get('screen').width / 10,
         borderRadius: 50,
+        borderColor: 'rgb(255,40,40)',
+        borderWidth: 1,
     },
 });

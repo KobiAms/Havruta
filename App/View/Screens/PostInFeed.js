@@ -1,47 +1,65 @@
 /* eslint-disable prettier/prettier */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
-import { Avatar } from 'react-native-elements';
+import IconIo from 'react-native-vector-icons/Ionicons';
+import auth from '@react-native-firebase/auth';
+import { TouchableWithoutFeedback } from 'react-native';
+import HTMLRend from 'react-native-render-html';
+import { Dimensions } from 'react-native';
 
-function PostInFeed({ onPress, data }) {
-  let { autor, date, headline, comments, likes, contant } = data;
+function PostInFeed({ onPress, data, isAdmin }) {
+  const [postData, setPostData] = useState(data)
+  const [isLiked, setIsLiked] = useState(auth().currentUser ? data.likes.includes(auth().currentUser.email) : false)
 
   return (
-    <View style={styles.main}>
-      <View style={styles.row}>
-        {/* <Avatar
-          size="small"
-          rounded
-          source={{
-            uri:
-              'https://post.medicalnewstoday.com/wp-content/uploads/sites/3/2020/03/GettyImages-1092658864_hero-1024x575.jpg',
-          }}
-        /> */}
-        <View>
-          <Text style={styles.autor}>{autor}</Text>
-          <Text>{date}</Text>
+    <TouchableWithoutFeedback onPress={() => onPress()} data={postData}>
+      <View style={styles.main}>
+        <View style={styles.row}>
+          <View>
+            {/* <Text style={styles.autor}>{postData.autor}</Text> */}
+            <Text>{postData.date}</Text>
+          </View>
+          {
+            isAdmin ?
+              <TouchableOpacity>
+                <IconIo name={data.lock ? 'ios-lock-closed' : 'ios-lock-open-outline'} color={data.lock ? 'red' : 'green'} size={20} />
+              </TouchableOpacity>
+              :
+              null
+          }
         </View>
+        <HTMLRend
+          source={{ html: postData.headline }}
+          contentWidth={Dimensions.get('window').width}
+          baseFontStyle={{
+            fontSize: 22,
+            alignItems: 'flex-end',
+            fontWeight: 'bold',
+          }}
+        ></HTMLRend>
+        <HTMLRend
+          source={{ html: postData.short }}
+          contentWidth={Dimensions.get('window').width}
+        ></HTMLRend>
+        {
+          postData.full ?
+            <View>
+              <View style={styles.line} />
+              <View style={styles.response}>
+                <View style={styles.row}>
+                  <Icon name={'like1'} size={20} style={styles.pad} color={isLiked ? 'rgb(120,90,140)' : '#000'} />
+                  <Text style={{ color: isLiked ? 'rgb(120,90,140)' : '#000' }}>likes: {postData.likes.length}</Text>
+                </View>
+                <Text >
+                  comments: {postData.comments ? postData.comments.length : 0}
+                </Text>
+              </View>
+            </View>
+            : null
+        }
       </View>
-
-      <Text onPress={() => onPress()} data={data} style={styles.headline}>
-        {headline}
-        {'\n'}
-      </Text>
-      <Text onPress={() => onPress()} data={data}>
-        {contant}
-      </Text>
-      <View style={styles.line} />
-      <View style={styles.response}>
-        <TouchableOpacity style={styles.row}>
-          <Icon name={'like1'} size={20} style={styles.pad} />
-          <Text>likes: {likes.length}</Text>
-        </TouchableOpacity>
-        <Text onPress={() => onPress()} data={data}>
-          comments: {comments ? comments.length : 0}
-        </Text>
-      </View>
-    </View>
+    </TouchableWithoutFeedback >
   );
 }
 
@@ -75,6 +93,7 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
+    justifyContent: 'space-between'
   },
   response: {
     flexDirection: 'row',

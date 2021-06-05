@@ -1,22 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text, FlatList, View, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 let { width } = Dimensions.get('window')
 
 let listlength = 0;
 
-export default function MultiSwitcher({ onSelect, list }) {
+export default function MultiSwitcher({ onSelect, list, selectedIndex }) {
     if (!onSelect)
         throw new Error('onSelect is undefined')
     else if (!list)
         throw new Error('list is undefined')
     listlength = list.length;
 
-    const [selected, setSelected] = useState({ emoji: undefined, name: undefined });
-    select = item => {
+    const [selected, setSelected] = useState({ name: undefined, emoji: undefined });
+    function select(item) {
         onSelect(item)
         setSelected(item)
     }
 
+    useEffect(() => {
+        //setSelected(list[selectedIndex])
+
+        console.log(list + ' \nthe selected index ' + selectedIndex);
+    }, [setSelected])
     const renderItem = ({ item }) => <Item item={item} onPress={() => select(item)} />
 
     const Item = ({ item }) => (

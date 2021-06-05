@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   View,
+  ScrollView,
   Text,
   StyleSheet,
   TouchableOpacity,
@@ -20,6 +21,7 @@ import IconFAW5 from 'react-native-vector-icons/FontAwesome5';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { launchImageLibrary } from 'react-native-image-picker';
 import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
+import NewUserWizard from './NewUserWizard';
 
 export default function UserForm({ setUser, navigation, setLoading }) {
   const [userRole, setUserRole] = useState();
@@ -33,6 +35,7 @@ export default function UserForm({ setUser, navigation, setLoading }) {
   const [editName, setEditName] = useState();
   const [editDate, setEditDate] = useState();
   const [editAbout, setEditAbout] = useState();
+  const [isNew, setIsNew] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
 
@@ -68,6 +71,9 @@ export default function UserForm({ setUser, navigation, setLoading }) {
         await reference.putFile(response.uri);
         reference.getDownloadURL().then(url => {
           setUserAvatar({ uri: url });
+          firestore().collection('users').doc(auth().currentUser.email)
+            .update({ photo: url })
+            .catch(() => console.log('error updtae imageurl'))
           auth().currentUser.updateProfile({ photoURL: url })
             .catch(() => console.log('error updtae imageurl'))
           setLoading(false);
@@ -87,18 +93,25 @@ export default function UserForm({ setUser, navigation, setLoading }) {
       // show loading indicator
       setLoading(true)
       // update at firestore users collection the new data
-      firestore().collection('users').doc(auth().currentUser.email)
-        .update({
-          about: editAbout,
-          name: editName,
-          dob: firestore.Timestamp.fromDate(editDate)
-        })
+      auth().currentUser.updateProfile({ displayName: editName })
         .then(() => {
-          // updates the relevant views
-          setuserName(editName)
-          setUserAbout(editAbout)
-          setEditable(false);
-          setLoading(false);
+
+          firestore().collection('users').doc(auth().currentUser.email)
+            .update({
+              about: editAbout,
+              name: editName,
+              dob: firestore.Timestamp.fromDate(editDate)
+            })
+            .then(() => {
+              // updates the relevant views
+              setuserName(editName)
+              setUserAbout(editAbout)
+              setEditable(false);
+              setLoading(false);
+            })
+        })
+        .catch((error) => {
+          console.log(error.code)
         })
     } else {
       // discrad changes
@@ -129,108 +142,115 @@ export default function UserForm({ setUser, navigation, setLoading }) {
         setuserDOB(dateToReadbleFormat(doc.data().dob.toDate()));
         setEditDate(doc.data().dob.toDate())
         setuserName(doc.data().name);
+        setIsNew(doc.data().isNew);
         setLoading(false);
       })
       .catch(() => { });
     return subscriber;
   }, [setUserAbout, setUserRole, setDefaultStyle, setuserName, setuserDOB]);
 
-  return (
-    <View style={styles.main}>
-      <DateTimePickerModal
-        isVisible={isDatePickerVisible}
-        mode="date"
-        date={editDate}
-        onConfirm={handleDateConfirm}
-        onCancel={() => setDatePickerVisibility(false)}
-      />
-      <View style={styles.backline} />
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
-        <TouchableOpacity onPress={() => setToEditable()}>
-          <View style={{ alignItems: 'center', flexDirection: 'row', backgroundColor: '#fff', padding: 5, borderRadius: 20, borderColor: editable ? '#008800' : '#000000' }}>
-            <IconFeather
-              name={editable ? 'check-square' : 'edit'}
-              color={editable ? '#008800' : '#000000'}
-              size={30}
-              style={{ margin: 5 }} />
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.aview} onPress={() => uploadNewAvatar()}>
-          <Image source={userAvatar} style={{ width: '100%', height: '100%' }} onLoadEnd={() => setLoadingAvatar(false)} />
-          {
-            loadingAvatar ?
-              <ActivityIndicator style={{ position: 'absolute' }} color={'#007fff'} size={'large'} />
-              : null
-          }
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => editable ? setEditable(false) : null}>
-          <View style={{ alignItems: 'center', flexDirection: 'row', backgroundColor: '#fff', padding: 5, borderRadius: 20, borderColor: '#990000', opacity: editable ? 1 : 0 }}>
-            <IconFeather
-              name={'x-square'}
-              color={'#990000'}
-              size={30}
-              style={{ margin: 5 }} />
-          </View>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.row}>
-        {
-          editable ?
-            <TextInput
-              style={[styles.name, styles.editable]}
-              value={editName}
-              onChangeText={setEditName} />
-            :
-            <Text style={styles.name}>{userName}</Text>
-        }
-      </View>
-      <View style={styles.row}>
-        <Text style={{ fontWeight: 'bold', fontSize: 21 }}>Date of Birth:</Text>
-        {
-          editable ?
-            <TouchableOpacity onPress={() => setDatePickerVisibility(true)} style={styles.editable}>
-              <Text style={{ fontSize: 18 }}>{userDOB}</Text>
-            </TouchableOpacity>
-            :
-            <Text style={{ fontSize: 18, padding: 4 }}>{userDOB}</Text>
-        }
-      </View>
-      <View style={{ padding: 20 }}>
-        <Text style={{ fontWeight: 'bold', fontSize: 21 }}>About Me:</Text>
-        {
-          editable ?
-            <AutoGrowingTextInput
-              style={[styles.editable, { fontSize: 17 }]}
-              value={editAbout}
-              onChangeText={setEditAbout} />
-            :
-            <Text style={{ fontSize: 17, padding: 4 }}>{userAbout}</Text>
-        }
-      </View>
 
-      {/*the following view contain the logout / manage users buttons*/}
-      <View style={styles.chose}>
-        {userRole && userRole == 'admin' ? (
+  return (
+
+    isNew ?
+      <NewUserWizard />
+      :
+      <View style={{ flex: 1 }}>
+        <ScrollView style={styles.main}>
+          <DateTimePickerModal
+            isVisible={isDatePickerVisible}
+            mode="date"
+            date={editDate}
+            onConfirm={handleDateConfirm}
+            onCancel={() => setDatePickerVisibility(false)}
+          />
+          <View style={styles.backline} />
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
+            <TouchableOpacity onPress={() => setToEditable()}>
+              <View style={{ alignItems: 'center', flexDirection: 'row', backgroundColor: '#ffffff80', padding: 5, borderRadius: 20 }}>
+                <IconFeather
+                  name={editable ? 'check-square' : 'edit'}
+                  color={editable ? '#008800' : '#000000'}
+                  size={30}
+                  style={{ margin: 5 }} />
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.aview} onPress={() => uploadNewAvatar()}>
+              <Image source={userAvatar} style={{ width: '100%', height: '100%' }} onLoadEnd={() => setLoadingAvatar(false)} />
+              {
+                loadingAvatar ?
+                  <ActivityIndicator style={{ position: 'absolute' }} color={'#007fff'} size={'large'} />
+                  : null
+              }
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => editable ? setEditable(false) : null}>
+              <View style={{ alignItems: 'center', flexDirection: 'row', backgroundColor: '#ffffff80', padding: 5, borderRadius: 20, borderColor: '#990000', opacity: editable ? 1 : 0 }}>
+                <IconFeather
+                  name={'x-square'}
+                  color={'#990000'}
+                  size={30}
+                  style={{ margin: 5 }} />
+              </View>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.row}>
+            {
+              editable ?
+                <TextInput
+                  style={[styles.name, styles.editable]}
+                  value={editName}
+                  onChangeText={setEditName} />
+                :
+                <Text style={[styles.name, styles.editcont]}>{userName}</Text>
+            }
+          </View>
+          <View style={styles.row}>
+            <Text style={{ fontWeight: 'bold', fontSize: 21 }}>Date of Birth:</Text>
+            {
+              editable ?
+                <TouchableOpacity onPress={() => setDatePickerVisibility(true)} style={styles.editable}>
+                  <Text style={{ fontSize: 18 }}>{userDOB}</Text>
+                </TouchableOpacity>
+                :
+                <Text style={[{ fontSize: 18, padding: 4 }, styles.editcont]}>{userDOB}</Text>
+            }
+          </View>
+          <View style={{ padding: 20 }}>
+            <Text style={{ fontWeight: 'bold', fontSize: 21, paddingLeft: 8 }}>About Me:</Text>
+            {
+              editable ?
+                <AutoGrowingTextInput
+                  style={[styles.editable, { fontSize: 17 }]}
+                  value={editAbout}
+                  onChangeText={setEditAbout} />
+                :
+                <Text style={[{ fontSize: 17, padding: 4 }, styles.editcont]}>{userAbout}</Text>
+            }
+          </View>
+        </ScrollView >
+        {/*the following view contain the logout / manage users buttons*/}
+        <View style={styles.chose}>
+          {userRole && userRole == 'admin' ? (
+            <TouchableOpacity
+              style={styles.option}
+              onPress={() => navigation.navigate('Manage Users')}>
+              <Text style={{ color: '#000000', fontSize: 20 }}>Manage Users</Text>
+              <IconFAW5 name={'user-cog'} color={'#666666'} size={20} />
+            </TouchableOpacity>
+          ) : null}
           <TouchableOpacity
             style={styles.option}
-            onPress={() => navigation.navigate('Manage Users')}>
-            <Text style={{ color: '#000000', fontSize: 20 }}>Manage Users</Text>
-            <IconFAW5 name={'user-cog'} color={'#666666'} size={20} />
+            onPress={() =>
+              auth()
+                .signOut()
+                .then(() => setUser(auth().currentUser))
+            }>
+            <Text style={{ color: '#ff0000', fontSize: 20 }}>Log Out</Text>
+            <IconFeather name={'log-out'} color={'#ff0000'} size={20} />
           </TouchableOpacity>
-        ) : null}
-        <TouchableOpacity
-          style={styles.option}
-          onPress={() =>
-            auth()
-              .signOut()
-              .then(() => setUser(auth().currentUser))
-          }>
-          <Text style={{ color: '#ff0000', fontSize: 20 }}>Log Out</Text>
-          <IconFeather name={'log-out'} color={'#ff0000'} size={20} />
-        </TouchableOpacity>
-      </View>
+        </View>
 
-    </View >
+      </View>
   );
 }
 
@@ -238,6 +258,7 @@ const styles = StyleSheet.create({
   main: {
     flex: 1,
     backgroundColor: 'rgb(200,200,220)',
+    marginBottom: 5 + Dimensions.get('screen').height / 10,
   },
   row: {
     flexDirection: 'row',
@@ -266,12 +287,23 @@ const styles = StyleSheet.create({
     elevation: 6,
     padding: 8,
   },
+  editcont: {
+    borderWidth: 1,
+    borderRadius: 10,
+    borderColor: '#00000000',
+    backgroundColor: '#FFFFFF00',
+    padding: 8,
+  },
   chose: {
     alignItems: 'flex-end',
     flex: 1,
     alignContent: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
+    margin: Dimensions.get('screen').width / 50,
+    zIndex: 1,
+    position: 'absolute',
+    bottom: 0,
   },
   option: {
     flex: 1,
@@ -282,6 +314,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 50,
     margin: 5,
+
   },
   backline: {
     backgroundColor: 'rgb(160,160,200)',
@@ -295,7 +328,7 @@ const styles = StyleSheet.create({
     width: 12 + Dimensions.get('screen').width / 3,
     borderRadius: Dimensions.get('screen').width / 1.5,
     backgroundColor: 'rgb(200,200,220)',
-    borderColor: '#000',
+    borderColor: 'rgb(160,160,200)',
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',

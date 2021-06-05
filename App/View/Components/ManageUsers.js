@@ -30,11 +30,13 @@ export default ManageUsers = ({ navigation }) => {
         querySnapshot.forEach(documentSnapshot => {
           let colorTmp;
           if (documentSnapshot.data().role == 'admin') {
-            colorTmp = '#007fff';
+            colorTmp = '#15B525';
           } else if (documentSnapshot.data().role == 'user') {
             colorTmp = '#666666';
+          } else if (documentSnapshot.data().role == 'reporter') {
+            colorTmp = '#007fff';
           } else {
-            colorTmp = '#f00';
+            colorTmp = '#f00'
           }
           users.push({
             ...documentSnapshot.data(),
@@ -51,7 +53,7 @@ export default ManageUsers = ({ navigation }) => {
   UserItem = ({ headline, color, onPress }) => {
     return (
       <TouchableOpacity style={styles.item} onPress={onPress}>
-        <IconAw style={styles.dot} name={'circle'} size={10} color={color} />
+        <IconAw style={styles.dot} name={'circle'} size={20} color={color} />
         <Text>{headline}</Text>
         <Icon2
           style={styles.arrow_right}
@@ -67,19 +69,6 @@ export default ManageUsers = ({ navigation }) => {
     <View style={styles.main}>
       <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
       <SafeAreaView style={styles.main}>
-        <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.back_button}
-            onPress={() => navigation.goBack()}>
-            <Icon name={'arrow-left'} size={20} />
-          </TouchableOpacity>
-          <Text style={styles.screen_title}>Havruta</Text>
-          <View
-            style={[
-              styles.back_button,
-              { backgroundColor: 'rgba(0,0,0,0)' },
-            ]}></View>
-        </View>
         <View style={styles.body}>
           <View style={styles.search_container}>
             <TextInput
@@ -125,20 +114,9 @@ const styles = StyleSheet.create({
   main: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: '#fff',
+    backgroundColor: 'rgb(220,220,240)',
   },
-  header: {
-    width: '100%',
-    height: '10%',
-    backgroundColor: 'rgb(120,90,140)',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderColor: '#999',
-    borderBottomWidth: 1,
-    paddingLeft: 10,
-    paddingRight: 10,
-  },
+
   screen_title: {
     fontSize: 20,
     fontWeight: 'bold',
@@ -158,14 +136,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   body: {
-    height: '90%',
+    height: '100%',
     width: '100%',
   },
   search_container: {
     width: '100%',
-    // height: Dimensions.get('screen').height / 16,
     height: 50,
-    backgroundColor: 'rgba(255, 255, 255, 1)',
+    backgroundColor: 'rgba(180,180,210, 1)',
     alignItems: 'center',
     justifyContent: 'space-evenly',
     flexDirection: 'row',
@@ -175,7 +152,7 @@ const styles = StyleSheet.create({
   search_box: {
     width: '90%',
     height: '80%',
-    backgroundColor: 'rgba(238, 238, 238, 1)',
+    backgroundColor: 'rgba(238, 238, 248, 1)',
     borderRadius: 15,
     paddingLeft: 10,
   },
@@ -198,11 +175,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 20,
+    padding: 10,
     width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height / 10,
-    backgroundColor: 'rgb(255,255,255)',
-    borderBottomColor: 'rgba(111,111,111,0.5)',
-    borderBottomWidth: 1,
+    height: Dimensions.get('window').height / 14,
+    backgroundColor: 'rgb(250,250,255)',
+    marginBottom: 4,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 0.20,
+    shadowRadius: 1.41,
+
+    elevation: 2,
   },
 });

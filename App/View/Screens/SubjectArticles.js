@@ -4,87 +4,123 @@ import { Dimensions, Text, StyleSheet, View, ActivityIndicator, TouchableOpacity
 import { FlatList } from 'react-native-gesture-handler';
 import PostInFeed from './PostInFeed';
 import firestore from '@react-native-firebase/firestore';
-import Icon from 'react-native-vector-icons/FontAwesome5';
-import { createStackNavigator } from '@react-navigation/stack';
+import auth from '@react-native-firebase/auth';
+import { RefreshControl } from 'react-native';
+import axios from 'axios'
 
-const Stack = createStackNavigator();
+dateToReadbleFormat = (date) => date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear();
 
-function SubjectArticles({ navigation, route }) {
-  const [fullArticles, setFullArticles] = useState({ articles: [], temp: [], recevied: 0 });
+export default function SubjectArticles({ navigation }) {
+  const [fullArticles, setFullArticles] = useState([]);
+  const [user, setUser] = useState();
+  const [loading, setLoading] = useState(false)
+  const baseURL = 'https://havruta.org.il/wp-json'
+  let api = axios.create({ baseURL });
 
-  function articlesUpdater(art, index, length) {
-    fullArticles.temp[index] = art;
-    fullArticles.recevied++;
-    if (fullArticles.recevied == length) {
-      setFullArticles({ articles: fullArticles.temp, recevied: length });
-    }
+  function onAuthStateChanged(user) {
+    setUser(user);
+  }
+
+  function refresh() {
+    getArticlesFromWP()
   }
 
 
+  function getArticlesDataFromFB(articles_from_wp) {
+    let promises_fs = []
+    articles_from_wp.forEach((val) => {
+      let cur_promise = firestore().collection('article').doc(val.id).get();
+      promises_fs.push(cur_promise);
+    })
+    Promise.all(promises_fs)
+      .then(responses => {
+        responses.forEach((val, i) => {
+          if (val.data()) {
+            articles_from_wp[i].likes = val.data().likes
+            articles_from_wp[i].comments = val.data().comments
+            articles_from_wp[i].lock = val.data().lock
+            articles_from_wp[i].full = true
+          } else {
+            articles_from_wp[i].likes = []
+            articles_from_wp[i].comments = []
+            articles_from_wp[i].full = false
+            articles_from_wp[i].lock = false
+          }
+        })
+        setFullArticles(articles_from_wp)
+        setLoading(false)
+      })
+      .catch(errors => {
+        console.log(errors)
+      })
+  }
+
+  /****================ wordpress async start here ==============*******/
+
+  async function getArticlesFromWP() {
+    let articles = await api.get('/wp/v2/posts?categories=388');
+    let arr = [];
+    for (let i = 0; i < articles.data.length; i++) {
+      let obj = {
+        id: articles.data[i].id + '',
+        content: articles.data[i].content.rendered,
+        short: articles.data[i].excerpt.rendered,
+        date: dateToReadbleFormat(new Date(articles.data[i].date)),
+        autor: articles.data[i].author,
+        headline: articles.data[i].title.rendered,
+      }
+      arr.push(obj)
+    }
+    getArticlesDataFromFB(arr)
+    return;
+  };
+
   useEffect(() => {
+    getArticlesFromWP()
+  }, [])
 
-    let articles_wp = [{
-      "id": "arti1",
-      "headline": "Daimonds in the sky",
-      "autor": "Zohar",
-      "date": "1/1/1001",
-      "contant": "Shine bright like a diamond. Shine bright like a diamond. Find light in the beautiful sea. I choose to be happy, You and I, you and I, We're like diamonds in the sky, You're a shooting star I see, A vision of ecstasy, When you hold me, I'm alive",
-      "contant-short": "Lorem Ipsum is simply dummy text of the printing and typesetting industry"
-    }, {
-      "id": "arti2",
-      "headline": "זה מגן מטילים וגם ממרגמות",
-      "autor": "Daniel Ohayon",
-      "date": "6/6/2021",
-      "contant": "לך עליה עליה בבוקר, למה לא למה לא, אם רצית בה לגעת כמו חלום, למה לא, אם הצעת לה טבעת יהלום, למה לא, אם ניסית והצלחת, למה לא למה לא, למה לא למה לא",
-      "contant-short": "bla"
-    }, {
-      "id": "arti3",
-      "headline": "This is America",
-      "autor": "Rihanna",
-      "date": "21/12/2012",
-      "contant": "Shine bright like a diamond. Shine bright like a diamond. Find light in the beautiful sea. I choose to be happy, You and I, you and I, We're like diamonds in the sky, You're a shooting star I see, A vision of ecstasy, When you hold me, I'm alive",
-      "contant-short": "Lorem Ipsum is simply dummy text of the printing and typesetting industry"
-    },
-    ]
+  /*******===== async ends here =============*************** */
 
-    articles_wp.forEach((val, i, arr) => {
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    if (auth().currentUser) {
       firestore()
-        .collection('article')
-        .doc(val.id)
-        .get()
-        .then(doc => {
-          let art = { ...val, likes: doc.data().likes, comments: doc.data().comments }
-          articlesUpdater(art, i, arr.length)
+        .collection('users')
+        .doc(auth().currentUser.email)
+        .get().then(doc => {
+          if (!doc) return;
+          let userDetails = doc.data();
+          setUser(userDetails);
         })
         .catch(err => {
-          console.log('error:', err.code);
-        });
-    })
-
-  }, [])
+          console.log(err)
+        })
+    }
+    return subscriber;
+  }, [setUser])
 
 
   return (
     <View style={styles.main}>
       <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
       <SafeAreaView style={styles.main}>
-        <View style={styles.header}>
-          <View
-            style={[styles.register, { backgroundColor: 'rgba(0,0,0,0)' }]}></View>
-          <Text style={styles.screen_title}>Havruta</Text>
-          <View
-            style={[styles.register, { backgroundColor: 'rgba(0,0,0,0)' }]}></View>
-        </View>
         {
-          fullArticles.articles.length == 0 ?
+          fullArticles.length == 0 ?
             <ActivityIndicator style={{ marginTop: '30%' }} size={'large'} color={'#000'} />
             :
             <FlatList
-              data={fullArticles.articles}
+              data={fullArticles}
+              refreshControl={
+                <RefreshControl
+                  refreshing={false}
+                  onRefresh={refresh}
+                />
+              }
               renderItem={({ item }) => (
                 <PostInFeed
-                  onPress={() => navigation.navigate('ArticleScreen', { data: item })}
+                  onPress={() => navigation.navigate('ArticleScreen', { data: item, user: user, idAdmin: auth().currentUser ? user.role == 'admin' : false })}
                   data={item}
+                  idAdmin={auth().currentUser ? user.role == 'admin' : false}
                 />
               )}
               keyExtractor={(item, idx) => idx}
@@ -127,8 +163,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'rgb(255,255,255)',
   },
-
-  register: {
+  back_button: {
     width: 50,
     height: 50,
     borderRadius: 25,
@@ -137,5 +172,3 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
-
-export default SubjectArticles;
