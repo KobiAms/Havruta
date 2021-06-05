@@ -5,7 +5,8 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import IconF from 'react-native-vector-icons/Fontisto';
 import auth from '@react-native-firebase/auth';
 import { TouchableWithoutFeedback } from 'react-native';
-
+import HTMLRend from 'react-native-render-html';
+import { Dimensions } from 'react-native';
 
 function PostInFeed({ onPress, data, isAdmin }) {
   const [postData, setPostData] = useState(data)
@@ -28,14 +29,19 @@ function PostInFeed({ onPress, data, isAdmin }) {
               null
           }
         </View>
-
-        <Text style={styles.headline}>
-          {postData.headline}
-          {'\n'}
-        </Text>
-        <Text >
-          {postData.contant}
-        </Text>
+        <HTMLRend
+          source={{ html: postData.headline }}
+          contentWidth={Dimensions.get('window').width}
+          baseFontStyle={{
+            fontSize: 22,
+            alignItems: 'flex-end',
+            fontWeight: 'bold',
+          }}
+        ></HTMLRend>
+        <HTMLRend
+          source={{ html: postData.short }}
+          contentWidth={Dimensions.get('window').width}
+        ></HTMLRend>
         {
           postData.full ?
             <View>
@@ -56,7 +62,6 @@ function PostInFeed({ onPress, data, isAdmin }) {
     </TouchableWithoutFeedback>
   );
 }
-
 
 const styles = StyleSheet.create({
   main: {

@@ -1,9 +1,9 @@
-import React from 'react'
-import { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native'
+import React, { useState } from 'react'
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions, Image } from 'react-native'
 import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 import Icon from 'react-native-vector-icons/AntDesign';
 import IconIos from 'react-native-vector-icons/Ionicons';
+import HTMLRend from 'react-native-render-html';
 
 
 export default function FullArticleComponent({ data, addComment, likeUpdate, isLiked, likes, isRegister }) {
@@ -13,18 +13,27 @@ export default function FullArticleComponent({ data, addComment, likeUpdate, isL
             <View
                 style={[styles.row, { padding: 10 }]} /** user info - icon, name and date of publish */>
                 <View>
-                    <Text style={{ fontWeight: 'bold' }}>{data.autor}</Text>
+                    {/* <Text style={{ fontWeight: 'bold' }}>{data.autor}</Text> */}
                     <Text>{data.date}</Text>
-                    <Text style={styles.headline}>
-                        {data.headline}
-                        {'\n'}
-                    </Text>
-                    <Text>{data.contant}</Text>
+                    <HTMLRend
+                        source={{ html: data.headline }}
+                        contentWidth={Dimensions.get('screen').width * (95 / 100)}
+                        baseFontStyle={{
+                            fontSize: 22,
+                            alignItems: 'flex-end',
+                            fontWeight: 'bold',
+                        }}
+                    ></HTMLRend>
+                    <HTMLRend
+                        source={{ html: data.content }}
+                        contentWidth={Dimensions.get('screen').width * (95 / 100)}
+                        tagsStyles={{ h5: { fontSize: 17, } }}
+                        containerStyle={{}}
+                    ></HTMLRend>
                 </View>
             </View>
             {
                 data.full ?
-
                     <View>
                         <View style={styles.line} />
                         <View
@@ -58,8 +67,9 @@ export default function FullArticleComponent({ data, addComment, likeUpdate, isL
                                 <IconIos name={'send'} size={25} />
                             </TouchableOpacity>
                         </View>
-                    </View> : null}
-        </View>
+                    </View> : null
+            }
+        </View >
     )
 }
 
