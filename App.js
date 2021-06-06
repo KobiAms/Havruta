@@ -85,13 +85,6 @@ App = () => {
                   }
                 </TouchableOpacity>
               ),
-              headerLeft: () => (
-                <TouchableOpacity
-                  style={styles.register}
-                  onPress={() => console.log('search')}>
-                  <Icon color={'#fff'} name={'search'} size={20} />
-                </TouchableOpacity>
-              )
             })} />
           <Stack.Screen
             name="Registration"
