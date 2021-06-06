@@ -172,7 +172,6 @@ GenericChat = ({ navigation, route }) => {
             style={styles.main}
             keyboardVerticalOffset={Platform.OS == 'ios' ? KEYBOARD_VERTICAL_OFFSET : -(headerHeight + tabBarHeight)}
         >
-            {/* <View style={styles.main}> */}
             <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
             <View style={styles.main}>
                 <FlatList
@@ -194,7 +193,7 @@ GenericChat = ({ navigation, route }) => {
                         </Pressable>
                     )}
                 />
-                {user ? (
+                {user && user.role == 'admin' ? (
                     <View
                         style={styles.inputContainer}>
                         <TextInput
@@ -216,7 +215,6 @@ GenericChat = ({ navigation, route }) => {
                     </View>
                 ) : null}
             </View>
-            {/* </View> */}
         </KeyboardAvoidingView>
     );
 };

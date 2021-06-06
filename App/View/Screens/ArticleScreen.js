@@ -145,7 +145,7 @@ function ArticleScreen({ navigation, route }) {
       <View style={{ flex: 10, paddingTop: 0, backgroundColor: 'rgb(220,220,240)' }}>
         <FlatList
           scrollIndicatorInsets={{ right: 1 }}
-          data={[route.params.data, ...comments]}
+          data={[route.params.data, ...comments, 'end_list']}
           refreshControl={
             <RefreshControl
               refreshing={false}
@@ -155,6 +155,8 @@ function ArticleScreen({ navigation, route }) {
           renderItem={({ item, index }) => {
             if (index == 0)
               return (<FullArticleComponent data={item} likes={likes} likeUpdate={updateLikes} addComment={addComment} isLiked={isLiked} isRegister={auth().currentUser} />)
+            else if (index == comments.length + 1)
+              return <View style={{ height: 80, width: '100%' }}></View>
             return (<CommentComponent data={item} setLoading={setLoading} id={route.params.data.id} isAdmin={route.params.user ? route.params.user.role : false} deleteComment={() => deleteComment(item, index)} />)
           }}
           keyExtractor={(item, idx) => idx}

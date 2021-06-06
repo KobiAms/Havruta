@@ -68,7 +68,7 @@ export default ManageUsers = ({ navigation }) => {
   return (
     <View style={styles.main}>
       <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
-      <SafeAreaView style={styles.main}>
+      <View style={styles.main}>
         <View style={styles.body}>
           <View style={styles.search_container}>
             <TextInput
@@ -91,21 +91,27 @@ export default ManageUsers = ({ navigation }) => {
             ) : (
               <FlatList
                 style={styles.list}
-                data={list_to_show}
-                renderItem={({ item }) => (
-                  <UserItem
-                    headline={item.name}
-                    color={item.color}
-                    onPress={() =>
-                      navigation.navigate('Manage User', { data: item })
-                    }
-                  />
-                )}
+                data={[...list_to_show, 'end_list']}
+                renderItem={({ item, index }) => {
+                  if (index == list_to_show.length)
+                    return <View style={{ height: 40, width: '100%' }}></View>
+                  else
+                    return (
+                      <UserItem
+                        headline={item.name}
+                        color={item.color}
+                        onPress={() =>
+                          navigation.navigate('Manage User', { data: item })
+                        }
+                      />
+                    )
+                }}
+                keyExtractor={(item, idx) => idx}
               />
             )}
           </View>
         </View>
-      </SafeAreaView>
+      </View>
     </View>
   );
 };

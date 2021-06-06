@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Keyboard, TouchableWithoutFeedback } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome5';
 import IconIC from 'react-native-vector-icons/Ionicons';
 import auth from '@react-native-firebase/auth';
 import LoginForm from '../Components/LoginForm';
 import SignupForm from '../Components/SignupForm';
 import UserForm from '../Components/UserForm';
-import LoadingComponent from '../Components/LoadingComponent'
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { SafeAreaView } from 'react-native';
 import { ActivityIndicator } from 'react-native';

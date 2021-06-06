@@ -18,8 +18,7 @@ import auth from '@react-native-firebase/auth'
 import RegistrationScreen from './App/View/Screens/RegistrationScreen';
 import ManageUsers from './App/View/Components/ManageUsers';
 import ManageUser from './App/View/Components/ManageUser';
-import { KeyboardAvoidingView } from 'react-native';
-import { Platform } from 'react-native';
+
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -40,7 +39,11 @@ MainScreenNavigator = () => {
     return true;
   };
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+      tabBarOptions={{
+        activeTintColor: 'rgb(120,90,140)',
+        inactiveTintColor: 'gray',
+      }}>
       <Tab.Screen name="MainScreen" component={MainScreen}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="file-contract" size={25} color={color} />), })} />
       <Tab.Screen name="Gays" component={SubjectArticles}
@@ -70,6 +73,7 @@ App = () => {
             component={MainScreenNavigator}
             options={({ navigation }) => ({
               title: 'Havruta',
+              headerTitle: <Image style={styles.image_title} source={require('./App/Assets/logo.png')} />,
               headerRight: () => (
                 <TouchableOpacity
                   style={styles.register}
@@ -79,6 +83,13 @@ App = () => {
                     :
                     <Icon color={'#fff'} name={'user-alt'} size={20} />
                   }
+                </TouchableOpacity>
+              ),
+              headerLeft: () => (
+                <TouchableOpacity
+                  style={styles.register}
+                  onPress={() => console.log('search')}>
+                  <Icon color={'#fff'} name={'search'} size={20} />
                 </TouchableOpacity>
               )
             })} />
@@ -141,16 +152,27 @@ const styles = StyleSheet.create({
       width: 0,
       height: 4,
     },
-    shadowOpacity: 0.32,
-    shadowRadius: 5.46,
-    elevation: 6,
+    shadowOpacity: 0.80,
+    shadowRadius: 5,
   },
   user_image: {
     height: 35,
     width: 35,
     borderRadius: 20,
     overflow: 'hidden'
+  },
+  image_title: {
+    height: 40,
+    width: 80,
+    shadowColor: '#fff',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.80,
+    shadowRadius: 5,
   }
+
 });
 
 export default App;
