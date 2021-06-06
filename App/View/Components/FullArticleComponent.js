@@ -21,6 +21,7 @@ export default function FullArticleComponent({ data, addComment, likeUpdate, isL
                         baseFontStyle={{
                             fontSize: 22,
                             alignItems: 'flex-end',
+                            textAlign: 'right',
                             fontWeight: 'bold',
                         }}
                     ></HTMLRend>
@@ -28,7 +29,9 @@ export default function FullArticleComponent({ data, addComment, likeUpdate, isL
                         source={{ html: data.content }}
                         contentWidth={Dimensions.get('screen').width * (95 / 100)}
                         tagsStyles={{ h5: { fontSize: 17, } }}
-                        containerStyle={{}}
+                        baseFontStyle={{
+                            textAlign: 'right',
+                        }}
                     ></HTMLRend>
                 </View>
             </View>

@@ -12,7 +12,7 @@ import OtherScreen from './App/View/Screens/OtherScreen';
 import GenericChat from './App/View/Screens/GenericChat';
 import MainScreen from './App/View/Screens/MainScreen';
 import Wizard from './App/View/Components/NewUserWizard'
-import SubjectArticles from './App/View/Screens/SubjectArticles'
+import GenericFeed from './App/View/Screens/GenericFeed'
 import ArticleScreen from './App/View/Screens/ArticleScreen'
 import auth from '@react-native-firebase/auth'
 import RegistrationScreen from './App/View/Screens/RegistrationScreen';
@@ -46,11 +46,11 @@ MainScreenNavigator = () => {
       }}>
       <Tab.Screen name="MainScreen" component={MainScreen}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="file-contract" size={25} color={color} />), })} />
-      <Tab.Screen name="Gays" component={SubjectArticles}
+      <Tab.Screen name="Community" component={GenericFeed}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="transgender" size={25} color={color} />), })} />
       <Tab.Screen name="Reporters" component={GenericChat}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="comment-alt" size={25} color={color} />), })} />
-      <Tab.Screen name="Judaism" component={SubjectArticles}
+      <Tab.Screen name="Judaism" component={GenericFeed}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="torah" size={25} color={color} />), })} />
       <Tab.Screen name="Other" component={OtherScreen}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="bars" size={25} color={color} />), })} />
@@ -103,8 +103,8 @@ App = () => {
             component={Wizard}
             options={{ title: 'Welcome', }} />
           <Stack.Screen
-            name="SubjectArticles"
-            component={SubjectArticles}
+            name="GenericFeed"
+            component={GenericFeed}
           />
           <Stack.Screen
             name="ArticleScreen"

@@ -9,12 +9,14 @@ import HTMLRend from 'react-native-render-html';
 import { Dimensions } from 'react-native';
 import firestore from '@react-native-firebase/firestore'
 
+
+
 function PostInFeed({ onPress, data, isAdmin }) {
-  const [postData, setPostData] = useState(data)
+  const postData = data
   const [postLock, setPostLock] = useState(data.lock)
   const [newPost, setNewPost] = useState(data.new_post)
   const [postFull, setPostFull] = useState(data.full)
-  const [isLiked, setIsLiked] = useState(auth().currentUser ? data.likes.includes(auth().currentUser.email) : false)
+  const isLiked = auth().currentUser ? data.likes.includes(auth().currentUser.email) : false
 
   function lock_post() {
     if (newPost) {
@@ -53,6 +55,7 @@ function PostInFeed({ onPress, data, isAdmin }) {
 
   return (
     <TouchableWithoutFeedback onPress={() => onPress(postLock)} data={postData}>
+
       <View style={styles.main}>
         <View style={styles.row}>
           <View>
@@ -78,11 +81,15 @@ function PostInFeed({ onPress, data, isAdmin }) {
             fontSize: 22,
             alignItems: 'flex-end',
             fontWeight: 'bold',
+            textAlign: 'right',
           }}
         ></HTMLRend>
         <HTMLRend
           source={{ html: postData.short }}
           contentWidth={Dimensions.get('window').width}
+          baseFontStyle={{
+            textAlign: 'right',
+          }}
         ></HTMLRend>
         {
           postFull ?
@@ -122,7 +129,6 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.34,
     shadowRadius: 3.27,
-
     elevation: 10,
   },
   headline: {
