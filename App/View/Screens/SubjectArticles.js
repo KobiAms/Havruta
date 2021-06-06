@@ -8,6 +8,7 @@ import auth from '@react-native-firebase/auth';
 import { RefreshControl } from 'react-native';
 import axios from 'axios'
 
+
 dateToReadbleFormat = (date) => date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear();
 
 export default function SubjectArticles({ navigation }) {
@@ -112,15 +113,17 @@ export default function SubjectArticles({ navigation }) {
             :
             <FlatList
               data={fullArticles}
+              scrollIndicatorInsets={{ right: 1 }}
               refreshControl={
                 <RefreshControl
+                  enabled={true}
                   refreshing={false}
                   onRefresh={refresh}
                 />
               }
               renderItem={({ item }) => (
                 <PostInFeed
-                  onPress={() => navigation.navigate('ArticleScreen', { data: item, user: user, idAdmin: auth().currentUser ? user.role == 'admin' : false })}
+                  onPress={(postLock) => navigation.navigate('ArticleScreen', { data: item, user: user, idAdmin: auth().currentUser ? user.role == 'admin' : false, lock: postLock })}
                   data={item}
                   isAdmin={auth().currentUser ? user.role == 'admin' : false}
                 />

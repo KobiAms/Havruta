@@ -11,6 +11,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 
 
 function MainScreen({ navigation, route }) {
+
   return (
     <View style={styles.main}>
       <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />

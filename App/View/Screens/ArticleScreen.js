@@ -5,17 +5,21 @@ import CommentComponent from '../Components/CommentComponent';
 import FullArticleComponent from '../Components/FullArticleComponent'
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import { KeyboardAvoidingView } from 'react-native';
+import { Platform } from 'react-native';
+import { Dimensions } from 'react-native';
 
 
 function ArticleScreen({ navigation, route }) {
-  // const [data, setData] = useState([route.params.data, ...route.params.data.comments.slice().reverse()])
   const [comments, setComments] = useState(route.params.data.comments)
   const [likes, setLikes] = useState(route.params.data.likes)
   const [loading, setLoading] = useState(false)
+  const [isLock, setIsLock] = useState(route.params.data.lock)
   const [isLiked, setIsLiked] = useState(auth().currentUser ? route.params.data.likes.includes(auth().currentUser.email) : false)
 
+
   // this function updates the like/dislike at firestore
-  updateLikes = () => {
+  function updateLikes() {
     if (auth().currentUser) {
       setLoading(true)
       if (isLiked) {
@@ -55,7 +59,7 @@ function ArticleScreen({ navigation, route }) {
   }
 
   // this function add comment into firestore 
-  addComment = (comInput) => {
+  function addComment(comInput) {
     if (auth().currentUser) {
       setLoading(true)
       let new_comment = {
@@ -63,7 +67,6 @@ function ArticleScreen({ navigation, route }) {
         user_id: auth().currentUser.email,
         timestamp: firestore.Timestamp.fromDate(new Date())
       }
-      console.log('add comment: ', comInput)
       firestore().collection('article').doc(route.params.data.id).update({
         comments: firestore.FieldValue.arrayUnion(new_comment),
       }).then(() => {
@@ -82,7 +85,7 @@ function ArticleScreen({ navigation, route }) {
     }
   }
 
-  deleteComment = (comment_to_delete, index) => {
+  function deleteComment(comment_to_delete, index) {
     Alert.alert(
       'Delete Comment',
       'Are you sure you want to delete this comment?',
@@ -119,13 +122,17 @@ function ArticleScreen({ navigation, route }) {
       .then(doc => {
         if (!doc.data())
           return
-        let likes_tmp = doc.data().likes
-        let comments_tmp = doc.data().comments
+        const likes_tmp = doc.data().likes
+        const comments_tmp = doc.data().comments
+        const lock_tmp = doc.data().lock
         if (likes_tmp.length != likes.length) {
           setLikes(likes_tmp)
         }
         if (comments_tmp.length != comments.length) {
           setComments(comments_tmp)
+        }
+        if (lock_tmp != isLock) {
+          setIsLock(lock_tmp)
         }
         setLoading(false)
       })
@@ -136,27 +143,39 @@ function ArticleScreen({ navigation, route }) {
   }
 
   useEffect(() => {
-    refresh()
+    const subscriber = firestore().collection('article').doc(route.params.data.id)
+      .onSnapshot(doc => {
+        const likes_tmp = doc.data().likes
+        const comments_tmp = doc.data().comments
+        const lock_tmp = doc.data().lock
+        setLikes(likes_tmp)
+        setComments(comments_tmp)
+        setIsLock(lock_tmp)
+        setLoading(false)
+      })
+    return subscriber
   }, [])
 
   return (
     <View style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
-      <View style={{ flex: 10, paddingTop: 0, backgroundColor: 'rgb(220,220,240)' }}>
+      <View
+        style={{ flex: 10, paddingTop: 0, backgroundColor: 'rgb(220,220,240)' }}>
         <FlatList
-          scrollIndicatorInsets={{ right: 1 }}
           data={[route.params.data, ...comments, 'end_list']}
           refreshControl={
             <RefreshControl
+              enabled={true}
               refreshing={false}
               onRefresh={refresh}
             />
           }
+          scrollIndicatorInsets={{ right: 1 }}
           renderItem={({ item, index }) => {
             if (index == 0)
-              return (<FullArticleComponent data={item} likes={likes} likeUpdate={updateLikes} addComment={addComment} isLiked={isLiked} isRegister={auth().currentUser} />)
+              return (<FullArticleComponent data={item} likes={likes} likeUpdate={updateLikes} addComment={addComment} isLiked={isLiked} isRegister={auth().currentUser} lock={isLock} />)
             else if (index == comments.length + 1)
-              return <View style={{ height: 80, width: '100%' }}></View>
+              return <View style={{ height: Dimensions.get('screen').height * 0.4, width: '100%' }}></View>
             return (<CommentComponent data={item} setLoading={setLoading} id={route.params.data.id} isAdmin={route.params.user ? route.params.user.role : false} deleteComment={() => deleteComment(item, index)} />)
           }}
           keyExtractor={(item, idx) => idx}

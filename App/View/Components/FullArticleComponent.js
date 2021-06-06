@@ -6,7 +6,7 @@ import IconIos from 'react-native-vector-icons/Ionicons';
 import HTMLRend from 'react-native-render-html';
 
 
-export default function FullArticleComponent({ data, addComment, likeUpdate, isLiked, likes, isRegister }) {
+export default function FullArticleComponent({ data, addComment, likeUpdate, isLiked, likes, isRegister, lock }) {
     const [commentInput, setCommentInput] = useState('')
     return (
         <View>
@@ -33,9 +33,10 @@ export default function FullArticleComponent({ data, addComment, likeUpdate, isL
                 </View>
             </View>
             {
-                data.full ?
+                data.full && !lock ?
                     <View>
                         <View style={styles.line} />
+
                         <View
                             style={[styles.response, { padding: 15, paddingTop: 5, paddingBottom: 5 }]} /** displays the amount of likes and comments */
                         >
@@ -47,6 +48,7 @@ export default function FullArticleComponent({ data, addComment, likeUpdate, isL
                             </TouchableOpacity>
                             <Text>comments: {data.comments ? data.comments.length : 0}</Text>
                         </View>
+
                         <View style={styles.new_comment_box} /** text input to add new comment */>
                             <AutoGrowingTextInput
                                 placeholder={isRegister ? 'Add your comment...' : 'comments avilable to register users only'}

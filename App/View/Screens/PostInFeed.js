@@ -52,7 +52,7 @@ function PostInFeed({ onPress, data, isAdmin }) {
   }
 
   return (
-    <TouchableWithoutFeedback onPress={() => onPress()} data={postData}>
+    <TouchableWithoutFeedback onPress={() => onPress(postLock)} data={postData}>
       <View style={styles.main}>
         <View style={styles.row}>
           <View>

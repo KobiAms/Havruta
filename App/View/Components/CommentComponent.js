@@ -4,6 +4,7 @@ import { Avatar } from 'react-native-elements';
 import firestore from '@react-native-firebase/firestore';
 import { TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/EvilIcons'
+import { Pressable } from 'react-native';
 
 const colors = ['#fff', '#f99', '#9ff', '#f9f', '#ff9', '#9f9', '#99f', '#999', '#fff'];
 
@@ -17,8 +18,6 @@ export default function CommentComponent({ data, isAdmin, deleteComment }) {
     // const [autorData, setAutorData] = useState(data)
     const [name, setName] = useState('Loading...')
     const [imageUrl, setImageUrl] = useState(require('../../Assets/logo.png'))
-
-
 
 
     useEffect(() => {
@@ -35,32 +34,29 @@ export default function CommentComponent({ data, isAdmin, deleteComment }) {
     }, [])
 
     return (
-        <View style={styles.combox}>
-            <View>
-                <Avatar
-                    size="small"
-                    rounded
-                    title={name[0]}
-                    source={imageUrl}
-                    containerStyle={{ backgroundColor: getRandomColor() }}
-                    onPress={() => { console.log(name) }}
-                />
-            </View>
-            <View style={styles.comment}>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <Text style={styles.autor}>{name}</Text>
-                    <Text>{timePassParser(data.timestamp.seconds)}</Text>
-                </View>
+        <Pressable onLongPress={isAdmin ? deleteComment : null}>
+            <View style={styles.combox}>
                 <View>
-                    <Text>{data.comment}</Text>
+                    <Avatar
+                        size="small"
+                        rounded
+                        title={name[0]}
+                        source={imageUrl}
+                        containerStyle={{ backgroundColor: getRandomColor() }}
+                        onPress={() => { console.log(name) }}
+                    />
+                </View>
+                <View style={styles.comment}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <Text style={styles.autor}>{name}</Text>
+                        <Text>{timePassParser(data.timestamp.seconds)}</Text>
+                    </View>
+                    <View>
+                        <Text>{data.comment}</Text>
+                    </View>
                 </View>
             </View>
-            {isAdmin ?
-                <TouchableOpacity onPress={deleteComment}>
-                    <Icon name={'trash'} color={'#440000'} size={30} />
-                </TouchableOpacity>
-                : null}
-        </View>
+        </Pressable>
     )
 }
 
