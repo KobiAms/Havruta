@@ -15,6 +15,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios'
 import { useWindowDimensions } from 'react-native';
 import { ActivityIndicator } from 'react-native';
+import EventComponent from '../Components/EventComponent';
 
 
 
@@ -87,6 +88,7 @@ function MainScreen({ navigation, route }) {
         </View>
         <View style={styles.body}>
           <Post />
+          <EventComponent></EventComponent>
         </View>
       </SafeAreaView>
     </View>
