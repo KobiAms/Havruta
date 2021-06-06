@@ -18,6 +18,9 @@ import auth from '@react-native-firebase/auth'
 import RegistrationScreen from './App/View/Screens/RegistrationScreen';
 import ManageUsers from './App/View/Components/ManageUsers';
 import ManageUser from './App/View/Components/ManageUser';
+import ChatScreen from './App/View/Screens/ChatScreen';
+import AddChat from './App/View/Screens/AddChat';
+import DonationScreen from './App/View/Screens/DonationScreen';
 
 
 const Stack = createStackNavigator();
@@ -109,6 +112,22 @@ App = () => {
           <Stack.Screen
             name="ArticleScreen"
             component={ArticleScreen}
+          />
+          <Stack.Screen
+            name="ChatScreen"
+            component={ChatScreen}
+          />
+          <Stack.Screen
+            name="GenericChat"
+            component={GenericChat}
+          />
+          <Stack.Screen
+            name="AddChat"
+            component={AddChat}
+          />
+          <Stack.Screen
+            name="DonationScreen"
+            component={DonationScreen}
           />
         </Stack.Navigator>
       </NavigationContainer>
