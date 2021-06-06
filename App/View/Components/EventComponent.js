@@ -102,7 +102,7 @@ export default EventsList = () => {
                                                         })
                                                 }
                                                 else{
-                                                    console.log("You have to be registered to attend an event");
+                                                    Alert.alert("You must be registered in order to attend an event");
                                                 }
                                             }
                                             } title={item.key}>

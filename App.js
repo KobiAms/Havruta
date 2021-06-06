@@ -15,6 +15,8 @@ import MainScreen from './App/View/Screens/MainScreen';
 import RegistrationScreen from './App/View/Screens/RegistrationScreen';
 import ManageUsers from './App/View/Components/ManageUsers';
 import ManageUser from './App/View/Components/ManageUser';
+import { WebView } from 'react-native-webview';
+
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -37,7 +39,7 @@ App = () => {
 
   return (
     <SafeAreaProvider style={{ height: '100%', width: '100%' }}>
-      <NavigationContainer>
+       <NavigationContainer>
         <Tab.Navigator>
           <Tab.Screen name="MainScreen" component={MainScreenNavigator}
             options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="file-contract" size={25} color={color} />), })} />
@@ -50,7 +52,7 @@ App = () => {
           <Tab.Screen name="Other" component={OtherScreen}
             options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="bars" size={25} color={color} />), })} />
         </Tab.Navigator>
-      </NavigationContainer>
+      </NavigationContainer> 
     </SafeAreaProvider>
   );
 };
@@ -72,6 +74,12 @@ MainScreenNavigator = () => {
     </Stack.Navigator>
   );
 };
+
+// DonatePage = () => {
+//   return(
+//     <WebView source={{ uri: 'https://havruta.org.il/donate/'}} style={{ marginTop: 20 }}/>
+//   );
+// };
 
 const styles = StyleSheet.create({
   container: {
