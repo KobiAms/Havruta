@@ -11,32 +11,30 @@ import firestore from '@react-native-firebase/firestore'
 
 function PostInFeed({ onPress, data, isAdmin }) {
   const [postData, setPostData] = useState(data)
+  const [postLock, setPostLock] = useState(data.lock)
+  const [newPost, setNewPost] = useState(data.new_post)
+  const [postFull, setPostFull] = useState(data.full)
   const [isLiked, setIsLiked] = useState(auth().currentUser ? data.likes.includes(auth().currentUser.email) : false)
 
   function lock_post() {
-    if (postData.new_post) {
+    if (newPost) {
       firestore().collection('article').doc(postData.id).set({
         comments: [],
         likes: [],
         lock: false
       }).then(() => {
-        setPostData(prev => {
-          prev.lock = false
-          prev.new_post = false
-          return prev
-        })
+        setPostLock(false)
+        setPostFull(true)
+        setNewPost(false)
       })
         .catch(err => {
           alert('Initialise failed:\n' + err.code)
         })
-    } else if (postData.lock) {
+    } else if (postLock) {
       firestore().collection('article').doc(postData.id).update({
         lock: false
       }).then(() => {
-        setPostData(prev => {
-          prev.lock = false
-          return prev
-        })
+        setPostLock(false)
       })
         .catch(err => {
           alert('Unlock failed:\n' + err.code)
@@ -45,10 +43,7 @@ function PostInFeed({ onPress, data, isAdmin }) {
       firestore().collection('article').doc(postData.id).update({
         lock: true
       }).then(() => {
-        setPostData(prev => {
-          prev.lock = true
-          return prev
-        })
+        setPostLock(true)
       })
         .catch(err => {
           alert('Lock failed:\n' + err.code)
@@ -66,10 +61,10 @@ function PostInFeed({ onPress, data, isAdmin }) {
           {
             isAdmin ?
               <TouchableOpacity onPress={() => lock_post()}>
-                {postData.new_post ?
+                {newPost ?
                   <IconIo name={'add-circle'} color={'blue'} size={20} />
                   :
-                  <IconIo name={data.lock ? 'ios-lock-closed-outline' : 'ios-lock-open-outline'} color={data.lock ? 'red' : 'green'} size={20} />
+                  <IconIo name={postLock ? 'ios-lock-closed-outline' : 'ios-lock-open-outline'} color={postLock ? 'red' : 'green'} size={20} />
                 }
               </TouchableOpacity>
               :
@@ -90,7 +85,7 @@ function PostInFeed({ onPress, data, isAdmin }) {
           contentWidth={Dimensions.get('window').width}
         ></HTMLRend>
         {
-          postData.full ?
+          postFull ?
             <View>
               <View style={styles.line} />
               <View style={styles.response}>
