@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Pressable, FlatList, Dimensions, StyleSheet, Alert } from 'react-native';
+import { View, Pressable, FlatList, Dimensions, StyleSheet, Alert, SafeAreaView, ActivityIndicator } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import Chat from '../Components/ChatItem';
@@ -10,6 +10,7 @@ import IconIo from 'react-native-vector-icons/Ionicons';
 function ChatScreen({ navigation, route }) {
     const [chats, setChats] = useState([])
     const [isAdmin, setIsAdmin] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     /*this useEffect update the state "isAdmin" after checking it's role on firebase*/
     useEffect(() => {
@@ -19,6 +20,7 @@ function ChatScreen({ navigation, route }) {
             .get().then(doc => {
                 if (!doc) return;
                 if (doc.data().role === 'admin') setIsAdmin(true);
+                setLoading(false);
             })
             .catch(err => console.log(err.code))
         return subscriber;
@@ -33,10 +35,14 @@ function ChatScreen({ navigation, route }) {
             .collection('chats')
             .onSnapshot(que => {
                 que.forEach(doc => {
-                    let obj = { id: doc.id, name: doc.data().name };
+                    let chatLen = doc.data().messages.length;
+                    let lastCom;
+                    if (chatLen > 0) lastCom = doc.data().messages[chatLen - 1];
+                    let obj = { id: doc.id, name: doc.data().name, lastCom: lastCom };
                     chatNames.push(obj);
                 });
                 setChats(chatNames);
+                setLoading(false);
             });
 
         return subscriber;
@@ -70,34 +76,42 @@ function ChatScreen({ navigation, route }) {
     }
 
     return (
+
         <View style={styles.main}>
-            <FlatList
-                scrollIndicatorInsets={{ right: 1 }}
-                style={styles.list}
-                data={[...chats, 'end_list']}
-                renderItem={({ item, index }) => {
-                    if (index == chats.length)
-                        return <View style={{ height: 40, width: '100%' }}></View>
-                    else
-                        return (
-                            <Pressable onLongPress={() => deleteChat(item)}>
-                                <Chat
-                                    id={item.name}
-                                    onPress={() =>
-                                        navigation.navigate('GenericChat', { id: item.id, data: item })
-                                    }
-                                /></Pressable>
-                        )
-                }}
-                keyExtractor={(item, idx) => idx}
-            />
-            {isAdmin ?
-                <TouchableOpacity
-                    style={styles.add}
-                    onPress={() => navigation.navigate('AddChat', { data: chats })}>
-                    <IconIo name={'add-circle'} color={'rgb(120,90,140)'} size={65} />
-                </TouchableOpacity> : null}
+            {loading ? (
+                <ActivityIndicator size="large" color="dodgerblue" />
+            ) : (
+                <FlatList
+                    scrollIndicatorInsets={{ right: 1 }}
+                    style={styles.list}
+                    data={[...chats, 'end_list']}
+                    renderItem={({ item, index }) => {
+                        if (index == chats.length)
+                            return <View style={{ height: 40, width: '100%' }}></View>
+                        else
+                            return (
+                                <Pressable onLongPress={() => deleteChat(item)}>
+                                    <Chat
+                                        id={item.name}
+                                        onPress={() =>
+                                            navigation.navigate('GenericChat', { id: item.id, data: item })
+                                        }
+                                        lastCom={item.lastCom}
+                                    /></Pressable>
+                            )
+                    }}
+                    keyExtractor={(item, idx) => idx}
+                />)}
+            <View style={{ position: 'absolute', bottom: 10, right: 10 }}>
+                {isAdmin ?
+                    <TouchableOpacity
+                        style={styles.adder}
+                        onPress={() => navigation.navigate('AddChat', { data: chats })}>
+                        <IconIo name={'add-circle'} color={'rgb(120,90,140)'} size={65} />
+                    </TouchableOpacity> : null}
+            </View>
         </View>
+
     );
 }
 const styles = StyleSheet.create({
@@ -110,11 +124,9 @@ const styles = StyleSheet.create({
         height: '100%',
         width: '100%',
     },
-    add: {
-        position: 'relative',
+    adder: {
         justifyContent: 'flex-end',
         alignItems: 'flex-end',
-        bottom: 0,
         zIndex: 1,
         margin: 20,
     },
