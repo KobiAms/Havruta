@@ -1,12 +1,10 @@
 ---------- ========== toDo ========== ----------:
-in AddChat
-    validate the chat name
-    sed alert if all the fields are not fiiled
 
 in ChatScreen
-    add an option to admin to delete chat
     add photo to a chat.
     add last message on the chat.
+    fix ADD button to be floatin above
+    fix delete going inside a chat, and crash the app
 
 in ArticleScreen
     comment delete by admin
@@ -48,3 +46,10 @@ in RegistraionScreen
 
 in Other Screen 
     more chats section -v
+
+in AddChat
+    validate the chat name - V
+    send alert if all the fields are not fiiled -V
+
+in ChatScreen
+    add an option to admin to delete chat -V
