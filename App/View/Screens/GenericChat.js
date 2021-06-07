@@ -45,11 +45,12 @@ GenericChat = ({ navigation, route }) => {
     const [user, setUser] = useState();
     const [chat_name, set_chat_name] = useState('');
     const [loadingMore, set_loading_more] = useState(false);
-    const feed_type = route.name;
-    const chat_id = 'test';
+    const chat_id = route.name == 'Reporters' ? 'reporters' : route.params.id;
     const [refreshing, setRefreshing] = React.useState(false);
     const headerHeight = useHeaderHeight();
-    const tabBarHeight = useBottomTabBarHeight();
+    const [docPre, setDocPre] = useState();
+    const [useRole, setUseRole] = useState('user');
+    // const tabBarHeight = useBottomTabBarHeight();
     const KEYBOARD_VERTICAL_OFFSET = headerHeight + StatusBar.currentHeight;
 
     const onRefresh = React.useCallback(() => {
@@ -58,7 +59,7 @@ GenericChat = ({ navigation, route }) => {
         wait(1000).then(() => setRefreshing(false));
     }, []);
 
-    deleteMsg = (item) => {
+    function deleteMsg(item) {
         if (auth().currentUser.email === item.user_id || user.role === "admin") {
             Alert.alert(
                 "Delete Message",
@@ -67,7 +68,7 @@ GenericChat = ({ navigation, route }) => {
                     {
                         text: "DELETE",
                         onPress: () => {
-                            firestore().collection('chats').doc('reporters').update({ messages: firestore.FieldValue.arrayRemove(item) })
+                            firestore().collection('chats').doc(chat_id).update({ messages: firestore.FieldValue.arrayRemove(item) })
                             Alert.alert("Message Deleted")
                         },
                         style: 'destructive'
@@ -83,32 +84,32 @@ GenericChat = ({ navigation, route }) => {
             );
         }
 
-    },
-        //this function is used when we wanna send msg on the chat. first we check the the msg content exist in order the prevent from sending
-        // empty msgs to the server.
-        // after we verify that the msg is decent we update our data base with the new msgs
-        sendMessage = () => {
-            let tempMessage = {
-                user_id: user.email,
-                message: newMessage,
-                date: new Date(),
-            };
-            setNewMessage('');
-            if (!tempMessage.message.replace(/\s/g, '').length || !auth().currentUser) {
-                setNewMessage('');
-            } else {
-
-                firestore()
-                    .collection('chats')
-                    .doc('reporters')
-                    .update({
-                        messages: firestore.FieldValue.arrayUnion(tempMessage),
-                    })
-                    .catch(error => {
-                        console.log('error is: ' + error.toString());
-                    });
-            }
+    }
+    //this function is used when we wanna send msg on the chat. first we check the the msg content exist in order the prevent from sending
+    // empty msgs to the server.
+    // after we verify that the msg is decent we update our data base with the new msgs
+    function sendMessage() {
+        let tempMessage = {
+            user_id: user.email,
+            message: newMessage,
+            date: new Date(),
         };
+        setNewMessage('');
+        if (!tempMessage.message.replace(/\s/g, '').length || !auth().currentUser) {
+            setNewMessage('');
+        } else {
+
+            firestore()
+                .collection('chats')
+                .doc(chat_id)
+                .update({
+                    messages: firestore.FieldValue.arrayUnion(tempMessage),
+                })
+                .catch(error => {
+                    console.log('error is: ' + error.toString());
+                });
+        }
+    };
 
     function onAuthStateChanged(user) {
         setUser(user);
@@ -121,7 +122,7 @@ GenericChat = ({ navigation, route }) => {
         msgToLoad = msgToLoad + 20;
         firestore()
             .collection('chats')
-            .doc('reporters')
+            .doc(chat_id)
             .onSnapshot(doc => {
                 if (!doc) return;
 
@@ -132,7 +133,6 @@ GenericChat = ({ navigation, route }) => {
                 } else {
                     set_chat_data(reversed.slice(msgToStart, msgToLoad));
                 }
-                // console.log('chat data len is: ' + chat_data.length);
                 if (chat_data.length === doc.data().messages.length) {
                     endReached = true;
                 }
@@ -141,8 +141,6 @@ GenericChat = ({ navigation, route }) => {
     }
 
     useEffect(() => {
-        console.log(headerHeight, StatusBar.currentHeight)
-        //
         const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
         if (auth().currentUser) {
             firestore()
@@ -152,29 +150,37 @@ GenericChat = ({ navigation, route }) => {
                     if (!doc) return;
                     let userDetails = doc.data();
                     setUser(userDetails);
+                    setUseRole(doc.data().role);
+
                 })
                 .catch()
         }
         firestore()
             .collection('chats')
-            .doc('reporters')
+            .doc(chat_id)
             .onSnapshot(doc => {
                 if (!doc) return;
                 let reversed = doc.data().messages.reverse();
-                set_chat_data(reversed.slice(0, msgToLoad));
+                if (reversed.length === 0) {
+                    setDocPre(doc.data().premission);
+                    return subscriber;
+                }
+                else {
+                    set_chat_data(reversed.slice(0, msgToLoad));
+                    setDocPre(doc.data().premission);
+                }
             });
-
         return subscriber; // unsubscribe on unmount
     }, []);
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS == 'ios' ? "padding" : 'padding'}
             style={styles.main}
-            keyboardVerticalOffset={Platform.OS == 'ios' ? KEYBOARD_VERTICAL_OFFSET : -(headerHeight + tabBarHeight)}
+            keyboardVerticalOffset={Platform.OS == 'ios' ? KEYBOARD_VERTICAL_OFFSET : -(headerHeight + 0)} // tabBarHeight
         >
             <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
             <View style={styles.main}>
-                <FlatList
+                {chat_data ? <FlatList
                     style={styles.list}
                     inverted
                     data={chat_data}
@@ -192,8 +198,8 @@ GenericChat = ({ navigation, route }) => {
                             />
                         </Pressable>
                     )}
-                />
-                {user && user.role == 'admin' ? (
+                /> : null}
+                {useRole == 'admin' || (useRole == 'reporter' && docPre !== 'admin') ? (
                     <View
                         style={styles.inputContainer}>
                         <TextInput

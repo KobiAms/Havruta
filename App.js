@@ -12,13 +12,17 @@ import OtherScreen from './App/View/Screens/OtherScreen';
 import GenericChat from './App/View/Screens/GenericChat';
 import MainScreen from './App/View/Screens/MainScreen';
 import Wizard from './App/View/Components/NewUserWizard'
-import SubjectArticles from './App/View/Screens/SubjectArticles'
+import GenericFeed from './App/View/Screens/GenericFeed'
 import ArticleScreen from './App/View/Screens/ArticleScreen'
 import auth from '@react-native-firebase/auth'
 import RegistrationScreen from './App/View/Screens/RegistrationScreen';
 import ManageUsers from './App/View/Components/ManageUsers';
 import ManageUser from './App/View/Components/ManageUser';
-
+import ChatScreen from './App/View/Screens/ChatScreen';
+import AddChat from './App/View/Screens/AddChat';
+import DonationScreen from './App/View/Screens/DonationScreen';
+import EventsScreen from './App/View/Screens/EventsScreen';
+import AddEvent from './App/View/Screens/AddEvent';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -41,16 +45,16 @@ MainScreenNavigator = () => {
   return (
     <Tab.Navigator
       tabBarOptions={{
-        activeTintColor: 'rgb(120,90,140)',
+        activeTintColor: 'rgb(0,110,220)',
         inactiveTintColor: 'gray',
       }}>
       <Tab.Screen name="MainScreen" component={MainScreen}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="file-contract" size={25} color={color} />), })} />
-      <Tab.Screen name="Gays" component={SubjectArticles}
+      <Tab.Screen name="Community" component={GenericFeed}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="transgender" size={25} color={color} />), })} />
       <Tab.Screen name="Reporters" component={GenericChat}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="comment-alt" size={25} color={color} />), })} />
-      <Tab.Screen name="Judaism" component={SubjectArticles}
+      <Tab.Screen name="Judaism" component={GenericFeed}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="torah" size={25} color={color} />), })} />
       <Tab.Screen name="Other" component={OtherScreen}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="bars" size={25} color={color} />), })} />
@@ -103,12 +107,36 @@ App = () => {
             component={Wizard}
             options={{ title: 'Welcome', }} />
           <Stack.Screen
-            name="SubjectArticles"
-            component={SubjectArticles}
+            name="GenericFeed"
+            component={GenericFeed}
           />
           <Stack.Screen
             name="ArticleScreen"
             component={ArticleScreen}
+          />
+          <Stack.Screen
+            name="ChatScreen"
+            component={ChatScreen}
+          />
+          <Stack.Screen
+            name="GenericChat"
+            component={GenericChat}
+          />
+          <Stack.Screen
+            name="AddChat"
+            component={AddChat}
+          />
+          <Stack.Screen
+            name="DonationScreen"
+            component={DonationScreen}
+          />
+          <Stack.Screen
+            name="EventsScreen"
+            component={EventsScreen}
+          />
+          <Stack.Screen
+            name="AddEvent"
+            component={AddEvent}
           />
         </Stack.Navigator>
       </NavigationContainer>

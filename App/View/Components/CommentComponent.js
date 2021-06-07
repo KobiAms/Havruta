@@ -2,30 +2,21 @@ import React, { useEffect, useState } from 'react'
 import { View, StyleSheet, Text } from 'react-native'
 import { Avatar } from 'react-native-elements';
 import firestore from '@react-native-firebase/firestore';
-import { TouchableOpacity } from 'react-native';
-import Icon from 'react-native-vector-icons/EvilIcons'
-
-const colors = ['#fff', '#f99', '#9ff', '#f9f', '#ff9', '#9f9', '#99f', '#999', '#fff'];
-
-function getRandomColor() {
-    let rand = Math.floor(Math.random() * 8);
-    return colors[rand]
-}
-
+import { Pressable } from 'react-native';
 
 export default function CommentComponent({ data, isAdmin, deleteComment }) {
-    // const [autorData, setAutorData] = useState(data)
+    // name of the name of the comment writer
     const [name, setName] = useState('Loading...')
     const [imageUrl, setImageUrl] = useState(require('../../Assets/logo.png'))
 
-
-
-
     useEffect(() => {
+        // get the comment writer data from firebase  
         firestore().collection('users').doc(data.user_id).get()
             .then(doc => {
                 let autorDetailes = doc.data();
                 setName(autorDetailes.name)
+                // un-comments this line will render the writer image
+                //
                 // if (autorDetailes.photo)
                 //     setImageUrl({ uri: autorDetailes.photo })
             })
@@ -35,32 +26,29 @@ export default function CommentComponent({ data, isAdmin, deleteComment }) {
     }, [])
 
     return (
-        <View style={styles.combox}>
-            <View>
-                <Avatar
-                    size="small"
-                    rounded
-                    title={name[0]}
-                    source={imageUrl}
-                    containerStyle={{ backgroundColor: getRandomColor() }}
-                    onPress={() => { console.log(name) }}
-                />
-            </View>
-            <View style={styles.comment}>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <Text style={styles.autor}>{name}</Text>
-                    <Text>{timePassParser(data.timestamp.seconds)}</Text>
-                </View>
+        <Pressable onLongPress={isAdmin ? deleteComment : null}>
+            <View style={styles.combox}>
                 <View>
-                    <Text>{data.comment}</Text>
+                    <Avatar
+                        size="small"
+                        rounded
+                        title={name[0]}
+                        source={imageUrl}
+                        containerStyle={{ backgroundColor: getRandomColor() }}
+                        onPress={() => { console.log(name) }}
+                    />
+                </View>
+                <View style={styles.comment}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <Text style={styles.autor}>{name}</Text>
+                        <Text>{timePassParser(data.timestamp.seconds)}</Text>
+                    </View>
+                    <View>
+                        <Text>{data.comment}</Text>
+                    </View>
                 </View>
             </View>
-            {isAdmin ?
-                <TouchableOpacity onPress={deleteComment}>
-                    <Icon name={'trash'} color={'#440000'} size={30} />
-                </TouchableOpacity>
-                : null}
-        </View>
+        </Pressable>
     )
 }
 
@@ -92,6 +80,14 @@ const styles = StyleSheet.create({
     },
 })
 
+// generate random color from the colors set
+function getRandomColor() {
+    return colors[0]
+    // let rand = Math.floor(Math.random() * 8);
+    // return colors[rand]
+}
+
+
 
 function timePassParser(time) {
     let now = new Date();
@@ -111,3 +107,5 @@ function timePassParser(time) {
     diff /= 12;
     return (parseInt(diff) + ' years ago');
 }
+
+const colors = ['#fff', '#f99', '#9ff', '#f9f', '#ff9', '#9f9', '#99f', '#999', '#fff'];

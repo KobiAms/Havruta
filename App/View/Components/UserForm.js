@@ -129,8 +129,8 @@ export default function UserForm({ setUser, navigation, setLoading }) {
     const subscriber = firestore()
       .collection('users')
       .doc(auth().currentUser.email)
-      .get()
-      .then(doc => {
+      .onSnapshot
+      (doc => {
         if (!doc.data()) {
           return;
         }
@@ -145,7 +145,6 @@ export default function UserForm({ setUser, navigation, setLoading }) {
         setIsNew(doc.data().isNew);
         setLoading(false);
       })
-      .catch(() => { });
     return subscriber;
   }, [setUserAbout, setUserRole, setDefaultStyle, setuserName, setuserDOB]);
 

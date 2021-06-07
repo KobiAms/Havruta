@@ -12,6 +12,8 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import firestore from '@react-native-firebase/firestore';
 import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 import auth from '@react-native-firebase/auth';
+import { KeyboardAvoidingView } from 'react-native';
+import { Platform } from 'react-native';
 
 export default function NewUserWizard() {
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -67,40 +69,44 @@ export default function NewUserWizard() {
         }
     }, [setuserName])
     return (
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS == 'ios' ? 'padding' : null}>
 
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View style={styles.main}>
-                <DateTimePickerModal
-                    isVisible={isDatePickerVisible}
-                    mode="date"
-                    date={editDate}
-                    onConfirm={handleDateConfirm}
-                    onCancel={() => setDatePickerVisibility(false)}
-                />
-                <Text style={{ fontSize: 24, fontWeight: 'bold', margin: 10 }}>Welcome {userName}!</Text>
-                <Text style={{ fontSize: 18, alignSelf: 'center' }}>It is great having you in our comunity. please fill in your information so we can get to know you better.</Text>
-                <View style={{ margin: 10, alignItems: 'center' }}>
-                    <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>Please chose your date of birth:</Text>
-                    <TouchableOpacity onPress={() => setDatePickerVisibility(true)} style={styles.editable}>
-                        <Text style={{ fontSize: 18 }}>{userDOB}</Text>
+            <TouchableWithoutFeedback style={{ flex: 1 }} onPress={Keyboard.dismiss}>
+                <View style={styles.main}>
+                    <DateTimePickerModal
+                        isVisible={isDatePickerVisible}
+                        mode="date"
+                        date={editDate}
+                        onConfirm={handleDateConfirm}
+                        onCancel={() => setDatePickerVisibility(false)}
+                    />
+                    <View style={{ margin: 10, alignItems: 'center' }}>
+                        <Text style={{ fontSize: 24, fontWeight: 'bold', margin: 10 }}>Welcome {userName}!</Text>
+                        <Text style={{ fontSize: 18, alignSelf: 'center' }}>It is great having you in our comunity. please fill in your information so we can get to know you better.</Text>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>Please chose your date of birth:</Text>
+                        <TouchableOpacity onPress={() => setDatePickerVisibility(true)} style={styles.editable}>
+                            <Text style={{ fontSize: 18 }}>{userDOB}</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    <View style={{ margin: 10, alignSelf: 'center' }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>Please tell us about yourself. note that other users can see it.</Text>
+                        <AutoGrowingTextInput
+                            style={styles.editable}
+                            value={editAbout}
+                            onChangeText={setEditAbout}
+                            placeholder={'Add your about here...'} />
+                    </View>
+                    <TouchableOpacity
+                        style={styles.submit}
+                        onPress={() => setSubmit()}>
+                        <Text style={{ fontSize: 22, color: '#fff', fontWeight: 'bold' }}>Submit</Text>
                     </TouchableOpacity>
-                </View>
-
-                <View style={{ margin: 10, alignSelf: 'center' }}>
-                    <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>Please tell us about yourself. note that other users can see it.</Text>
-                    <AutoGrowingTextInput
-                        style={styles.editable}
-                        value={editAbout}
-                        onChangeText={setEditAbout}
-                        placeholder={'Add your about here...'} />
-                </View>
-                <TouchableOpacity
-                    style={styles.submit}
-                    onPress={() => setSubmit()}>
-                    <Text style={{ fontSize: 22, color: '#fff', fontWeight: 'bold' }}>Submit</Text>
-                </TouchableOpacity>
-            </View >
-        </TouchableWithoutFeedback>
+                </View >
+            </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
     )
 }
 const styles = StyleSheet.create({

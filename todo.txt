@@ -1,26 +1,29 @@
 ---------- ========== toDo ========== ----------:
-in RegistraionScreen
-    integrate "NewUserWizard.js" component into sign up flow
+
+in ChatScreen
+    add photo to a chat.
+    add last message on the chat. - fix last sender name and style
+    fix delete going inside a chat, and crash the app
+
 
 in ArticleScreen
-    comment delete by admin
-    make the feed reload on swipe up or on press
+    comment delete by admin - V
+    make the feed reload on swipe up or on press - V
 
 in ManageUser.js
     add block field in user collection in firestore. - using bulidin fb block server side - fb function - X
     implement delele user button. - using bulidin fb delete server side fb function - X
 
 in Other Screen 
-    more chats section
     more subject articles section
-    about section
+    about section -- get the api call from "https://havruta.org.il/donate/"
 
 in MainScreen
     show the top 5 from any subject required
 
 in subjectArticle
-    fix load from wordpress and display on screen.
-    admin can lock & unlock article likes/comment.
+    fix load from wordpress and display on screen. - V
+    admin can lock & unlock article likes/comment. - V
 
 
 ---------- ========== done ========== ----------:
@@ -37,3 +40,16 @@ in ArticleScreen
     insert new comment into firestore - V
     get user avatar for each comment - V
     insert or remove user_id to likes[] onPress in ArticleScreen.js line 88 - V
+
+in RegistraionScreen
+    integrate "NewUserWizard.js" component into sign up flow -V
+
+in Other Screen 
+    more chats section -v
+
+in AddChat
+    validate the chat name - V
+    send alert if all the fields are not fiiled -V
+
+in ChatScreen
+    add an option to admin to delete chat -V
