@@ -1,39 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Dimensions, Image } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import Icon2 from 'react-native-vector-icons/AntDesign';
 import firestore from '@react-native-firebase/firestore';
 
-function ChatItem({ id, onPress, lastCom }) {
-    const [lastMessage, setlastMessage] = useState('');
+function ChatItem({ id, item }) {
+    const chat_name = item.data ? item.data.name : 'untitled';
+    const [lastMessage, setlastMessage] = useState('Loading...');
     const [lastSender, setlastSender] = useState('');
     const [lastSenderName, setLastSenderName] = useState('');
 
     useEffect(() => {
-        if (lastCom) {
-            setlastMessage(lastCom.message)
-            setlastSender(lastCom.user_id)
+        let last_m;
+        last_m = item.data.messages[item.data.messages.length - 1]
+        if (last_m) {
+            firestore().collection('users').doc(last_m.user_id).get()
+                .then(doc => {
+                    setLastSenderName(doc.data().name);
+                    if (last_m.message.length > 20) {
+                        setlastMessage(last_m.message.substring(0, 20).concat("..."));
+                    } else {
+                        setlastMessage(last_m.message);
+                    }
+                })
+                .catch(err => {
+                    setLastSenderName('Error');
+                    setlastMessage('Cannot Load Meassage');
+                    console.log('Last message not loaded: ', err)
+                })
+        } else {
+            setLastSenderName('');
+            setlastMessage('');
         }
-        if (lastMessage.length > 35) {
-            setlastMessage(lastMessage.substring(0, 35).concat("..."));
-        }
-        console.log("message " + lastMessage)
-        console.log("sender " + lastSender)
-        firestore().collection('users').doc(lastSender).get()
-            .then(doc => {
-                setLastSenderName(doc.data().name)
-            })
-            .catch(err => console.log(err.code))
-    }, [])
+
+    }, [setLastSenderName, setlastMessage])
 
     return (
-        <TouchableOpacity style={styles.main} onPress={onPress} >
-            <View style={styles.aview}>
-                <Image></Image>
-            </View>
+        <View style={styles.main} >
+            <Image style={styles.image} source={item.data.imageUrl ? { uri: item.data.imageUrl } : require('../../Assets/logo.png')} />
             <View style={{ width: '70%' }}>
-                <Text style={{ fontWeight: 'bold', fontSize: 17 }}>{id}</Text>
-                <Text style={{ color: '#666' }}>{lastSenderName}: {lastMessage}</Text>
+                <Text style={{ fontWeight: 'bold', fontSize: 17 }}>{chat_name}</Text>
+                <View style={{ flexDirection: 'row', paddingBottom: 5, paddingTop: 5, marginTop: 5 }}>
+                    <Text style={{ color: '#333', textAlignVertical: 'bottom' }}>{lastSenderName}: </Text>
+                    <Text style={{ color: '#666', textAlignVertical: 'bottom' }}>{lastMessage}</Text>
+                </View>
             </View>
             <Icon2
                 style={styles.arrow_right}
@@ -41,7 +50,7 @@ function ChatItem({ id, onPress, lastCom }) {
                 size={20}
                 color={'gray'}
             />
-        </TouchableOpacity>
+        </View>
     )
 }
 
@@ -52,9 +61,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         padding: 10,
         width: Dimensions.get('window').width,
-        //height: Dimensions.get('window').height / 14,
         backgroundColor: 'rgb(250,250,255)',
-        // marginBottom: 4,
         borderBottomWidth: 1,
         borderBottomColor: 'rgb(220,220,255)',
         shadowColor: "#000",
@@ -66,17 +73,14 @@ const styles = StyleSheet.create({
         shadowRadius: 1.41,
         elevation: 2,
     },
-    aview: {
-        alignSelf: 'center',
-        height: Dimensions.get('screen').width / 10,
-        width: Dimensions.get('screen').width / 10,
-        borderRadius: Dimensions.get('screen').width / 1.5,
-        backgroundColor: 'rgb(200,200,220)',
-        borderColor: '#999',
-        borderWidth: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
+    image: {
+        backgroundColor: '#fff',
+        height: 50,
+        width: 50,
+        borderRadius: 25,
         overflow: 'hidden',
-    },
+        borderWidth: 1,
+        borderColor: '#aaa'
+    }
 });
 export default ChatItem;

@@ -27,11 +27,14 @@ function DonationScreen() {
         <ScrollView style={{ flex: 1, padding: 10 }}>
             <HTMLRend
                 source={{ html: html }}
-
+                baseFontStyle={{
+                    textAlign: 'right',
+                }}
             // contentWidth={Dimensions.get('screen').width * (95 / 100)}
             >
 
             </HTMLRend>
+            <View style={{ height: 40 }}></View>
         </ScrollView>
     )
 }

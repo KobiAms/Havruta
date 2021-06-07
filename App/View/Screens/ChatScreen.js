@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Pressable, FlatList, Dimensions, StyleSheet, Alert, SafeAreaView, ActivityIndicator } from 'react-native';
+import { View, Pressable, FlatList, TouchableOpacity, StyleSheet, Alert, Dimensions, ActivityIndicator } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import Chat from '../Components/ChatItem';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import IconIo from 'react-native-vector-icons/Ionicons';
-
+import SkeletonContent from 'react-native-skeleton-content-nonexpo';
+import { useLayoutEffect } from 'react';
 
 function ChatScreen({ navigation, route }) {
-    const [chats, setChats] = useState([])
+    const [chats, setChats] = useState([, , , , , , , , , ,])
     const [isAdmin, setIsAdmin] = useState(false);
     const [loading, setLoading] = useState(true);
 
@@ -17,12 +17,14 @@ function ChatScreen({ navigation, route }) {
         const subscriber = firestore()
             .collection('users')
             .doc(auth().currentUser.email)
-            .get().then(doc => {
+            .onSnapshot(doc => {
                 if (!doc) return;
-                if (doc.data().role === 'admin') setIsAdmin(true);
-                setLoading(false);
+                if (doc.data().role === 'admin') {
+                    setIsAdmin(true);
+                } else {
+                    setIsAdmin(false);
+                }
             })
-            .catch(err => console.log(err.code))
         return subscriber;
     }, []);
 
@@ -30,21 +32,17 @@ function ChatScreen({ navigation, route }) {
     each object is a name and id of all the chats in the collection
     this goes onSnapshot, which mean every updata that happen on the server side will be push automaticly to the local device */
     useEffect(() => {
-        let chatNames = []
         const subscriber = firestore()
             .collection('chats')
-            .onSnapshot(que => {
-                que.forEach(doc => {
-                    let chatLen = doc.data().messages.length;
-                    let lastCom;
-                    if (chatLen > 0) lastCom = doc.data().messages[chatLen - 1];
-                    let obj = { id: doc.id, name: doc.data().name, lastCom: lastCom };
-                    chatNames.push(obj);
-                });
-                setChats(chatNames);
+            .onSnapshot(querySnapshot => {
+                let chats_docs = []
+                querySnapshot.forEach((doc) => {
+                    let chat_tmp = doc.data();
+                    chats_docs.push({ id: doc.id, data: chat_tmp });
+                })
+                setChats(chats_docs);
                 setLoading(false);
             });
-
         return subscriber;
     }, [])
 
@@ -75,31 +73,78 @@ function ChatScreen({ navigation, route }) {
         }
     }
 
+
+    function chat_item_to_inflate(item, index) {
+        if (loading) {
+            return (
+                <SkeletonContent
+                    containerStyle={styles.skeleton}
+                    layout={[
+                        {
+                            width: 200,
+                            height: Dimensions.get('screen').height * 0.01,
+                            marginBottom: 5,
+                        },
+                        {
+                            width: '90%',
+                            height: Dimensions.get('screen').height * 0.03,
+                            marginBottom: 5,
+                        }
+                    ]}
+                    isLoading={loading}>
+                </SkeletonContent>
+            )
+        } else if (item == 'end_list') {
+            return <View style={{ height: 40, width: '100%' }}></View>
+        } else {
+            return (
+                <Pressable
+                    onPress={() => navigation.navigate('GenericChat', { id: item.id, data: item.data })}
+                    onLongPress={() => deleteChat(item)}>
+                    <Chat item={item} />
+                </Pressable>
+            )
+        }
+    }
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            title: 'Chats',
+        });
+    }, [])
+
     return (
 
         <View style={styles.main}>
             {loading ? (
-                <ActivityIndicator size="large" color="dodgerblue" />
+                <FlatList
+                    data={chats}
+                    renderItem={() => (
+                        <SkeletonContent
+                            containerStyle={styles.skeleton}
+                            layout={[
+                                {
+                                    width: 200,
+                                    height: Dimensions.get('screen').height * 0.04,
+                                    marginBottom: 5,
+                                },
+                                {
+                                    width: '90%',
+                                    height: Dimensions.get('screen').height * 0.06,
+                                    marginBottom: 5,
+                                }
+                            ]}
+                            isLoading={loading}>
+                        </SkeletonContent>
+                    )}
+                    keyExtractor={(item, idx) => idx}
+                />
             ) : (
                 <FlatList
                     scrollIndicatorInsets={{ right: 1 }}
                     style={styles.list}
                     data={[...chats, 'end_list']}
-                    renderItem={({ item, index }) => {
-                        if (index == chats.length)
-                            return <View style={{ height: 40, width: '100%' }}></View>
-                        else
-                            return (
-                                <Pressable onLongPress={() => deleteChat(item)}>
-                                    <Chat
-                                        id={item.name}
-                                        onPress={() =>
-                                            navigation.navigate('GenericChat', { id: item.id, data: item })
-                                        }
-                                        lastCom={item.lastCom}
-                                    /></Pressable>
-                            )
-                    }}
+                    renderItem={({ item, index }) => chat_item_to_inflate(item, index)}
                     keyExtractor={(item, idx) => idx}
                 />)}
             <View style={{ position: 'absolute', bottom: 10, right: 10 }}>
@@ -130,6 +175,22 @@ const styles = StyleSheet.create({
         zIndex: 1,
         margin: 20,
     },
+    skeleton: {
+        backgroundColor: 'rgb(220,220,240)',
+        minWidth: '97%',
+        padding: 5,
+        justifyContent: 'flex-start',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 5,
+        },
+        shadowOpacity: 0.34,
+        shadowRadius: 3.27,
+        elevation: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: 'rgb(160,160,180)'
+    }
 });
 
 export default ChatScreen;
