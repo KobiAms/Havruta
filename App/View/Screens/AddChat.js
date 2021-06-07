@@ -1,31 +1,51 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, Dimensions, StyleSheet, TouchableWithoutFeedback, Keyboard, TextInput } from 'react-native';
+import { View, Text, FlatList, Dimensions, StyleSheet, TouchableWithoutFeedback, Keyboard, TextInput, Alert } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import auth from '@react-native-firebase/auth';
-import Chat from '../Components/ChatItem';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import IconIo from 'react-native-vector-icons/Ionicons';
 import SwitchSelector from "react-native-switch-selector";
 
 
-
-
 function AddChat({ navigation, route }) {
+    const existChat = route.params.data
     const [chatName, setChatName] = useState();
     const [premission, setPremission] = useState();
-    function add_chat_to_FB(name, premission) {
-        firestore().collection('chats').doc(name).set({
+
+    function add_chat_to_FB(name, premission) {     //a function to create new chat
+        let id = name;
+        for (let i = 0; i < existChat.length; i++)  // make sure first that the id is unique
+            if (id == existChat[i].id)
+                id = makeid(10);                    //if it does not generate new random one
+
+
+        firestore().collection('chats').doc(id).set({
             messages: [{
                 user_id: 'admin@test.com',
-                message: 'Welcome to Havruta! plese keep respectfull langaued',
+                message: 'Welcome to Havruta! plese keep respectfull language',
                 date: new Date(),
             }],
             name: name,
             premission: premission,
-
         }).then(() => navigation.goBack()).catch(err => console.log(err))
     }
 
+    function makeid(length) {  //function to generate random chat id incase that the id is already in use.
+        var result = [];
+        var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        var charactersLength = characters.length;
+        for (var i = 0; i < length; i++) {
+            result.push(characters.charAt(Math.floor(Math.random() *
+                charactersLength)));
+        }
+        return result.join('');
+    }
+
+    function fillAllFields() {      //alert function in case there is name or premission missing
+        Alert.alert(
+            "Please fill all the fields",
+            "ok?", [{ text: "OK", style: "cancel" }],
+            { cancelable: true }
+        );
+    }
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -43,7 +63,6 @@ function AddChat({ navigation, route }) {
                 <View style={{ margin: 10, alignItems: 'center' }}>
                     <Text>Who can send messages in this chat?</Text>
                     <SwitchSelector
-                        // initial={0}
                         options={[
                             { label: 'All useres', value: 'user' },
                             { label: 'Authorized only', value: 'reporter' },
@@ -60,7 +79,7 @@ function AddChat({ navigation, route }) {
                 <TouchableOpacity
                     style={styles.submit}
                     onPress={() => {
-                        chatName && premission ? add_chat_to_FB(chatName, premission) : console.log('fill al the fields')
+                        chatName && premission ? add_chat_to_FB(chatName, premission) : fillAllFields()
                     }
                     }>
                     <Text style={{ fontSize: 22, color: '#fff', fontWeight: 'bold' }}>Submit</Text>

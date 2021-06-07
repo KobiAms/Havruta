@@ -5,7 +5,7 @@ import Icon2 from 'react-native-vector-icons/AntDesign';
 
 function ChatItem({ id, onPress }) {
     return (
-        <TouchableOpacity style={styles.main} onPress={onPress}>
+        <TouchableOpacity style={styles.main} onPress={onPress} >
             <View style={styles.aview}>
                 <Image></Image>
             </View>
