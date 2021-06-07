@@ -16,6 +16,7 @@ import SubjectArticles from './App/View/Screens/SubjectArticles'
 import ArticleScreen from './App/View/Screens/ArticleScreen'
 import auth from '@react-native-firebase/auth'
 import RegistrationScreen from './App/View/Screens/RegistrationScreen';
+import DonateScreen from './App/View/Screens/DonateScreen';
 import ManageUsers from './App/View/Components/ManageUsers';
 import ManageUser from './App/View/Components/ManageUser';
 
@@ -109,6 +110,10 @@ App = () => {
           <Stack.Screen
             name="ArticleScreen"
             component={ArticleScreen}
+          />
+          <Stack.Screen
+            name="donateUs"
+            component ={DonateScreen}
           />
         </Stack.Navigator>
       </NavigationContainer>

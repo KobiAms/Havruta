@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 import { useEffect, useState } from 'react';
 import {
     View,
@@ -12,7 +12,8 @@ import {
     TouchableOpacity,
     RefreshControl,
     Dimensions,
-    Alert
+    Alert,
+    Button
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
@@ -26,6 +27,8 @@ import { StatusBar } from 'react-native';
 import { useHeaderHeight } from '@react-navigation/stack';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { Platform } from 'react-native';
+import IconF from 'react-native-vector-icons/Feather';
+
 
 let msgToLoad = 20;
 let msgToStart = 0;
@@ -43,14 +46,24 @@ GenericChat = ({ navigation, route }) => {
     const [newMessage, setNewMessage] = useState('');
     const [chat_data, set_chat_data] = useState([]);
     const [user, setUser] = useState();
+    const [flatlistref,setFlatlistRef] =useState();
     const [chat_name, set_chat_name] = useState('');
     const [loadingMore, set_loading_more] = useState(false);
     const feed_type = route.name;
-    const chat_id = 'test';
     const [refreshing, setRefreshing] = React.useState(false);
     const headerHeight = useHeaderHeight();
     const tabBarHeight = useBottomTabBarHeight();
     const KEYBOARD_VERTICAL_OFFSET = headerHeight + StatusBar.currentHeight;
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+          headerRight: () => (
+            <TouchableOpacity onPress={() => console.log('kkkkkk')}>
+                <Text>aaassss</Text>
+            </TouchableOpacity>
+          ),
+        });
+      }, [navigation]);
 
     const onRefresh = React.useCallback(() => {
         console.log('im here');
@@ -173,8 +186,14 @@ GenericChat = ({ navigation, route }) => {
             keyboardVerticalOffset={Platform.OS == 'ios' ? KEYBOARD_VERTICAL_OFFSET : -(headerHeight + tabBarHeight)}
         >
             <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
+            <View>
+            <TouchableOpacity style={styles.scrollButtonUp}  onPress={() => flatlistref ? flatlistref.scrollToEnd() :null}>
+                <IconF name={"arrow-up-circle"} size={22.5} color={"black"}></IconF>
+            </TouchableOpacity>
+            </View>
             <View style={styles.main}>
                 <FlatList
+                    ref = {setFlatlistRef}
                     style={styles.list}
                     inverted
                     data={chat_data}
@@ -193,6 +212,11 @@ GenericChat = ({ navigation, route }) => {
                         </Pressable>
                     )}
                 />
+                <View style={styles.scrollButtonDown}>
+                    <TouchableOpacity   onPress={() => flatlistref ? flatlistref.scrollToIndex({ index: 0 }):null}>
+                        <IconF name={"arrow-down-circle"} size={25.5} color={"black"}></IconF>
+                    </TouchableOpacity> 
+                </View>
                 {user && user.role == 'admin' ? (
                     <View
                         style={styles.inputContainer}>
@@ -305,6 +329,30 @@ const styles = StyleSheet.create({
         fontSize: 11,
         color: '#333333',
     },
+    scrollButtonDown:{
+        justifyContent:'flex-end',
+        alignItems:'flex-end',
+        position:'absolute', 
+        zIndex: 1,
+        padding:5,
+        right: 5, 
+        bottom: 70,
+        borderColor:'white',
+        borderRadius:20,
+        backgroundColor: '#ffffff80',
+    },
+    scrollButtonUp:{
+        justifyContent:'flex-end',
+        alignItems:'flex-end',
+        position:'absolute', 
+        zIndex: 1,
+        padding: 5,
+        top:10,
+        alignSelf:'center',
+        backgroundColor: '#ffffff80',
+        borderRadius: 20 ,
+
+    }
 
 });
 
