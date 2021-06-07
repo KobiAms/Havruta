@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { View, Text, StyleSheet, Touchable } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -7,9 +8,13 @@ import IconFA from 'react-native-vector-icons/FontAwesome';
 
 import { Dimensions } from 'react-native';
 
+
 OtherScreen = ({ navigation, route }) => {
+
+    const [isLoading, setIsLoading] = useState(true);
     const feed_type = route.name
     return (
+
         <View style={styles.main}>
 
             <TouchableOpacity
@@ -43,12 +48,14 @@ OtherScreen = ({ navigation, route }) => {
                 <Text>Events</Text>
             </TouchableOpacity>
 
+
         </View>
 
     )
 }
 
 const styles = StyleSheet.create({
+
     main: {
         alignItems: 'center',
         backgroundColor: 'rgb(200,200,220)',
@@ -65,7 +72,9 @@ const styles = StyleSheet.create({
         margin: 10,
         width: Dimensions.get('screen').width * (85 / 100),
     },
+
 });
+
 
 
 export default OtherScreen;

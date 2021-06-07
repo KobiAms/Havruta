@@ -5,9 +5,10 @@ in ChatScreen
     add last message on the chat. - fix last sender name and style
     fix delete going inside a chat, and crash the app
 
+
 in ArticleScreen
-    comment delete by admin
-    make the feed reload on swipe up or on press
+    comment delete by admin - V
+    make the feed reload on swipe up or on press - V
 
 in ManageUser.js
     add block field in user collection in firestore. - using bulidin fb block server side - fb function - X
@@ -21,8 +22,8 @@ in MainScreen
     show the top 5 from any subject required
 
 in subjectArticle
-    fix load from wordpress and display on screen.
-    admin can lock & unlock article likes/comment.
+    fix load from wordpress and display on screen. - V
+    admin can lock & unlock article likes/comment. - V
 
 
 ---------- ========== done ========== ----------:
