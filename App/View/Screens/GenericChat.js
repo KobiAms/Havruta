@@ -68,7 +68,7 @@ GenericChat = ({ navigation, route }) => {
                     {
                         text: "DELETE",
                         onPress: () => {
-                            firestore().collection('chats').doc('reporters').update({ messages: firestore.FieldValue.arrayRemove(item) })
+                            firestore().collection('chats').doc(chat_id).update({ messages: firestore.FieldValue.arrayRemove(item) })
                             Alert.alert("Message Deleted")
                         },
                         style: 'destructive'
@@ -180,7 +180,7 @@ GenericChat = ({ navigation, route }) => {
         >
             <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
             <View style={styles.main}>
-                <FlatList
+                {chat_data ? <FlatList
                     style={styles.list}
                     inverted
                     data={chat_data}
@@ -198,7 +198,7 @@ GenericChat = ({ navigation, route }) => {
                             />
                         </Pressable>
                     )}
-                />
+                /> : null}
                 {useRole == 'admin' || (useRole == 'reporter' && docPre !== 'admin') ? (
                     <View
                         style={styles.inputContainer}>
