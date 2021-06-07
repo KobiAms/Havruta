@@ -21,7 +21,8 @@ import ManageUser from './App/View/Components/ManageUser';
 import ChatScreen from './App/View/Screens/ChatScreen';
 import AddChat from './App/View/Screens/AddChat';
 import DonationScreen from './App/View/Screens/DonationScreen';
-
+import EventsScreen from './App/View/Screens/EventsScreen';
+import AddEvent from './App/View/Screens/AddEvent';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -44,7 +45,7 @@ MainScreenNavigator = () => {
   return (
     <Tab.Navigator
       tabBarOptions={{
-        activeTintColor: 'rgb(120,90,140)',
+        activeTintColor: 'rgb(0,110,220)',
         inactiveTintColor: 'gray',
       }}>
       <Tab.Screen name="MainScreen" component={MainScreen}
@@ -128,6 +129,14 @@ App = () => {
           <Stack.Screen
             name="DonationScreen"
             component={DonationScreen}
+          />
+          <Stack.Screen
+            name="EventsScreen"
+            component={EventsScreen}
+          />
+          <Stack.Screen
+            name="AddEvent"
+            component={AddEvent}
           />
         </Stack.Navigator>
       </NavigationContainer>
