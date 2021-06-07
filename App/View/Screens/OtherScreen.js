@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Touchable } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import IconIo from 'react-native-vector-icons/Ionicons';

@@ -15,7 +15,7 @@ export default function CommentComponent({ data, isAdmin, deleteComment }) {
             .then(doc => {
                 let autorDetailes = doc.data();
                 setName(autorDetailes.name)
-                // un-comments this line will render the writer image
+                // un-comments this lines will render the writer image
                 //
                 // if (autorDetailes.photo)
                 //     setImageUrl({ uri: autorDetailes.photo })

@@ -1,6 +1,5 @@
 /* eslint-disable prettier/prettier */
-import React from 'react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState, useLayoutEffect } from 'react';
 import {
     View,
     Text,
@@ -12,49 +11,46 @@ import {
     TouchableOpacity,
     RefreshControl,
     Dimensions,
-    Alert
+    Alert,
+    Image,
+    Platform,
+    StatusBar,
+    KeyboardAvoidingView,
+    SafeAreaView
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { SafeAreaView } from 'react-native';
 import ChatMessage from '../Components/ChatMessageComponent'
-import { resolvePreset } from '@babel/core';
-import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
-import { KeyboardAvoidingView } from 'react-native';
-import { StatusBar } from 'react-native';
 import { useHeaderHeight } from '@react-navigation/stack';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
-import { Platform } from 'react-native';
+import { launchImageLibrary } from 'react-native-image-picker';
+
 
 let msgToLoad = 20;
 let msgToStart = 0;
 let endReached = false;
-let flag = false;
 
 const ListFooterComponent = () => {
     return <ActivityIndicator size="large" color="rainbow" />;
 };
+
+
 //this function dicompose the doc of the coplete chat into small object where as any object represent one msg item inside our chat
 //
-
-
 GenericChat = ({ navigation, route }) => {
     const [newMessage, setNewMessage] = useState('');
     const [chat_data, set_chat_data] = useState([]);
     const [user, setUser] = useState();
-    const [chat_name, set_chat_name] = useState('');
-    const [loadingMore, set_loading_more] = useState(false);
     const chat_id = route.name == 'Reporters' ? 'reporters' : route.params.id;
-    const [refreshing, setRefreshing] = React.useState(false);
+    const [refreshing, setRefreshing] = useState(false);
     const headerHeight = useHeaderHeight();
     const [docPre, setDocPre] = useState();
     const [useRole, setUseRole] = useState('user');
-    // const tabBarHeight = useBottomTabBarHeight();
+    const [curUserInfo, setCurUserInfo] = useState();
     const KEYBOARD_VERTICAL_OFFSET = headerHeight + StatusBar.currentHeight;
 
     const onRefresh = React.useCallback(() => {
-        console.log('im here');
         setRefreshing(true);
         wait(1000).then(() => setRefreshing(false));
     }, []);
@@ -118,14 +114,12 @@ GenericChat = ({ navigation, route }) => {
     // this function updates the displayed msgs list.
     // we read all the chat list from the chat and we slice it into the amount of messages we want to see.
     function loadMore(chat_data) {
-        set_loading_more(true);
         msgToLoad = msgToLoad + 20;
         firestore()
             .collection('chats')
             .doc(chat_id)
             .onSnapshot(doc => {
                 if (!doc) return;
-
                 let reversed = doc.data().messages.reverse();
                 if (reversed.length < msgToLoad) {
                     endReached = true;
@@ -137,29 +131,77 @@ GenericChat = ({ navigation, route }) => {
                     endReached = true;
                 }
             });
-        set_loading_more(false);
+    }
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            title: route.params && route.params.data ? route.params.data.name : route.name,
+            headerRight: () => (
+                < TouchableOpacity
+                    style={styles.chat_image_container}
+                    onPress={() => update_chat_image()}>
+                    <Image source={require('../../Assets/logo.png')} style={styles.chat_image} />
+                </TouchableOpacity >
+            )
+        });
+
+    }, [])
+
+    function setHeaderImage(imageUrl) {
+        navigation.setOptions({
+            headerRight: () => {
+                return (
+                    < View
+                        style={styles.chat_image_container}
+                        onPress={() => update_chat_image()}>
+                        <Image source={imageUrl ? imageUrl : require('../../Assets/logo.png')} style={styles.chat_image} />
+                    </View >
+                )
+            }
+        })
+    }
+
+    // this function upload the avatar image into the storage
+    function update_chat_image() {
+        if (useRole == 'admin') {
+            // lunching the camera roll / gallery
+            launchImageLibrary({}, async response => {
+                if (response.didCancel) {
+
+                } else if (response.error) {
+                    Alert.alert(
+                        'Error',
+                        response.errorCode + ': ' + response.errorMessage,
+                        [{ text: 'OK' }],
+                        { cancelable: false },
+                    );
+
+                } else {
+                    // // create storage ref
+                    const reference = storage().ref('/chats/' + chat_id + '/' + 'chat_photo.png');
+                    // upload image and wait till it ends
+                    await reference.putFile(response.uri);
+                    // get the url of the photo we just upload
+                    reference.getDownloadURL().then(url => {
+                        firestore().collection('chats').doc(chat_id)
+                            .update({ imageUrl: url })
+                            .then(() => setHeaderImage({ uri: response.uri }))
+                            .catch(() => console.log('error updtae imageurl'))
+                    });
+                }
+            });
+        }
     }
 
     useEffect(() => {
-        const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-        if (auth().currentUser) {
-            firestore()
-                .collection('users')
-                .doc(auth().currentUser.email)
-                .get().then(doc => {
-                    if (!doc) return;
-                    let userDetails = doc.data();
-                    setUser(userDetails);
-                    setUseRole(doc.data().role);
-
-                })
-                .catch()
-        }
-        firestore()
+        const subscriber = firestore()
             .collection('chats')
             .doc(chat_id)
             .onSnapshot(doc => {
                 if (!doc) return;
+                if (doc.data().imageUrl) {
+                    setHeaderImage({ uri: doc.data().imageUrl })
+                }
                 let reversed = doc.data().messages.reverse();
                 if (reversed.length === 0) {
                     setDocPre(doc.data().premission);
@@ -170,6 +212,22 @@ GenericChat = ({ navigation, route }) => {
                     setDocPre(doc.data().premission);
                 }
             });
+        return subscriber
+    }, [])
+
+
+    useEffect(() => {
+        const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+        firestore()
+            .collection('users')
+            .doc(auth().currentUser.email)
+            .get().then(doc => {
+                if (!doc) return;
+                let userDetails = doc.data();
+                setUseRole(doc.data().role)
+                setCurUserInfo(userDetails)
+            })
+            .catch(() => { })
         return subscriber; // unsubscribe on unmount
     }, []);
     return (
@@ -179,48 +237,50 @@ GenericChat = ({ navigation, route }) => {
             keyboardVerticalOffset={Platform.OS == 'ios' ? KEYBOARD_VERTICAL_OFFSET : -(headerHeight + 0)} // tabBarHeight
         >
             <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
-            <View style={styles.main}>
-                {chat_data ? <FlatList
-                    style={styles.list}
-                    inverted
-                    data={chat_data}
-                    onEndReachedThreshold={0.2}
-                    onEndReached={() => loadMore(chat_data)}
-                    keyExtractor={(item, index) => index}
-                    ListFooterComponent={() => !endReached && <ListFooterComponent />}
-                    renderItem={({ item }) => (
-                        <Pressable onLongPress={() => deleteMsg(item)}>
-                            <ChatMessage
-                                item={item}
-                                refreshControl={
-                                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                                }
+            <SafeAreaView style={{ flex: 1, backgroundColor: 'rgb(140, 140, 180)' }}>
+                <View style={styles.main}>
+                    {chat_data ? <FlatList
+                        style={styles.list}
+                        inverted
+                        data={chat_data}
+                        onEndReachedThreshold={0.2}
+                        onEndReached={() => loadMore(chat_data)}
+                        keyExtractor={(item, index) => index}
+                        ListFooterComponent={() => !endReached && <ListFooterComponent />}
+                        renderItem={({ item }) => (
+                            <Pressable onLongPress={() => deleteMsg(item)}>
+                                <ChatMessage
+                                    item={item}
+                                    refreshControl={
+                                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                                    }
+                                />
+                            </Pressable>
+                        )}
+                    /> : null}
+                    {useRole == 'admin' || (useRole == 'reporter' && docPre !== 'admin') ? (
+                        <View
+                            style={styles.inputContainer}>
+                            <TextInput
+                                placeholder=" Add your message..."
+                                style={styles.input}
+                                value={newMessage}
+                                onChangeText={setNewMessage}
+                                autoCorrect={false}
                             />
-                        </Pressable>
-                    )}
-                /> : null}
-                {useRole == 'admin' || (useRole == 'reporter' && docPre !== 'admin') ? (
-                    <View
-                        style={styles.inputContainer}>
-                        <TextInput
-                            placeholder=" Add your message..."
-                            style={styles.input}
-                            value={newMessage}
-                            onChangeText={setNewMessage}
-                            autoCorrect={false}
-                        />
-                        <TouchableOpacity
-                            onPress={() => sendMessage()}
-                            style={
-                                newMessage.length == 0
-                                    ? styles.sendButtonEmpty
-                                    : styles.sendButtonFull
-                            }>
-                            <Icon name={'md-send'} size={20} color={'#ffffff'} />
-                        </TouchableOpacity>
-                    </View>
-                ) : null}
-            </View>
+                            <TouchableOpacity
+                                onPress={() => sendMessage()}
+                                style={
+                                    newMessage.length == 0
+                                        ? styles.sendButtonEmpty
+                                        : styles.sendButtonFull
+                                }>
+                                <Icon name={'md-send'} size={20} color={'#ffffff'} />
+                            </TouchableOpacity>
+                        </View>
+                    ) : null}
+                </View>
+            </SafeAreaView>
         </KeyboardAvoidingView>
     );
 };
@@ -229,7 +289,7 @@ const styles = StyleSheet.create({
     main: {
         flex: 1,
         justifyContent: 'center',
-        backgroundColor: 'rgb(200,200,220)',
+        backgroundColor: 'rgb(180,180,200)',
     },
     headline: {
         padding: 15,
@@ -239,11 +299,13 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
         padding: 5,
-        backgroundColor: 'rgb(180,180,200)',
+        backgroundColor: 'rgb(140, 140, 180)',
         width: '100%',
         alignItems: 'center',
         justifyContent: 'space-evenly',
         flexDirection: 'row',
+        borderTopWidth: 1,
+        borderTopColor: 'rgb(140, 140, 180)'
 
     },
     input: {
@@ -262,7 +324,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.32,
         shadowRadius: 5.46,
         elevation: 6,
-        padding: 8,
+        padding: 4,
     },
     sendButtonEmpty: {
         padding: 8,
@@ -311,6 +373,17 @@ const styles = StyleSheet.create({
         fontSize: 11,
         color: '#333333',
     },
+    chat_image_container: {
+        height: 30,
+        width: 30,
+        borderRadius: 15,
+        overflow: 'hidden',
+        marginRight: 10
+    },
+    chat_image: {
+        height: 30,
+        width: 30,
+    }
 
 });
 

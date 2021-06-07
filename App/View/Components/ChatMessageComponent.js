@@ -21,12 +21,13 @@ export default function ChatMessageComponent({ item }) {
         firestore().collection('users').doc(item.user_id).get()
             .then(doc => {
                 let autorDetailes = doc.data();
-                setName(autorDetailes.name)
+                setName(autorDetailes ? autorDetailes.name : 'ghost')
+                //un-comment this lins will render the user photo
                 // if (autorDetailes.photo)
                 //     setImageUrl({ uri: autorDetailes.photo })
             })
             .catch(error => {
-                console.log('error loading comment details', error)
+                console.log('error loading comment details:', error)
             })
 
     }, [])

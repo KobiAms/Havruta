@@ -1,9 +1,9 @@
 ---------- ========== toDo ========== ----------:
 
 in ChatScreen
-    add photo to a chat.
-    add last message on the chat. - fix last sender name and style
-    fix delete going inside a chat, and crash the app
+    add photo to a chat. - V
+    add last message on the chat. - fix last sender name and style - V
+    fix delete going inside a chat, and crash the app - V
 
 
 in ArticleScreen
