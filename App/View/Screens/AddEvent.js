@@ -3,29 +3,29 @@ import { View, Text, FlatList, Dimensions, StyleSheet, TouchableWithoutFeedback,
 import firestore from '@react-native-firebase/firestore';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import SwitchSelector from "react-native-switch-selector";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
-
+// create a readble date dd.mm.yyyy from Date obj
+dateToReadbleFormat = (date) => date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes();
+const handleDateConfirm = (date) => {
+    setEventTime(date)
+    setTimeToShow(dateToReadbleFormat(date))
+    setDatePickerVisibility(false);
+};
 function AddEvent({ navigation, route }) {
-    const existChat = route.params.data
-    const [chatName, setChatName] = useState();
-    const [premission, setPremission] = useState();
+    const existEvents = route.params.data
+    const [eventName, setEventName] = useState();
+    const [eventDesc, setEventDesc] = useState();
+    const [eventTime, setEventTime] = useState(new Date());
+    const [timeToShow, setTimeToShow] = useState();
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+    const [onSubmit, setOnSubmit] = useState(false)
 
-    function add_chat_to_FB(name, premission) {     //a function to create new chat
+    function add_event_to_FB(name) {     //a function to create new chat
         let id = name;
-        for (let i = 0; i < existChat.length; i++)  // make sure first that the id is unique
-            if (id == existChat[i].id)
+        for (let i = 0; i < existEvents.length; i++)  // make sure first that the id is unique
+            if (id == existEvents[i].id)
                 id = makeid(10);                    //if it does not generate new random one
-
-
-        firestore().collection('chats').doc(id).set({
-            messages: [{
-                user_id: 'admin@test.com',
-                message: 'Welcome to Havruta! plese keep respectfull language',
-                date: new Date(),
-            }],
-            name: name,
-            premission: premission,
-        }).then(() => navigation.goBack()).catch(err => console.log(err))
     }
 
     function makeid(length) {  //function to generate random chat id incase that the id is already in use.
@@ -46,40 +46,63 @@ function AddEvent({ navigation, route }) {
             { cancelable: true }
         );
     }
+    useEffect(() => {
+        if (eventDesc && eventName) {
+            let id = eventName;
+            for (let i = 0; i < existEvents.length; i++)  // make sure first that the id is unique
+                if (id == existEvents[i].id)
+                    id = makeid(10);
+            const subscriber = firestore().collection('Events').doc(id).set({
+                description: eventDesc,
+                details: firestore.Timestamp.fromDate(eventTime),
+                name: eventName,
+                attendings: [],
+            }).then(() => navigation.goBack()).catch(err => console.log(err))
+            return subscriber;
 
+        }
+    }, [setOnSubmit])
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+
             <View style={styles.main}>
                 <View style={{ margin: 10, alignItems: 'center' }}>
                     <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>
-                        Please chose the new chat name
+                        Please chose the new Event name
                     </Text>
                     <TextInput
                         style={styles.editable}
-                        value={chatName}
-                        onChangeText={setChatName}
-                        placeholder={'Add your about here...'} />
+                        value={eventName}
+                        onChangeText={setEventName}
+                        placeholder={'Add your event name here...'} />
                 </View>
                 <View style={{ margin: 10, alignItems: 'center' }}>
-                    <Text>Who can send messages in this chat?</Text>
-                    <SwitchSelector
-                        options={[
-                            { label: 'All useres', value: 'user' },
-                            { label: 'Authorized only', value: 'reporter' },
-                            { label: 'Admin only', value: 'admin' }
-                        ]}
-                        textColor={'#000'}
-                        onPress={value => setPremission(value)}
-                        hasPadding
-                        buttonColor={'rgb(40,120,190)'}
-                        style={{ margin: 10, width: Dimensions.get('screen').width * (85 / 100), }}
-                    />
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>
+                        You can add some description about this new event
+                    </Text>
+                    <TextInput
+                        style={styles.editable}
+                        value={eventDesc}
+                        onChangeText={setEventDesc}
+                        placeholder={'Add your description for the event here...'} />
                 </View>
-
+                <View style={{ margin: 10, alignItems: 'center' }}>
+                    <Text>When the event will take place?</Text>
+                    <TouchableOpacity onPress={() => setDatePickerVisibility(true)} style={styles.editable}>
+                        <Text style={{ fontSize: 18 }}>{timeToShow}</Text>
+                    </TouchableOpacity>
+                </View>
+                <DateTimePickerModal
+                    isVisible={isDatePickerVisible}
+                    mode='datetime'
+                    date={eventTime}
+                    onConfirm={handleDateConfirm}
+                    onCancel={() => setDatePickerVisibility(false)}
+                />
                 <TouchableOpacity
                     style={styles.submit}
                     onPress={() => {
-                        chatName && premission ? add_chat_to_FB(chatName, premission) : fillAllFields()
+                        eventName && eventDesc ? setOnSubmit(!onSubmit) : fillAllFields()
                     }
                     }>
                     <Text style={{ fontSize: 22, color: '#fff', fontWeight: 'bold' }}>Submit</Text>
