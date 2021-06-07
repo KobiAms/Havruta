@@ -2,8 +2,7 @@
 
 in ChatScreen
     add photo to a chat.
-    add last message on the chat.
-    fix ADD button to be floatin above
+    add last message on the chat. - fix last sender name and style
     fix delete going inside a chat, and crash the app
 
 in ArticleScreen
