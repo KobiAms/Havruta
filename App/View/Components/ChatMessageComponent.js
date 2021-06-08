@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     myMessageBox: {
         margin: 5,
         padding: 5,
-        backgroundColor: 'rgb(205,255,230)',
+        backgroundColor: '#9ffcdf',
         borderColor: 'black',
         borderRadius: 15,
         alignSelf: 'flex-start',
