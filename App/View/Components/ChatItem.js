@@ -6,7 +6,6 @@ import firestore from '@react-native-firebase/firestore';
 function ChatItem({ id, item }) {
     const chat_name = item.data ? item.data.name : 'untitled';
     const [lastMessage, setlastMessage] = useState('Loading...');
-    const [lastSender, setlastSender] = useState('');
     const [lastSenderName, setLastSenderName] = useState('');
 
     useEffect(() => {

@@ -125,12 +125,12 @@ function ChatScreen({ navigation, route }) {
                             layout={[
                                 {
                                     width: 200,
-                                    height: Dimensions.get('screen').height * 0.04,
+                                    height: Dimensions.get('screen').height * 0.02,
                                     marginBottom: 5,
                                 },
                                 {
                                     width: '90%',
-                                    height: Dimensions.get('screen').height * 0.06,
+                                    height: Dimensions.get('screen').height * 0.035,
                                     marginBottom: 5,
                                 }
                             ]}

@@ -5,7 +5,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import SwitchSelector from "react-native-switch-selector";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
-// create a readble date dd.mm.yyyy from Date obj
+// create a readble date dd.mm.yyyy hh:mm from Date obj
 dateToReadbleFormat = (date) => date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes();
 const handleDateConfirm = (date) => {
     setEventTime(date)
@@ -16,17 +16,18 @@ function AddEvent({ navigation, route }) {
     const existEvents = route.params.data
     const [eventName, setEventName] = useState();
     const [eventDesc, setEventDesc] = useState();
-    const [eventTime, setEventTime] = useState(new Date());
-    const [timeToShow, setTimeToShow] = useState();
+    const [eventTime, setEventTime] = useState();
+    const [timeToShow, setTimeToShow] = useState('10.6.2021 16:00');
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [onSubmit, setOnSubmit] = useState(false)
 
-    function add_event_to_FB(name) {     //a function to create new chat
-        let id = name;
-        for (let i = 0; i < existEvents.length; i++)  // make sure first that the id is unique
-            if (id == existEvents[i].id)
-                id = makeid(10);                    //if it does not generate new random one
-    }
+    // create a readble date dd.mm.yyyy hh:mm from Date obj
+    dateToReadbleFormat = (date) => date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes();
+    const handleDateConfirm = (date) => {
+        setEventTime(date)
+        setTimeToShow(dateToReadbleFormat(date))
+        setDatePickerVisibility(false);
+    };
 
     function makeid(length) {  //function to generate random chat id incase that the id is already in use.
         var result = [];
@@ -46,22 +47,23 @@ function AddEvent({ navigation, route }) {
             { cancelable: true }
         );
     }
+
     useEffect(() => {
         if (eventDesc && eventName) {
             let id = eventName;
             for (let i = 0; i < existEvents.length; i++)  // make sure first that the id is unique
                 if (id == existEvents[i].id)
                     id = makeid(10);
-            const subscriber = firestore().collection('Events').doc(id).set({
+            const subscriber = firestore().collection("Events").doc(id).set({
                 description: eventDesc,
                 details: firestore.Timestamp.fromDate(eventTime),
                 name: eventName,
                 attendings: [],
-            }).then(() => navigation.goBack()).catch(err => console.log(err))
+            }).then(() => { console.log('sucsses'); navigation.goBack() }).catch(err => console.log(err))
             return subscriber;
-
         }
-    }, [setOnSubmit])
+    }, [setOnSubmit]);
+
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 
