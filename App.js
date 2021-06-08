@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   NavigationContainer,
   getFocusedRouteNameFromRoute,
 } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Image, Dimensions, TextInput } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import OtherScreen from './App/View/Screens/OtherScreen';
@@ -62,6 +62,7 @@ MainScreenNavigator = () => {
   );
 };
 
+
 App = () => {
   return (
     <SafeAreaProvider style={{ height: '100%', width: '100%' }}>
@@ -75,21 +76,70 @@ App = () => {
           <Stack.Screen
             name="MainScreenNavigator"
             component={MainScreenNavigator}
-            options={({ navigation }) => ({
-              title: 'Havruta',
-              headerTitle: <Image style={styles.image_title} source={require('./App/Assets/logo.png')} />,
-              headerRight: () => (
-                <TouchableOpacity
-                  style={styles.register}
-                  onPress={() => navigation.navigate('Registration')}>
-                  {auth().currentUser && auth().currentUser.photoURL ?
-                    <Image style={styles.user_image} source={{ uri: auth().currentUser.photoURL }} />
-                    :
-                    <Icon color={'#fff'} name={'user-alt'} size={20} />
+            // set the main header to show logo, search and user 
+            options={({ navigation }) => {
+              // state for search box open or close and state fo rthe search text
+              const [close, setClose] = useState(true);
+              const [toSearch, setToSearch] = useState('');
+              return ({
+                title: 'Havruta',
+                headerLeft: () => {
+                  if (close) {
+                    return (
+                      <Image style={styles.image_title} source={require('./App/Assets/logo.png')} />
+                    )
+                  } else {
+                    return (
+                      <TouchableOpacity style={{ padding: 10 }} onPress={() => { setToSearch(''); setClose(true) }}>
+                        <Icon style={styles.search_icon} color={'#fff'} size={20} name={'chevron-left'} />
+                      </TouchableOpacity>
+                    )
                   }
-                </TouchableOpacity>
-              ),
-            })} />
+                },
+                headerTitle: () => {
+                  return (
+                    <View style={{ justifyContent: 'flex-end', flexDirection: 'row' }}>
+                      {
+                        close ?
+                          <TouchableOpacity style={{ padding: 10 }} onPress={() => close ? setClose(false) : console.log(toSearch)}>
+                            <Icon style={styles.search_icon} color={'#fff'} size={20} name={'search'} />
+                          </TouchableOpacity>
+                          :
+                          <TextInput
+                            value={toSearch}
+                            onChangeText={setToSearch}
+                            placeholder={'Search Here...'}
+                            placeholderTextColor={'#fffa'}
+                            returnKeyType={'search'}
+                            style={styles.stack_search}
+                            autoFocus={true}
+                            onSubmitEditing={() => toSearch.length == 0 ? setClose(true) : navigation.navigate('GenericFeed', { toSearch: toSearch })}
+                          />
+                      }
+                    </View>
+                  )
+                }
+                ,
+                // this butten show the Profile button
+                headerRight: () => {
+                  if (close) {
+                    return (
+                      <TouchableOpacity
+                        style={styles.register}
+                        onPress={() => navigation.navigate('Registration')}>
+                        <Icon color={auth().currentUser ? '#fff' : '#f00'} name={'user-alt'} size={20} />
+                      </TouchableOpacity>
+                    )
+                  } else {
+                    return (
+                      <TouchableOpacity style={{ padding: 10 }} onPress={() => toSearch.length == 0 ? setClose(true) : navigation.navigate('GenericFeed', { toSearch: toSearch })}>
+                        <Icon style={styles.search_icon} color={'#fff'} size={20} name={'search'} />
+                      </TouchableOpacity>
+                    )
+                  }
+                },
+              })
+            }} />
           <Stack.Screen
             name="Registration"
             component={RegistrationScreen}
@@ -138,6 +188,7 @@ App = () => {
             name="AddEvent"
             component={AddEvent}
           />
+
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
@@ -163,35 +214,41 @@ const styles = StyleSheet.create({
     color: "#fff"
   },
   register: {
-    padding: 5,
-    paddingRight: 20,
-    paddingLeft: 20,
+    padding: 10,
+    marginRight: 10,
     borderRadius: 15,
     overflow: 'hidden',
-    shadowColor: '#fff',
+    shadowColor: '#111',
     shadowOffset: {
       width: 0,
       height: 4,
     },
     shadowOpacity: 0.80,
-    shadowRadius: 5,
+    shadowRadius: 4,
   },
   user_image: {
-    height: 35,
-    width: 35,
+    height: 25,
+    width: 25,
     borderRadius: 20,
     overflow: 'hidden'
   },
   image_title: {
-    height: 40,
-    width: 80,
-    shadowColor: '#fff',
+    height: 50,
+    width: 50,
+  },
+  stack_search: {
+    width: Dimensions.get('screen').width * 0.6,
+    height: '100%',
+    color: '#fff'
+  },
+  search_icon: {
+    shadowColor: '#111',
     shadowOffset: {
       width: 0,
       height: 4,
     },
     shadowOpacity: 0.80,
-    shadowRadius: 5,
+    shadowRadius: 4,
   }
 
 });

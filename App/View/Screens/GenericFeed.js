@@ -19,19 +19,27 @@ dateToReadbleFormat = (date) => date.getDate() + '.' + (date.getMonth() + 1) + '
 * and request the relevant data (if exsists) from firestore
 **/// ---------------------------------------------------
 export default function GenericFeed({ navigation, route }) {
+  // console.log(route.params)
+  let category_id;
+  if (route.params && route.params.toSearch) {
+    // console.log('toSearch')
+    category_id = 'search=' + route.params.toSearch
+  } else {
+    // console.log('by category')
+    if (route.name == 'Community') {
+      category_id = 'categories=122'
+    } else if (route.name == 'Judaism') {
+      category_id = 'categories=117'
+    } else {
+      if (!route.params || !route.params.category_id)
+        return new Error('GenericFeed: category_id must received by the route')
+      category_id = route.params.category_id;
+    }
+  }
   // set the category to the required category.
   // if the component called from the tab_navigator
   // set the category manully
-  let category_id;
-  if (route.name == 'Community') {
-    category_id = '122'
-  } else if (route.name == 'Judaism') {
-    category_id = '117'
-  } else {
-    if (!route.params || !route.params.category_id)
-      return new Error('GenericFeed: category_id must received by the route')
-    category_id = route.params.category_id;
-  }
+
 
   // attribute to hold the articles with the data from FB
   const [fullArticles, setFullArticles] = useState([, , , ,]);
@@ -42,7 +50,7 @@ export default function GenericFeed({ navigation, route }) {
 
   /**function to get articles from wordpress */
   async function getArticlesFromWP() {
-    let articles = await api.get('/wp/v2/posts?categories=' + category_id);
+    let articles = await api.get('/wp/v2/posts?' + category_id);
     let arr = [];
     for (let i = 0; i < articles.data.length; i++) {
       let obj = {
@@ -131,7 +139,7 @@ export default function GenericFeed({ navigation, route }) {
   return (
     <View style={styles.main}>
       <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
-      <SafeAreaView style={styles.main}>
+      <View style={styles.main}>
         {loading ?
           <FlatList
             data={fullArticles}
@@ -166,8 +174,9 @@ export default function GenericFeed({ navigation, route }) {
           />
           :
           <FlatList
-            data={fullArticles}
+            data={[...fullArticles, 'end_list']}
             scrollIndicatorInsets={{ right: 1 }}
+            onEndReached={() => { console.log('list ended'); }}
             refreshControl={
               <RefreshControl
                 enabled={true}
@@ -175,17 +184,19 @@ export default function GenericFeed({ navigation, route }) {
                 onRefresh={onRefresh}
               />
             }
-            renderItem={({ item }) => (
+            renderItem={({ item }) => item == 'end_list' ?
+              <View style={{ height: 40, width: '100%' }}></View>
+              :
               <PostInFeed
                 onPress={(postLock) => navigation.navigate('ArticleScreen', { data: item, user: user, idAdmin: auth().currentUser ? user.role == 'admin' : false, lock: postLock })}
                 data={item}
                 isAdmin={auth().currentUser ? user.role == 'admin' : false}
               />
-            )}
+            }
             keyExtractor={(item, idx) => idx}
           />
         }
-      </SafeAreaView>
+      </View>
     </View>
   );
 }
