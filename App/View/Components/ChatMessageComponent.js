@@ -13,7 +13,8 @@ import Hyperlink from 'react-native-hyperlink'
 
 
 export default function ChatMessageComponent({ item }) {
-    let date = item.date.toDate();
+    let date = { date: new Date(), };
+    item.date ? date = item.date.toDate() : date = null;
     const [name, setName] = useState("Loading...")
     const [imageUrl, setImageUrl] = useState(require('../../Assets/POWERPNT_frXVLHdxnI.png'))
 

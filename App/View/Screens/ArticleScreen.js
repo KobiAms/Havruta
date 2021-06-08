@@ -147,7 +147,7 @@ function ArticleScreen({ navigation, route }) {
     <View style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
       <View
-        style={{ flex: 10, paddingTop: 0, backgroundColor: 'rgb(220,220,240)' }}>
+        style={{ flex: 10, paddingTop: 0, backgroundColor: '#f2f2f3' }}>
         <FlatList
           data={[route.params.data, ...comments, 'end_list']}
           refreshControl={
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
   main: {
     flex: 1,
     alignSelf: 'center',
-    backgroundColor: 'rgb(220,220,240)',
+    backgroundColor: '#fff',
   },
   header: {
     flex: 1,

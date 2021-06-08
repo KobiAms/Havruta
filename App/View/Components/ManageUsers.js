@@ -60,8 +60,8 @@ export default function ManageUsers({ navigation }) {
         <IconAw style={styles.dot} name={'circle'} size={20} color={color} />
         <Text>{headline}</Text>
         <Icon2
-          style={styles.arrow_right}
-          name={'right'}
+          style={{}}
+          name={'left'}
           size={20}
           color={'gray'}
         />
@@ -72,12 +72,12 @@ export default function ManageUsers({ navigation }) {
   /**render of the manage users screen */
   return (
     <View style={styles.main}>
-      <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
+      <SafeAreaView style={{ flex: 0, backgroundColor: '#0d5794' }} />
       <View style={styles.main}>
         <View style={styles.body}>
           <View style={styles.search_container}>
             <TextInput
-              placeholder="Search Here"
+              placeholder="חפש כאן"
               style={styles.search_box}
               onChangeText={text => {
                 setShow(users.filter(item => item.name.toLowerCase().includes(text.toLowerCase())));
@@ -119,25 +119,7 @@ const styles = StyleSheet.create({
   main: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: 'rgb(220,220,240)',
-  },
-  screen_title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: 'rgb(255,255,255)',
-  },
-  headline: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    color: 'rgb(0,127,255)',
-  },
-  back_button: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#ffffff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: '#f0fbff',
   },
   body: {
     height: '100%',
@@ -146,7 +128,7 @@ const styles = StyleSheet.create({
   search_container: {
     width: '100%',
     height: 50,
-    backgroundColor: 'rgba(180,180,210, 1)',
+    backgroundColor: '#a3cbe0',
     alignItems: 'center',
     justifyContent: 'space-evenly',
     flexDirection: 'row',
@@ -156,9 +138,9 @@ const styles = StyleSheet.create({
   search_box: {
     width: '90%',
     height: '80%',
-    backgroundColor: 'rgba(238, 238, 248, 1)',
+    backgroundColor: '#fff',
     borderRadius: 15,
-    paddingLeft: 10,
+    padding: 10
   },
   search_button: {
     height: '80%',
@@ -176,14 +158,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   item: {
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: 10,
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height / 14,
-    backgroundColor: 'rgb(250,250,255)',
-    marginBottom: 4,
+    backgroundColor: '#fff',
+    marginBottom: 1,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -191,6 +173,6 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.20,
     shadowRadius: 1.41,
-    elevation: 2,
+    elevation: 1,
   },
 });

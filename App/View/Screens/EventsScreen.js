@@ -97,25 +97,25 @@ function EventsScreen({ navigation }) {
             <View style={styles.item}>
                 {data ? (<View>
                     <View>
-                        <View style={styles.textRow}>
-                            <Text>Event name: </Text>
-                            <Text style={{ fontSize: 22, fontWeight: 'bold', padding: 8 }}>{data.name}</Text>
+                        <View style={{}}>
+                            <Text>שם האירוע: </Text>
+                            <Text style={{ fontSize: 22, fontWeight: 'bold', padding: 8, textAlign: 'right' }}>{data.name}</Text>
                         </View>
                         <View style={styles.textRow}>
                             <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{participent}</Text>
-                            <Text style={{ padding: 8 }}> participants have so far confirmed their arrival</Text>
+                            <Text style={{ padding: 8 }}> משתמשים אישרו הגעה.</Text>
                         </View>
-                        <View style={styles.textRow}>
-                            <Text>Description: </Text>
-                            <Text style={{ fontSize: 17, fontWeight: 'bold', width: '85%', padding: 8 }}>{data.description}</Text>
+                        <View style={{}}>
+                            <Text>תיאור: </Text>
+                            <Text style={{ fontSize: 17, fontWeight: 'bold', padding: 8, textAlign: 'right' }}>{data.description}</Text>
                         </View>
                     </View>
                     <TouchableOpacity style={styles.attend}
                         onPress={() => attend(data.key)}>
                         <IconIo name={isAttend ? 'albums' : 'albums-outline'} size={20} style={{ margin: 8 }}></IconIo>
                         {isAttend ?
-                            <Text>Unattend to {data.name}</Text>
-                            : <Text>attend to {data.name}</Text>
+                            <Text>אני לא אגיע ל {data.name}</Text>
+                            : <Text>אני מגיע ל{data.name}</Text>
                         }
                     </TouchableOpacity>
                 </View>) : null}
@@ -141,7 +141,7 @@ function EventsScreen({ navigation }) {
                     <TouchableOpacity
                         style={styles.adder}
                         onPress={() => navigation.navigate('AddEvent', { data: events })}>
-                        <IconIo name={'add-circle'} color={'rgb(120,90,140)'} size={65} />
+                        <IconIo name={'add-circle'} color={'#0d5794'} size={65} />
                     </TouchableOpacity> : null}
             </View>
         </SafeAreaView>
@@ -151,7 +151,8 @@ function EventsScreen({ navigation }) {
 const styles = StyleSheet.create({
     main: {
         flex: 1,
-        backgroundColor: 'rgb(200,200,220)',
+        backgroundColor: '#f0fbff',
+        direction: 'rtl',
     },
     body: {
         height: '100%',
@@ -168,7 +169,7 @@ const styles = StyleSheet.create({
         width: Dimensions.get('screen').width * (70 / 100),
     },
     textRow: {
-        flexDirection: 'row',
+        flexDirection: 'row-reverse',
         alignItems: 'center',
         margin: 10,
     },
@@ -178,18 +179,23 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     item: {
-        padding: 20,
-        width: Dimensions.get('window').width,
-        backgroundColor: 'rgb(250,250,255)',
-        marginBottom: 4,
+        width: Dimensions.get('window').width * (97 / 100),
+        borderRadius: 5,
+        alignSelf: 'center',
+        backgroundColor: '#fff',
+        justifyContent: 'center',
+        padding: 10,
+        margin: 5,
+        flex: 1,
+        minWidth: '97%',
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
-            height: 1,
+            height: 5,
         },
-        shadowOpacity: 0.20,
-        shadowRadius: 1.41,
-        elevation: 2,
+        shadowOpacity: 1,
+        shadowRadius: 3.27,
+        elevation: 5,
     },
     adder: {
         justifyContent: 'flex-end',

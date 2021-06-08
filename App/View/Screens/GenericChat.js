@@ -195,14 +195,16 @@ function GenericChat({ navigation, route }) {
                 if (doc.data().imageUrl) {
                     setHeaderImage({ uri: doc.data().imageUrl })
                 }
-                let reversed = doc.data().messages.reverse();
-                if (reversed.length === 0) {
-                    setDocPre(doc.data().premission);
-                    return subscriber;
-                }
-                else {
-                    set_chat_data(reversed.slice(0, msgToLoad));
-                    setDocPre(doc.data().premission);
+                if (doc.data().messages) {
+                    let reversed = doc.data().messages.reverse();
+                    if (reversed.length === 0) {
+                        setDocPre(doc.data().premission);
+                        return subscriber;
+                    }
+                    else {
+                        set_chat_data(reversed.slice(0, msgToLoad));
+                        setDocPre(doc.data().premission);
+                    }
                 }
             });
         return subscriber
