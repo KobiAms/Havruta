@@ -40,9 +40,7 @@ export default function GenericFeed({ navigation, route }) {
   const baseURL = 'https://havruta.org.il/wp-json'
   let api = axios.create({ baseURL });
 
-
-
-
+  /**function to get articles from wordpress */
   async function getArticlesFromWP() {
     let articles = await api.get('/wp/v2/posts?categories=' + category_id);
     let arr = [];
@@ -98,15 +96,10 @@ export default function GenericFeed({ navigation, route }) {
     setUser(user);
   }
 
-
-
-
-
+  /**this useEffect get all the articles from wp and then from fb */
   useEffect(() => {
     getArticlesFromWP()
   }, [])
-
-  /*******===== async ends here =============*************** */
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
@@ -119,12 +112,10 @@ export default function GenericFeed({ navigation, route }) {
           let userDetails = doc.data();
           setUser(userDetails);
         })
-        .catch(err => {
-          console.log(err)
-        })
+        .catch(err => console.log(err))
     }
     return subscriber;
-  }, [setUser])
+  }, [setUser]);
 
   const [refreshing, setRefreshing] = useState(false);
   const wait = (timeout) => {

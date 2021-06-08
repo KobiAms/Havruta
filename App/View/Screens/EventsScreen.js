@@ -6,7 +6,6 @@ import {
     View,
     Alert,
     Dimensions,
-    TextInput,
     ActivityIndicator,
     FlatList,
 } from 'react-native';
@@ -15,8 +14,8 @@ import auth from '@react-native-firebase/auth';
 import IconIo from 'react-native-vector-icons/Ionicons';
 import firestore from '@react-native-firebase/firestore';
 
+/** A screen that displays all the events in the that is in the firestore collection */
 function EventsScreen({ navigation }) {
-
     const [loading, setLoading] = useState(true);
     const [events, setEvents] = useState([]);
     const [list_to_show, setShow] = useState(events);
@@ -61,6 +60,7 @@ function EventsScreen({ navigation }) {
     /**an item in the list. shows the details about the event. also makes it possible to attend/unattend */
     function EventItem({ data }) {
         const [isAttend, setisAttend] = useState(auth().currentUser && data.attendings ? data.attendings.includes(auth().currentUser.email) : false)
+        const [participent, setParticipent] = useState([]);
 
         /** this function is add you or remove from a certian event in firebase */
         function attend(key) {
@@ -84,36 +84,46 @@ function EventsScreen({ navigation }) {
                 Alert.alert("You must be registered in order to attend an event");
             }
         }
+        /**on render, this useEffect update the number of participents.  */
+        useEffect(() => {
+            if (data) {
+                if (data.attendings) setParticipent(data.attendings.length);
+                else setParticipent(0);
+            }
+        }, [])
 
+        /**the render of the "EventItem" */
         return (
             <View style={styles.item}>
-                <View >
-                    <View style={styles.textRow}>
-                        <Text>Event name: </Text>
-                        <Text style={{ fontSize: 22, fontWeight: 'bold', padding: 8 }}>{data.name}</Text>
+                {data ? (<View>
+                    <View>
+                        <View style={styles.textRow}>
+                            <Text>Event name: </Text>
+                            <Text style={{ fontSize: 22, fontWeight: 'bold', padding: 8 }}>{data.name}</Text>
+                        </View>
+                        <View style={styles.textRow}>
+                            <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{participent}</Text>
+                            <Text style={{ padding: 8 }}> participants have so far confirmed their arrival</Text>
+                        </View>
+                        <View style={styles.textRow}>
+                            <Text>Description: </Text>
+                            <Text style={{ fontSize: 17, fontWeight: 'bold', width: '85%', padding: 8 }}>{data.description}</Text>
+                        </View>
                     </View>
-                    <View style={styles.textRow}>
-                        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{data.attendings.length}</Text>
-                        <Text style={{ padding: 8 }}> participants have so far confirmed their arrival</Text>
-                    </View>
-                    <View style={styles.textRow}>
-                        <Text>Description: </Text>
-                        <Text style={{ fontSize: 17, fontWeight: 'bold', width: '85%', padding: 8 }}>{data.description}</Text>
-                    </View>
-                </View>
-                <TouchableOpacity style={styles.attend}
-                    onPress={() => attend(data.key)}>
-                    <IconIo name={isAttend ? 'albums' : 'albums-outline'} size={20} style={{ margin: 8 }}></IconIo>
-                    {isAttend ?
-                        <Text>Unattend to {data.name}</Text>
-                        : <Text>attend to {data.name}</Text>
-                    }
-                </TouchableOpacity>
-
+                    <TouchableOpacity style={styles.attend}
+                        onPress={() => attend(data.key)}>
+                        <IconIo name={isAttend ? 'albums' : 'albums-outline'} size={20} style={{ margin: 8 }}></IconIo>
+                        {isAttend ?
+                            <Text>Unattend to {data.name}</Text>
+                            : <Text>attend to {data.name}</Text>
+                        }
+                    </TouchableOpacity>
+                </View>) : null}
             </View>
         );
     };
 
+    /**the render of "EventScreen" */
     return (
         <SafeAreaView style={styles.main}>
             <View style={styles.body}>
@@ -135,7 +145,6 @@ function EventsScreen({ navigation }) {
                     </TouchableOpacity> : null}
             </View>
         </SafeAreaView>
-
     );
 };
 
@@ -192,6 +201,4 @@ const styles = StyleSheet.create({
         right: 10,
     },
 });
-
-
 export default EventsScreen;

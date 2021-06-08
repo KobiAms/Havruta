@@ -8,6 +8,33 @@ export default function CommentComponent({ data, isAdmin, deleteComment }) {
     // name of the name of the comment writer
     const [name, setName] = useState('Loading...')
     const [imageUrl, setImageUrl] = useState(require('../../Assets/logo.png'))
+    const colors = ['#fff', '#f99', '#9ff', '#f9f', '#ff9', '#9f9', '#99f', '#999', '#fff'];
+
+    // generate random color from the colors set. right now only white is used
+    function getRandomColor() {
+        return colors[0]
+        // let rand = Math.floor(Math.random() * 8);
+        // return colors[rand]
+    }
+
+    function timePassParser(time) {
+        let now = new Date();
+        let diff = now - ((7200 + time) * 1000);
+        if (diff < 0) return ('a while ago');
+        if (diff < 1000) return (parseInt(diff) + ' milliseconds ago');
+        diff /= 1000;
+        if (diff < 60) return (parseInt(diff) + ' seconds ago');
+        diff /= 60;
+        if (diff < 60) return (parseInt(diff) + ' minutes ago');
+        diff /= 60;
+        if (diff < 24) return (parseInt(diff) + ' hours ago');
+        diff /= 24;
+        if (diff < 30) return (parseInt(diff) + ' days ago');
+        diff /= 30;
+        if (diff < 12) return (parseInt(diff) + ' months ago');
+        diff /= 12;
+        return (parseInt(diff) + ' years ago');
+    }
 
     useEffect(() => {
         // get the comment writer data from firebase  
@@ -80,32 +107,3 @@ const styles = StyleSheet.create({
     },
 })
 
-// generate random color from the colors set
-function getRandomColor() {
-    return colors[0]
-    // let rand = Math.floor(Math.random() * 8);
-    // return colors[rand]
-}
-
-
-
-function timePassParser(time) {
-    let now = new Date();
-    let diff = now - ((7200 + time) * 1000);
-    if (diff < 0) return ('a while ago');
-    if (diff < 1000) return (parseInt(diff) + ' milliseconds ago');
-    diff /= 1000;
-    if (diff < 60) return (parseInt(diff) + ' seconds ago');
-    diff /= 60;
-    if (diff < 60) return (parseInt(diff) + ' minutes ago');
-    diff /= 60;
-    if (diff < 24) return (parseInt(diff) + ' hours ago');
-    diff /= 24;
-    if (diff < 30) return (parseInt(diff) + ' days ago');
-    diff /= 30;
-    if (diff < 12) return (parseInt(diff) + ' months ago');
-    diff /= 12;
-    return (parseInt(diff) + ' years ago');
-}
-
-const colors = ['#fff', '#f99', '#9ff', '#f9f', '#ff9', '#9f9', '#99f', '#999', '#fff'];

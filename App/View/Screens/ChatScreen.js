@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { View, Pressable, FlatList, TouchableOpacity, StyleSheet, Alert, Dimensions, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
+import { View, Pressable, FlatList, TouchableOpacity, StyleSheet, Alert, Dimensions } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import Chat from '../Components/ChatItem';
 import IconIo from 'react-native-vector-icons/Ionicons';
 import SkeletonContent from 'react-native-skeleton-content-nonexpo';
-import { useLayoutEffect } from 'react';
 
 function ChatScreen({ navigation, route }) {
     const [chats, setChats] = useState([, , , , , , , , , ,])

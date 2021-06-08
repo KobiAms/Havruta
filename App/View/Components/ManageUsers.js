@@ -9,18 +9,19 @@ import {
   ActivityIndicator,
   FlatList,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome5';
 import firestore from '@react-native-firebase/firestore';
 import IconAw from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/AntDesign';
 import { SafeAreaView } from 'react-native';
 
-export default ManageUsers = ({ navigation }) => {
+/**Admin manage users screen. display a list of all the users and by chosing one you can manage it */
+export default function ManageUsers({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
   const [list_to_show, setShow] = useState(users);
   const [filter, setFilter] = useState();
 
+  /**this useEffect gets all the data about the users onSnapshot - so it is updating upon new data in the database */
   useEffect(() => {
     firestore()
       .collection('users')
@@ -50,7 +51,10 @@ export default ManageUsers = ({ navigation }) => {
       });
   }, []);
 
-  UserItem = ({ headline, color, onPress }) => {
+  /**An item that represent a user.
+   * on the left side a color indicate the role of the user:
+   * admin - green, reporters - blue, users- gray, blocked user - red  */
+  function UserItem({ headline, color, onPress }) {
     return (
       <TouchableOpacity style={styles.item} onPress={onPress}>
         <IconAw style={styles.dot} name={'circle'} size={20} color={color} />
@@ -65,6 +69,7 @@ export default ManageUsers = ({ navigation }) => {
     );
   };
 
+  /**render of the manage users screen */
   return (
     <View style={styles.main}>
       <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
@@ -75,11 +80,7 @@ export default ManageUsers = ({ navigation }) => {
               placeholder="Search Here"
               style={styles.search_box}
               onChangeText={text => {
-                setShow(
-                  users.filter(item =>
-                    item.name.toLowerCase().includes(text.toLowerCase()),
-                  ),
-                );
+                setShow(users.filter(item => item.name.toLowerCase().includes(text.toLowerCase())));
                 setFilter(text);
               }}
               value={filter}
@@ -100,9 +101,7 @@ export default ManageUsers = ({ navigation }) => {
                       <UserItem
                         headline={item.name}
                         color={item.color}
-                        onPress={() =>
-                          navigation.navigate('Manage User', { data: item })
-                        }
+                        onPress={() => navigation.navigate('Manage User', { data: item })}
                       />
                     )
                 }}
@@ -122,7 +121,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     backgroundColor: 'rgb(220,220,240)',
   },
-
   screen_title: {
     fontSize: 20,
     fontWeight: 'bold',
@@ -193,7 +191,6 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.20,
     shadowRadius: 1.41,
-
     elevation: 2,
   },
 });

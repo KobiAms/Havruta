@@ -3,11 +3,14 @@ import { View, Text, StyleSheet, Dimensions, Image } from 'react-native';
 import Icon2 from 'react-native-vector-icons/AntDesign';
 import firestore from '@react-native-firebase/firestore';
 
+/**A component that renders a signle chat in the chat screen.
+ * displays the name of the chat, the last messeage sent in the chat and a picture that the chat creator chose */
 function ChatItem({ id, item }) {
     const chat_name = item.data ? item.data.name : 'untitled';
     const [lastMessage, setlastMessage] = useState('Loading...');
     const [lastSenderName, setLastSenderName] = useState('');
 
+    /**this useEffect triger firestore call to get the name of the user who send the last message in the chat. */
     useEffect(() => {
         let last_m;
         last_m = item.data.messages[item.data.messages.length - 1]

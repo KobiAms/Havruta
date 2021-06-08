@@ -1,14 +1,7 @@
 ---------- ========== toDo ========== ----------:
-
-in ChatScreen
-    add photo to a chat. - V
-    add last message on the chat. - fix last sender name and style - V
-    fix delete going inside a chat, and crash the app - V
-
-
-in ArticleScreen
-    comment delete by admin - V
-    make the feed reload on swipe up or on press - V
+in GenericFeed
+    add search to load new feed from the search results
+    scrolling down load more articles
 
 in ManageUser.js
     add block field in user collection in firestore. - using bulidin fb block server side - fb function - X
@@ -16,14 +9,12 @@ in ManageUser.js
 
 in Other Screen 
     more subject articles section
-    about section -- get the api call from "https://havruta.org.il/donate/"
-
+    
 in MainScreen
     show the top 5 from any subject required
 
-in subjectArticle
-    fix load from wordpress and display on screen. - V
-    admin can lock & unlock article likes/comment. - V
+in EventScreen
+    filter out the events that thier date is over
 
 
 ---------- ========== done ========== ----------:
@@ -40,16 +31,26 @@ in ArticleScreen
     insert new comment into firestore - V
     get user avatar for each comment - V
     insert or remove user_id to likes[] onPress in ArticleScreen.js line 88 - V
+    comment delete by admin - V
+    make the feed reload on swipe up or on press - V
 
 in RegistraionScreen
     integrate "NewUserWizard.js" component into sign up flow -V
 
 in Other Screen 
     more chats section -v
+    about section -- get the api call from "https://havruta.org.il/donate/" - V
 
 in AddChat
     validate the chat name - V
     send alert if all the fields are not fiiled -V
 
+in subjectArticle
+    fix load from wordpress and display on screen. - V
+    admin can lock & unlock article likes/comment. - V
+
 in ChatScreen
     add an option to admin to delete chat -V
+    add photo to a chat. - V
+    add last message on the chat. - fix last sender name and style - V
+    fix delete going inside a chat, and crash the app - V

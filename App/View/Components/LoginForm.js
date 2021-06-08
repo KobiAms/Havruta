@@ -4,16 +4,16 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, ActivityInd
 import auth from '@react-native-firebase/auth'
 
 
-LoginForm = ({ setUser }) => {
+function LoginForm({ setUser }) {
     const [password, setPassword] = useState("12344321")
     const [email, setEmail] = useState("testy@test.com")
     const [loading, setLoading] = useState(false)
 
-
-    login = () => {
+    /**the function that activate the login flow */
+    function login() {
         if (loading)
             return;
-        if (!(email && password)) {
+        if (!(email && password)) {         //incase some data is missing
             Alert.alert("Email or Password Missing", [{ text: "OK", }], { cancelable: false })
             return
         }
@@ -35,7 +35,6 @@ LoginForm = ({ setUser }) => {
             })
     }
     return (
-
         <View style={styles.form}>
             <TextInput
                 autoCapitalize={'none'}
@@ -60,7 +59,6 @@ LoginForm = ({ setUser }) => {
 }
 
 const styles = StyleSheet.create({
-
     form: {
         width: '100%',
         alignItems: 'center',
@@ -86,9 +84,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-
     }
 });
-
-
 export default LoginForm

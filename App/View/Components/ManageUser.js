@@ -1,8 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react';
-import { ActivityIndicator } from 'react-native';
-import { SafeAreaView } from 'react-native';
 import {
     View,
     StyleSheet,
@@ -11,14 +9,10 @@ import {
     Dimensions,
     Switch,
     Image,
-    Alert
+    Alert,
+    SafeAreaView
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome5';
 import firestore from '@react-native-firebase/firestore';
-import auth from '@react-native-firebase/auth';
-import app from '@react-native-firebase/app';
-import Switcher from './MultiSwitcher';
-
 
 export default ManageUser = ({ navigation, route }) => {
     const [isBlocked, setIsBlocked] = useState(false);
@@ -32,29 +26,24 @@ export default ManageUser = ({ navigation, route }) => {
     const [userAvatar, setUserAvatar] = useState(route.params.data.photo ? { uri: route.params.data.photo } : require('../../Assets/POWERPNT_frXVLHdxnI.png'));
     const [userRole, setuserRole] = useState('');
 
+    /**functionality of the admin swith */
     const toggleAdmin = () => {
         if (loading)
             return
         setLoading(true)
         let new_role;
-        if (isAdmin) new_role = 'user'
+        if (isAdmin) new_role = 'user'              //if now an admin, set new role to be user
         else {
-            if (isReporter) setIsRepoter(false);
-            new_role = 'admin';
+            if (isReporter) setIsRepoter(false);    //if you are reporter right now then you are not any more
+            new_role = 'admin';                     //because you are an admin now
         }
-
         setIsAdmin(!isAdmin)
-        firestore().collection('users').doc(route.params.data.email).update({
-            role: new_role
-        })
-            .then(() => {
-                setLoading(false)
-            })
-            .catch(() => {
-                setIsAdmin(!isAdmin)
-                setLoading(false)
-            })
+        firestore().collection('users').doc(route.params.data.email).update({ role: new_role })
+            .then(() => { setLoading(false) })
+            .catch(() => { setIsAdmin(!isAdmin); setLoading(false) })
     };
+
+    /**functionality of the reporter swith */
     const toggleReporter = () => {
         if (loading)
             return
@@ -67,17 +56,15 @@ export default ManageUser = ({ navigation, route }) => {
         if (isReporter)
             new_role = 'user';
         setIsRepoter(!isReporter);
-        firestore().collection('users').doc(route.params.data.email).update({
-            role: new_role
-        })
-            .then(() => {
-                setLoading(false)
-            })
-            .catch(() => {
-                setIsRepoter(!isReporter)
-                setLoading(false)
-            })
+        firestore().collection('users').doc(route.params.data.email).update({ role: new_role })
+            .then(() => { setLoading(false) })
+            .catch(() => { setIsRepoter(!isReporter); setLoading(false); })
     };
+
+    const toggleBlock = () => {
+        setLoading(!loading)
+        setIsBlocked(!isBlocked)
+    }
 
     function delete_user() {
         Alert.alert(
@@ -98,12 +85,7 @@ export default ManageUser = ({ navigation, route }) => {
         )
     }
 
-    const toggleBlock = () => {
-
-        setLoading(!loading)
-        setIsBlocked(!isBlocked)
-    }
-
+    /**this useEffect update the state variables */
     useEffect(() => {
         setuserName(route.params.data.name);
         setUserAbout(route.params.data.about);
@@ -119,6 +101,7 @@ export default ManageUser = ({ navigation, route }) => {
             setuserDOB(DAT_parse);
         }
     }, [setuserDOB, setUserAbout, setIsAdmin, setuserDOB])
+
     return (
         <View style={styles.main}>
             <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
@@ -133,13 +116,10 @@ export default ManageUser = ({ navigation, route }) => {
                         <Text style={{ fontSize: 16 }}>user id: {userEmail}</Text>
                     </View>
                 </View>
-
                 <View style={{ padding: 10 }}>
                     <Text style={{ fontWeight: 'bold', fontSize: 18 }}>About {userName}:</Text>
                     <Text style={{ fontSize: 16 }}> {userAbout}</Text>
                 </View>
-
-
                 <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
                     <View style={styles.switch}>
                         <Text style={{ fontWeight: 'bold', fontSize: 18, padding: 5 }}>{isBlocked ? 'Unblock' : 'Block'}</Text>
@@ -175,8 +155,6 @@ export default ManageUser = ({ navigation, route }) => {
                         />
                     </View>
                 </View >
-
-
                 <TouchableOpacity style={styles.delete} onPress={() => delete_user()}>
                     <Text style={{
                         color: 'rgb(255,40,40)',
@@ -195,36 +173,6 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         backgroundColor: 'rgb(200,200,220)',
         paddingTop: Dimensions.get('screen').height / 35
-    },
-    header: {
-        width: '100%',
-        height: Dimensions.get('screen').height / 10,
-        backgroundColor: 'rgb(120,90,140)',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        borderColor: '#999',
-        borderBottomWidth: 1,
-        paddingLeft: 10,
-        paddingRight: 10,
-    },
-    screen_title: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: 'rgb(255,255,255)',
-    },
-    headline: {
-        fontSize: 15,
-        fontWeight: 'bold',
-        color: 'rgb(0,127,255)',
-    },
-    back_button: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        backgroundColor: '#ffffff',
-        alignItems: 'center',
-        justifyContent: 'center',
     },
     switch: {
         margin: 10,

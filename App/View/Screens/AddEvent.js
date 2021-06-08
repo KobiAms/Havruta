@@ -1,15 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, Dimensions, StyleSheet, TouchableWithoutFeedback, Keyboard, TextInput, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Dimensions, StyleSheet, TouchableWithoutFeedback, Keyboard, TextInput, Alert } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import SwitchSelector from "react-native-switch-selector";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
-// create a readble date dd.mm.yyyy hh:mm from Date obj
-dateToReadbleFormat = (date) => date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes();
-
 function AddEvent({ navigation, route }) {
-    const existEvents = route.params.data
     const [eventName, setEventName] = useState('');
     const [eventDesc, setEventDesc] = useState('');
     const [eventTime, setEventTime] = useState(new Date());
@@ -41,12 +36,12 @@ function AddEvent({ navigation, route }) {
         );
     }
 
-    function createEvent() {
+    function createEvent() {        //creating new event into firestore
         if (eventName.length < 1 || eventDesc.length < 1) {
             fillAllFields()
             return
         }
-        let event_id = makeid(eventName);
+        let event_id = makeid(20);
         let new_event = {
             attending: [],
             description: eventDesc,
@@ -55,17 +50,11 @@ function AddEvent({ navigation, route }) {
         }
         firestore().collection('Events').doc(event_id)
             .set(new_event)
-            .then(() => {
-                navigation.goBack()
-            })
-            .catch((error) => {
-                alert(error)
-            })
+            .then(() => { navigation.goBack() }).catch((error) => { alert(error) })
     }
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-
             <View style={styles.main}>
                 <View style={{ margin: 10, alignItems: 'center' }}>
                     <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>
@@ -142,6 +131,5 @@ const styles = StyleSheet.create({
         margin: Dimensions.get('screen').width / 10,
         justifyContent: 'center',
     }
-})
-
+});
 export default AddEvent;

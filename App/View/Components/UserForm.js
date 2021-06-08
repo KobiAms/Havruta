@@ -23,6 +23,7 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 import NewUserWizard from './NewUserWizard';
 
+/**the main component of any user. when a user is loged in, this component is rendered */
 export default function UserForm({ setUser, navigation, setLoading }) {
   const [userRole, setUserRole] = useState();
   const [defaultStyle, setDefaultStyle] = useState(true);
@@ -37,7 +38,6 @@ export default function UserForm({ setUser, navigation, setLoading }) {
   const [editAbout, setEditAbout] = useState();
   const [isNew, setIsNew] = useState(false);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-
 
   // create a readble date dd.mm.yyyy from Date obj
   dateToReadbleFormat = (date) => date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear();
@@ -95,7 +95,6 @@ export default function UserForm({ setUser, navigation, setLoading }) {
       // update at firestore users collection the new data
       auth().currentUser.updateProfile({ displayName: editName })
         .then(() => {
-
           firestore().collection('users').doc(auth().currentUser.email)
             .update({
               about: editAbout,
@@ -131,9 +130,7 @@ export default function UserForm({ setUser, navigation, setLoading }) {
       .doc(auth().currentUser.email)
       .onSnapshot
       (doc => {
-        if (!doc.data()) {
-          return;
-        }
+        if (!doc.data()) return;
         // updates the relevant states to shoe the received data
         setUserAbout(doc.data().about);
         setUserRole(doc.data().role);
@@ -150,7 +147,6 @@ export default function UserForm({ setUser, navigation, setLoading }) {
 
 
   return (
-
     isNew ?
       <NewUserWizard />
       :
@@ -248,7 +244,6 @@ export default function UserForm({ setUser, navigation, setLoading }) {
             <IconFeather name={'log-out'} color={'#ff0000'} size={20} />
           </TouchableOpacity>
         </View>
-
       </View>
   );
 }

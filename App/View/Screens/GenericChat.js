@@ -2,7 +2,6 @@
 import React, { useEffect, useState, useLayoutEffect } from 'react';
 import {
     View,
-    Text,
     StyleSheet,
     FlatList,
     TextInput,
@@ -26,7 +25,6 @@ import ChatMessage from '../Components/ChatMessageComponent'
 import { useHeaderHeight } from '@react-navigation/stack';
 import { launchImageLibrary } from 'react-native-image-picker';
 
-
 let msgToLoad = 20;
 let msgToStart = 0;
 let endReached = false;
@@ -36,18 +34,17 @@ const ListFooterComponent = () => {
 };
 
 
-//this function dicompose the doc of the coplete chat into small object where as any object represent one msg item inside our chat
-//
-GenericChat = ({ navigation, route }) => {
+/*this function dicompose the doc of the coplete chat into small object where as any object represent one msg item inside our chat*/
+function GenericChat({ navigation, route }) {
+    const chat_id = route.name == 'Reporters' ? 'reporters' : route.params.id;
     const [newMessage, setNewMessage] = useState('');
     const [chat_data, set_chat_data] = useState([]);
     const [user, setUser] = useState();
-    const chat_id = route.name == 'Reporters' ? 'reporters' : route.params.id;
     const [refreshing, setRefreshing] = useState(false);
-    const headerHeight = useHeaderHeight();
     const [docPre, setDocPre] = useState();
     const [useRole, setUseRole] = useState('user');
     const [curUserInfo, setCurUserInfo] = useState();
+    const headerHeight = useHeaderHeight();
     const KEYBOARD_VERTICAL_OFFSET = headerHeight + StatusBar.currentHeight;
 
     const onRefresh = React.useCallback(() => {
@@ -74,16 +71,14 @@ GenericChat = ({ navigation, route }) => {
                         style: "cancel",
                     },
                 ],
-                {
-                    cancelable: true,
-                }
+                { cancelable: true, }
             );
         }
-
     }
-    //this function is used when we wanna send msg on the chat. first we check the the msg content exist in order the prevent from sending
-    // empty msgs to the server.
-    // after we verify that the msg is decent we update our data base with the new msgs
+
+    /*this function is used when we want to send message on the chat.
+    first we check the the message content exist in order to prevent from sending empty messages to the server.
+    after we verify that the messsage is decent we update firestore with the new message*/
     function sendMessage() {
         let tempMessage = {
             user_id: user.email,
@@ -94,7 +89,6 @@ GenericChat = ({ navigation, route }) => {
         if (!tempMessage.message.replace(/\s/g, '').length || !auth().currentUser) {
             setNewMessage('');
         } else {
-
             firestore()
                 .collection('chats')
                 .doc(chat_id)
@@ -120,15 +114,17 @@ GenericChat = ({ navigation, route }) => {
             .doc(chat_id)
             .onSnapshot(doc => {
                 if (!doc) return;
-                let reversed = doc.data().messages.reverse();
-                if (reversed.length < msgToLoad) {
-                    endReached = true;
-                    set_chat_data(reversed.slice(msgToStart, reversed.length));
-                } else {
-                    set_chat_data(reversed.slice(msgToStart, msgToLoad));
-                }
-                if (chat_data.length === doc.data().messages.length) {
-                    endReached = true;
+                if (doc.data().messages) {
+                    let reversed = doc.data().messages.reverse();
+                    if (reversed.length < msgToLoad) {
+                        endReached = true;
+                        set_chat_data(reversed.slice(msgToStart, reversed.length));
+                    } else {
+                        set_chat_data(reversed.slice(msgToStart, msgToLoad));
+                    }
+                    if (chat_data.length === doc.data().messages.length) {
+                        endReached = true;
+                    }
                 }
             });
     }
@@ -144,7 +140,6 @@ GenericChat = ({ navigation, route }) => {
                 </TouchableOpacity >
             )
         });
-
     }, [])
 
     function setHeaderImage(imageUrl) {
@@ -166,16 +161,14 @@ GenericChat = ({ navigation, route }) => {
         if (useRole == 'admin') {
             // lunching the camera roll / gallery
             launchImageLibrary({}, async response => {
-                if (response.didCancel) {
-
-                } else if (response.error) {
+                if (response.didCancel) { }
+                else if (response.error) {
                     Alert.alert(
                         'Error',
                         response.errorCode + ': ' + response.errorMessage,
                         [{ text: 'OK' }],
                         { cancelable: false },
                     );
-
                 } else {
                     // // create storage ref
                     const reference = storage().ref('/chats/' + chat_id + '/' + 'chat_photo.png');
@@ -215,21 +208,23 @@ GenericChat = ({ navigation, route }) => {
         return subscriber
     }, [])
 
-
     useEffect(() => {
         const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-        firestore()
-            .collection('users')
-            .doc(auth().currentUser.email)
-            .get().then(doc => {
-                if (!doc) return;
-                let userDetails = doc.data();
-                setUseRole(doc.data().role)
-                setCurUserInfo(userDetails)
-            })
-            .catch(() => { })
+        if (auth().currentUser) {
+            firestore()
+                .collection('users')
+                .doc(auth().currentUser.email)
+                .get().then(doc => {
+                    if (!doc) return;
+                    let userDetails = doc.data();
+                    setUseRole(doc.data().role)
+                    setCurUserInfo(userDetails)
+                })
+                .catch(() => { })
+        }
         return subscriber; // unsubscribe on unmount
     }, []);
+
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS == 'ios' ? "padding" : 'padding'}
@@ -306,7 +301,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         borderTopWidth: 1,
         borderTopColor: 'rgb(140, 140, 180)'
-
     },
     input: {
         borderColor: 'black',
@@ -332,7 +326,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: 200,
-
     },
     sendButtonFull: {
         padding: 8,
@@ -349,18 +342,6 @@ const styles = StyleSheet.create({
         shadowRadius: 3.80,
         elevation: 2,
     },
-    header: {
-        width: '100%',
-        height: Dimensions.get('screen').height / 12,
-        backgroundColor: 'rgb(120,90,140)',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderColor: '#999',
-        borderBottomWidth: 1,
-        paddingLeft: 10,
-        paddingRight: 10,
-    },
     list: {
         flex: 1,
     },
@@ -368,7 +349,6 @@ const styles = StyleSheet.create({
         fontSize: 11,
         color: '#333333',
     },
-
     date: {
         fontSize: 11,
         color: '#333333',
@@ -384,7 +364,5 @@ const styles = StyleSheet.create({
         height: 30,
         width: 30,
     }
-
 });
-
 export default GenericChat;

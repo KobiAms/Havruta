@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, ActivityIndicator } from 'react-native';
 import auth from '@react-native-firebase/auth'
 import firestore from '@react-native-firebase/firestore'
@@ -9,16 +8,15 @@ validateEmail = (email) => {
     return re.test(email);
 }
 
-
-SignupForm = ({ setUser }) => {
+/** the component that display on the screen when non user want to register */
+function SignupForm({ setUser }) {
     const [fullName, setFullName] = useState('testy test')
     const [email, setEmail] = useState('testy@test.com')
     const [password, setPassword] = useState('12344321')
     const [rePassword, setRePassword] = useState('12344321')
     const [loading, setLoading] = useState(false)
 
-
-    add_user_to_db = (email, password, name) => {
+    function add_user_to_db(email, password, name) {
         firestore().collection('users').doc(email).set({
             about: '',
             dob: firestore.Timestamp.fromDate(new Date()),
@@ -42,7 +40,7 @@ SignupForm = ({ setUser }) => {
         })
     }
 
-    signup = () => {
+    function signup() {
         if (loading)
             return;
         if (!(email && password && rePassword)) {
@@ -117,7 +115,6 @@ SignupForm = ({ setUser }) => {
 }
 
 const styles = StyleSheet.create({
-
     form: {
         width: '100%',
         alignItems: 'center',
@@ -143,7 +140,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-
     }
 });
 

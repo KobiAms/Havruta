@@ -6,15 +6,16 @@ import {
     TouchableOpacity,
     Dimensions,
     Keyboard,
-    TouchableWithoutFeedback
+    TouchableWithoutFeedback,
+    Platform,
+    KeyboardAvoidingView
 } from 'react-native';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import firestore from '@react-native-firebase/firestore';
 import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 import auth from '@react-native-firebase/auth';
-import { KeyboardAvoidingView } from 'react-native';
-import { Platform } from 'react-native';
 
+/**A wizard to complete all of the missing data about a new user */
 export default function NewUserWizard() {
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [editDate, setEditDate] = useState();
@@ -32,6 +33,7 @@ export default function NewUserWizard() {
         setDatePickerVisibility(false);
     };
 
+    /**write the new data to the database */
     function setSubmit() {
         if (auth().currentUser.displayName === userName) {
             firestore().collection('users').doc(auth().currentUser.email)
@@ -40,15 +42,11 @@ export default function NewUserWizard() {
                     dob: firestore.Timestamp.fromDate(editDate),
                     isNew: false
                 })
-                .then(() => {
-                    console.log("old user")
-                })
-                .catch(err => {
-                    console.log(err.code);
-                })
+                .then(() => { console.log("old user") }).catch(err => console.log(err.code))
         }
     }
 
+    /**this useEffect gets this user information that are currently in the database */
     useEffect(() => {
         if (auth().currentUser) {
             const subscriber = firestore()
@@ -56,23 +54,21 @@ export default function NewUserWizard() {
                 .doc(auth().currentUser.email)
                 .get()
                 .then(doc => {
-                    if (!doc.data()) {
-                        return;
-                    }
+                    if (!doc.data()) return;
                     setuserName(doc.data().name);
-                    setuserDOB(dateToReadbleFormat(doc.data().dob.toDate()))
-                    setEditDate(doc.data().dob.toDate())
-                    auth().currentUser.updateProfile({ displayName: userName })
+                    setuserDOB(dateToReadbleFormat(doc.data().dob.toDate()));
+                    setEditDate(doc.data().dob.toDate());
+                    auth().currentUser.updateProfile({ displayName: userName });
                 })
                 .catch(err => console.log(err.code))
             return subscriber
         }
-    }, [setuserName])
+    }, [setuserName]);
+
     return (
         <KeyboardAvoidingView
             style={{ flex: 1 }}
             behavior={Platform.OS == 'ios' ? 'padding' : null}>
-
             <TouchableWithoutFeedback style={{ flex: 1 }} onPress={Keyboard.dismiss}>
                 <View style={styles.main}>
                     <DateTimePickerModal
@@ -90,7 +86,6 @@ export default function NewUserWizard() {
                             <Text style={{ fontSize: 18 }}>{userDOB}</Text>
                         </TouchableOpacity>
                     </View>
-
                     <View style={{ margin: 10, alignSelf: 'center' }}>
                         <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>Please tell us about yourself. note that other users can see it.</Text>
                         <AutoGrowingTextInput
@@ -109,6 +104,7 @@ export default function NewUserWizard() {
         </KeyboardAvoidingView>
     )
 }
+
 const styles = StyleSheet.create({
     main: {
         justifyContent: 'center',

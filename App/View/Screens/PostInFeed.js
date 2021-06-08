@@ -1,16 +1,13 @@
 /* eslint-disable prettier/prettier */
-import React, { useEffect, useState } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { Text, View, StyleSheet, TouchableOpacity, Dimensions, TouchableWithoutFeedback } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import IconIo from 'react-native-vector-icons/Ionicons';
 import auth from '@react-native-firebase/auth';
-import { TouchableWithoutFeedback } from 'react-native';
 import HTMLRend from 'react-native-render-html';
-import { Dimensions } from 'react-native';
 import firestore from '@react-native-firebase/firestore'
 
-
-
+/**A component that display a short content on an article */
 function PostInFeed({ onPress, data, isAdmin }) {
   const postData = data
   const [postLock, setPostLock] = useState(data.lock)
@@ -18,6 +15,7 @@ function PostInFeed({ onPress, data, isAdmin }) {
   const [postFull, setPostFull] = useState(data.full)
   const isLiked = auth().currentUser ? data.likes.includes(auth().currentUser.email) : false
 
+  /**by any means, if the admin does not want to users to like and comment a post, he can lock it */
   function lock_post() {
     if (newPost) {
       firestore().collection('article').doc(postData.id).set({
@@ -29,33 +27,18 @@ function PostInFeed({ onPress, data, isAdmin }) {
         setPostFull(true)
         setNewPost(false)
       })
-        .catch(err => {
-          alert('Initialise failed:\n' + err.code)
-        })
+        .catch(err => { alert('Initialise failed:\n' + err.code) })
     } else if (postLock) {
-      firestore().collection('article').doc(postData.id).update({
-        lock: false
-      }).then(() => {
-        setPostLock(false)
-      })
-        .catch(err => {
-          alert('Unlock failed:\n' + err.code)
-        })
+      firestore().collection('article').doc(postData.id).update({ lock: false })
+        .then(() => setPostLock(false)).catch(err => alert('Unlock failed:\n' + err.code))
     } else {
-      firestore().collection('article').doc(postData.id).update({
-        lock: true
-      }).then(() => {
-        setPostLock(true)
-      })
-        .catch(err => {
-          alert('Lock failed:\n' + err.code)
-        })
+      firestore().collection('article').doc(postData.id).update({ lock: true }).
+        then(() => setPostLock(true)).catch(err => alert('Lock failed:\n' + err.code))
     }
   }
 
   return (
     <TouchableWithoutFeedback onPress={() => onPress(postLock)} data={postData}>
-
       <View style={styles.main}>
         <View style={styles.row}>
           <View>
@@ -156,5 +139,4 @@ const styles = StyleSheet.create({
     backgroundColor: '#000000',
   },
 });
-
 export default PostInFeed;

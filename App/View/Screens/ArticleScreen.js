@@ -9,12 +9,9 @@ import { Dimensions } from 'react-native';
 import { useCallback } from 'react';
 
 
-/* -----------------------------------------------------
-* this function return the article components including
+/*this function return the article components including
 * the article data from wordpress and the likes and comments
-* from firebase
-**/// ---------------------------------------------------
-
+* from firebase*/
 function ArticleScreen({ navigation, route }) {
   const [comments, setComments] = useState(route.params.data.comments)
   const [likes, setLikes] = useState(route.params.data.likes)
@@ -22,10 +19,7 @@ function ArticleScreen({ navigation, route }) {
   const [isLock, setIsLock] = useState(route.params.data.lock)
   const [isLiked, setIsLiked] = useState(auth().currentUser ? route.params.data.likes.includes(auth().currentUser.email) : false)
 
-
-  /* ----------------------------------------------------
-  * function to update the like/dislike at firestore
-  *///---------------------------------------------------
+  /* function to update the like/dislike at firestore*/
   function updateLikes() {
     // first check if user is login
     if (auth().currentUser) {
@@ -60,9 +54,7 @@ function ArticleScreen({ navigation, route }) {
     }
   }
 
-  /* ----------------------------------------------------------------
-  * function to add comment into the comments array at firebase
-  *///---------------------------------------------------------------
+  /* function to add comment into the comments array at firebase*/
   function addComment(comInput) {
     // check if user is login
     if (auth().currentUser) {
@@ -92,6 +84,7 @@ function ArticleScreen({ navigation, route }) {
       Alert.alert('this option open only to registreted users', '', []);
     }
   }
+
   /* ----------------------------------------------------------------
   * admin function to delete comment from the comments array at firebase
   *///---------------------------------------------------------------
@@ -143,14 +136,11 @@ function ArticleScreen({ navigation, route }) {
 
   // trolly loading animation to give the user the filling of the refresh option
   const [refreshing, setRefreshing] = useState(false);
-  const wait = (timeout) => {
-    return new Promise(resolve => setTimeout(resolve, timeout));
-  }
+  const wait = (timeout) => { return new Promise(resolve => setTimeout(resolve, timeout)); }
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     wait(2000).then(() => setRefreshing(false));
   }, []);
-
 
   // return the article component with all the data
   return (
@@ -213,26 +203,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
-
 export default ArticleScreen;
-
-
-
-function timePassParser(time) {
-  let now = new Date();
-  let diff = now - ((7200 + time) * 1000);
-  if (diff < 0) return ('a while ago');
-  if (diff < 1000) return (parseInt(diff) + ' milliseconds ago');
-  diff /= 1000;
-  if (diff < 60) return (parseInt(diff) + ' seconds ago');
-  diff /= 60;
-  if (diff < 60) return (parseInt(diff) + ' minutes ago');
-  diff /= 60;
-  if (diff < 24) return (parseInt(diff) + ' hours ago');
-  diff /= 24;
-  if (diff < 30) return (parseInt(diff) + ' days ago');
-  diff /= 30;
-  if (diff < 12) return (parseInt(diff) + ' months ago');
-  diff /= 12;
-  return (parseInt(diff) + ' years ago');
-}
