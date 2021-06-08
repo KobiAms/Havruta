@@ -204,7 +204,7 @@ export default function GenericFeed({ navigation, route }) {
 const styles = StyleSheet.create({
   main: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#f0fbff',
   },
   headline: {
     fontSize: 20,
@@ -215,36 +215,10 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
   },
-  header: {
-    width: '100%',
-    height: Dimensions.get('screen').height / 10,
-    backgroundColor: 'rgb(120,90,140)',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderColor: '#999',
-    borderBottomWidth: 1,
-    paddingLeft: 10,
-    paddingRight: 10,
-  },
-
-  screen_title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: 'rgb(255,255,255)',
-  },
-  back_button: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#ffffff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   skeleton: {
     margin: 5,
     borderRadius: 5,
-    backgroundColor: 'rgb(220,220,240)',
+    backgroundColor: '#fff',
     minWidth: '97%',
     padding: 20,
     alignItems: 'flex-end',
@@ -254,8 +228,8 @@ const styles = StyleSheet.create({
       width: 0,
       height: 5,
     },
-    shadowOpacity: 0.34,
+    shadowOpacity: 1,
     shadowRadius: 3.27,
-    elevation: 10,
+    elevation: 5,
   }
 });

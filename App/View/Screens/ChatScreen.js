@@ -151,7 +151,7 @@ function ChatScreen({ navigation, route }) {
                     <TouchableOpacity
                         style={styles.adder}
                         onPress={() => navigation.navigate('AddChat', { data: chats })}>
-                        <IconIo name={'add-circle'} color={'rgb(120,90,140)'} size={65} />
+                        <IconIo name={'add-circle'} color={'#0d5794'} size={65} />
                     </TouchableOpacity> : null}
             </View>
         </View>
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     main: {
         flex: 1,
         flexDirection: 'column',
-        backgroundColor: 'rgb(220,220,240)',
+        backgroundColor: '#f0fbff',
     },
     list: {
         height: '100%',
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
         margin: 20,
     },
     skeleton: {
-        backgroundColor: 'rgb(220,220,240)',
+        backgroundColor: '#fff',
         minWidth: '97%',
         padding: 5,
         justifyContent: 'flex-start',
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
         shadowRadius: 3.27,
         elevation: 10,
         borderBottomWidth: 1,
-        borderBottomColor: 'rgb(160,160,180)'
+        borderBottomColor: '#cfcfcf'
     }
 });
 

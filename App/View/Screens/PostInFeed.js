@@ -48,9 +48,9 @@ function PostInFeed({ onPress, data, isAdmin }) {
             isAdmin ?
               <TouchableOpacity onPress={() => lock_post()}>
                 {newPost ?
-                  <IconIo name={'add-circle'} color={'blue'} size={20} />
+                  <IconIo name={'add-circle'} color={'#0d5794'} size={20} />
                   :
-                  <IconIo name={postLock ? 'ios-lock-closed-outline' : 'ios-lock-open-outline'} color={postLock ? 'red' : 'green'} size={20} />
+                  <IconIo name={postLock ? 'ios-lock-closed-outline' : 'ios-lock-open-outline'} color={postLock ? '#e55a5a' : '#5ba92c'} size={20} />
                 }
               </TouchableOpacity>
               :
@@ -65,13 +65,14 @@ function PostInFeed({ onPress, data, isAdmin }) {
             alignItems: 'flex-end',
             fontWeight: 'bold',
             textAlign: 'right',
+            color: '#333'
           }}
         ></HTMLRend>
         <HTMLRend
           source={{ html: postData.short }}
           contentWidth={Dimensions.get('window').width}
           baseFontStyle={{
-            textAlign: 'right',
+            textAlign: 'right', color: '#333'
           }}
         ></HTMLRend>
         {
@@ -80,10 +81,10 @@ function PostInFeed({ onPress, data, isAdmin }) {
               <View style={styles.line} />
               <View style={styles.response}>
                 <View style={styles.row}>
-                  <Icon name={'like1'} size={20} style={styles.pad} color={isLiked ? 'rgb(120,90,140)' : '#000'} />
-                  <Text style={{ color: isLiked ? 'rgb(120,90,140)' : '#000' }}>likes: {postData.likes.length}</Text>
+                  <Icon name={'like1'} size={20} style={styles.pad} color={isLiked ? '#2e98c5' : '#333'} />
+                  <Text style={{ color: isLiked ? '#2e98c5' : '#333' }}>likes: {postData.likes.length}</Text>
                 </View>
-                <Text >
+                <Text style={{ color: '#333' }} >
                   comments: {postData.comments ? postData.comments.length : 0}
                 </Text>
               </View>
@@ -99,7 +100,7 @@ const styles = StyleSheet.create({
   main: {
     borderRadius: 5,
     alignSelf: 'center',
-    backgroundColor: 'rgb(220,220,240)',
+    backgroundColor: '#fff',
     justifyContent: 'center',
     padding: 10,
     margin: 5,
@@ -110,14 +111,15 @@ const styles = StyleSheet.create({
       width: 0,
       height: 5,
     },
-    shadowOpacity: 0.34,
+    shadowOpacity: 1,
     shadowRadius: 3.27,
-    elevation: 10,
+    elevation: 5,
   },
   headline: {
     fontSize: 22,
     alignItems: 'flex-end',
     fontWeight: 'bold',
+    color: '#333'
   },
   autor: {
     fontWeight: 'bold',
@@ -136,7 +138,8 @@ const styles = StyleSheet.create({
   line: {
     height: 1,
     margin: 10,
-    backgroundColor: '#000000',
+    marginBottom: 17,
+    backgroundColor: '#cfcfcf',
   },
 });
 export default PostInFeed;

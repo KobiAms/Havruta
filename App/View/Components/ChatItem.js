@@ -13,27 +13,30 @@ function ChatItem({ id, item }) {
     /**this useEffect triger firestore call to get the name of the user who send the last message in the chat. */
     useEffect(() => {
         let last_m;
-        last_m = item.data.messages[item.data.messages.length - 1]
-        if (last_m) {
-            firestore().collection('users').doc(last_m.user_id).get()
-                .then(doc => {
-                    setLastSenderName(doc.data().name);
-                    if (last_m.message.length > 20) {
-                        setlastMessage(last_m.message.substring(0, 20).concat("..."));
-                    } else {
-                        setlastMessage(last_m.message);
-                    }
-                })
-                .catch(err => {
-                    setLastSenderName('Error');
-                    setlastMessage('Cannot Load Meassage');
-                    console.log('Last message not loaded: ', err)
-                })
-        } else {
-            setLastSenderName('');
-            setlastMessage('');
+        if (item) {
+            if (item.data.messages) {
+                last_m = item.data.messages[item.data.messages.length - 1]
+                if (last_m) {
+                    firestore().collection('users').doc(last_m.user_id).get()
+                        .then(doc => {
+                            setLastSenderName(doc.data().name);
+                            if (last_m.message.length > 20) {
+                                setlastMessage(last_m.message.substring(0, 20).concat("..."));
+                            } else {
+                                setlastMessage(last_m.message);
+                            }
+                        })
+                        .catch(err => {
+                            setLastSenderName('Error');
+                            setlastMessage('Cannot Load Meassage');
+                            console.log('Last message not loaded: ', err)
+                        })
+                } else {
+                    setLastSenderName('');
+                    setlastMessage('');
+                }
+            }
         }
-
     }, [setLastSenderName, setlastMessage])
 
     return (
@@ -63,9 +66,9 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         padding: 10,
         width: Dimensions.get('window').width,
-        backgroundColor: 'rgb(250,250,255)',
+        backgroundColor: '#fff',
         borderBottomWidth: 1,
-        borderBottomColor: 'rgb(220,220,255)',
+        borderBottomColor: '#cfcfcf',
         shadowColor: "#000",
         shadowOffset: {
             width: 0,

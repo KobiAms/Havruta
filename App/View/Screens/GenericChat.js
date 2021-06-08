@@ -195,14 +195,16 @@ function GenericChat({ navigation, route }) {
                 if (doc.data().imageUrl) {
                     setHeaderImage({ uri: doc.data().imageUrl })
                 }
-                let reversed = doc.data().messages.reverse();
-                if (reversed.length === 0) {
-                    setDocPre(doc.data().premission);
-                    return subscriber;
-                }
-                else {
-                    set_chat_data(reversed.slice(0, msgToLoad));
-                    setDocPre(doc.data().premission);
+                if (doc.data().messages) {
+                    let reversed = doc.data().messages.reverse();
+                    if (reversed.length === 0) {
+                        setDocPre(doc.data().premission);
+                        return subscriber;
+                    }
+                    else {
+                        set_chat_data(reversed.slice(0, msgToLoad));
+                        setDocPre(doc.data().premission);
+                    }
                 }
             });
         return subscriber
@@ -284,7 +286,7 @@ const styles = StyleSheet.create({
     main: {
         flex: 1,
         justifyContent: 'center',
-        backgroundColor: 'rgb(180,180,200)',
+        backgroundColor: '#8fc0d4',
     },
     headline: {
         padding: 15,
@@ -294,13 +296,23 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
         padding: 5,
-        backgroundColor: 'rgb(140, 140, 180)',
+        backgroundColor: '#a3cbe0',
         width: '100%',
         alignItems: 'center',
         justifyContent: 'space-evenly',
         flexDirection: 'row',
-        borderTopWidth: 1,
-        borderTopColor: 'rgb(140, 140, 180)'
+        borderTopWidth: 2,
+        borderTopColor: '#555',
+        marginTop: 3,
+
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 10,
+            height: 10,
+        },
+        shadowOpacity: 0.32,
+        shadowRadius: 0.46,
+        elevation: 11,
     },
     input: {
         borderColor: 'black',

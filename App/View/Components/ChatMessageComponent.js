@@ -13,7 +13,8 @@ import Hyperlink from 'react-native-hyperlink'
 
 
 export default function ChatMessageComponent({ item }) {
-    let date = item.date.toDate();
+    let date = { date: new Date(), };
+    item.date ? date = item.date.toDate() : date = null;
     const [name, setName] = useState("Loading...")
     const [imageUrl, setImageUrl] = useState(require('../../Assets/POWERPNT_frXVLHdxnI.png'))
 
@@ -97,7 +98,7 @@ const styles = StyleSheet.create({
     myMessageBox: {
         margin: 5,
         padding: 5,
-        backgroundColor: 'rgb(205,255,230)',
+        backgroundColor: '#9ffcdf',
         borderColor: 'black',
         borderRadius: 15,
         alignSelf: 'flex-start',

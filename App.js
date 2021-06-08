@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   stack_header: {
-    backgroundColor: 'rgb(120,90,140)',
+    backgroundColor: '#0d5794',
     borderBottomWidth: 1,
     borderBottomColor: 'rgb(200,200,200)',
   },

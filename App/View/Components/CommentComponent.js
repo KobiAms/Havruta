@@ -61,7 +61,7 @@ export default function CommentComponent({ data, isAdmin, deleteComment }) {
                         rounded
                         title={name[0]}
                         source={imageUrl}
-                        containerStyle={{ backgroundColor: getRandomColor() }}
+                        containerStyle={{ backgroundColor: getRandomColor(), marginLeft: 3, marginTop: 2 }}
                         onPress={() => { console.log(name) }}
                     />
                 </View>
@@ -81,14 +81,15 @@ export default function CommentComponent({ data, isAdmin, deleteComment }) {
 
 const styles = StyleSheet.create({
     comment: {
-        backgroundColor: 'rgb(210,210,230)',
+        backgroundColor: '#eee',
         flex: 8,
         margin: 1,
-        paddingHorizontal: 10,
+        paddingHorizontal: 15,
         paddingVertical: 5,
         borderRadius: 18,
         flexDirection: 'column',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        marginLeft: 7,
     },
     autor: {
         fontWeight: 'bold',
@@ -97,7 +98,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'flex-start',
-        backgroundColor: 'rgb(200,200,220)',
+        backgroundColor: '#ddd',
         borderRadius: 21,
         paddingVertical: 5,
         padding: 5,
