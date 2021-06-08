@@ -39,7 +39,7 @@ function EventsScreen({ navigation }) {
    each object contains all the information about an event in the collection
    this goes onSnapshot, which mean every update that happen on the server side will be push automaticly to the local device */
     useEffect(() => {
-        firestore()
+        const subscriber = firestore()
             .collection('Events')
             .onSnapshot(querySnapshot => {
                 const events = [];
@@ -54,12 +54,13 @@ function EventsScreen({ navigation }) {
                 setShow(events);
                 setLoading(false);
             });
+        return subscriber;
     }, []);
 
 
     /**an item in the list. shows the details about the event. also makes it possible to attend/unattend */
     function EventItem({ data }) {
-        const [isAttend, setisAttend] = useState(auth().currentUser ? data.attendings.includes(auth().currentUser.email) : false)
+        const [isAttend, setisAttend] = useState(auth().currentUser && data.attendings ? data.attendings.includes(auth().currentUser.email) : false)
 
         /** this function is add you or remove from a certian event in firebase */
         function attend(key) {

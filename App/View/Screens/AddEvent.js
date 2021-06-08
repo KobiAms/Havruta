@@ -7,25 +7,18 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 // create a readble date dd.mm.yyyy hh:mm from Date obj
 dateToReadbleFormat = (date) => date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes();
-const handleDateConfirm = (date) => {
-    setEventTime(date)
-    setTimeToShow(dateToReadbleFormat(date))
-    setDatePickerVisibility(false);
-};
+
 function AddEvent({ navigation, route }) {
     const existEvents = route.params.data
-    const [eventName, setEventName] = useState();
-    const [eventDesc, setEventDesc] = useState();
-    const [eventTime, setEventTime] = useState();
-    const [timeToShow, setTimeToShow] = useState('10.6.2021 16:00');
+    const [eventName, setEventName] = useState('');
+    const [eventDesc, setEventDesc] = useState('');
+    const [eventTime, setEventTime] = useState(new Date());
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-    const [onSubmit, setOnSubmit] = useState(false)
 
     // create a readble date dd.mm.yyyy hh:mm from Date obj
     dateToReadbleFormat = (date) => date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes();
     const handleDateConfirm = (date) => {
         setEventTime(date)
-        setTimeToShow(dateToReadbleFormat(date))
         setDatePickerVisibility(false);
     };
 
@@ -48,21 +41,27 @@ function AddEvent({ navigation, route }) {
         );
     }
 
-    useEffect(() => {
-        if (eventDesc && eventName) {
-            let id = eventName;
-            for (let i = 0; i < existEvents.length; i++)  // make sure first that the id is unique
-                if (id == existEvents[i].id)
-                    id = makeid(10);
-            const subscriber = firestore().collection("Events").doc(id).set({
-                description: eventDesc,
-                details: firestore.Timestamp.fromDate(eventTime),
-                name: eventName,
-                attendings: [],
-            }).then(() => { console.log('sucsses'); navigation.goBack() }).catch(err => console.log(err))
-            return subscriber;
+    function createEvent() {
+        if (eventName.length < 1 || eventDesc.length < 1) {
+            fillAllFields()
+            return
         }
-    }, [setOnSubmit]);
+        let event_id = makeid(eventName);
+        let new_event = {
+            attending: [],
+            description: eventDesc,
+            details: firestore.Timestamp.fromDate(new Date()),
+            name: eventName,
+        }
+        firestore().collection('Events').doc(event_id)
+            .set(new_event)
+            .then(() => {
+                navigation.goBack()
+            })
+            .catch((error) => {
+                alert(error)
+            })
+    }
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -90,8 +89,8 @@ function AddEvent({ navigation, route }) {
                 </View>
                 <View style={{ margin: 10, alignItems: 'center' }}>
                     <Text>When the event will take place?</Text>
-                    <TouchableOpacity onPress={() => setDatePickerVisibility(true)} style={styles.editable}>
-                        <Text style={{ fontSize: 18 }}>{timeToShow}</Text>
+                    <TouchableOpacity onPress={() => setDatePickerVisibility(true)} style={[styles.editable, { minWidth: 100 }]}>
+                        <Text style={{ fontSize: 18 }}>{dateToReadbleFormat(eventTime)}</Text>
                     </TouchableOpacity>
                 </View>
                 <DateTimePickerModal
@@ -103,10 +102,7 @@ function AddEvent({ navigation, route }) {
                 />
                 <TouchableOpacity
                     style={styles.submit}
-                    onPress={() => {
-                        eventName && eventDesc ? setOnSubmit(!onSubmit) : fillAllFields()
-                    }
-                    }>
+                    onPress={() => createEvent()}>
                     <Text style={{ fontSize: 22, color: '#fff', fontWeight: 'bold' }}>Submit</Text>
                 </TouchableOpacity>
             </View >
@@ -123,6 +119,7 @@ const styles = StyleSheet.create({
         padding: 15
     },
     editable: {
+        minWidth: 200,
         borderWidth: 1,
         borderRadius: 10,
         backgroundColor: '#FFFFFF',
