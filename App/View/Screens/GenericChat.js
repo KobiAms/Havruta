@@ -21,17 +21,18 @@ import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
  
-user_id=auth().currentUser?auth().currentUser.email:NULL
-GetUserId=()=>{
-  user_id=auth().currentUser?auth().currentUser.email:NULL
-  return user_id
-}
- 
+
+
 export function GenericChat() {
+  user_id=auth().currentUser?auth().currentUser.email:auth().currentUser
+  
   const [messages, setMessages] = useState([]);
   const [name , setName] = useState()
+
+  // auth().onAuthStateChanged(()=>)
  
   useEffect(() => {
+
     const subscriber = firestore()
         .collection('chats')
         .doc('GiftedTest')
@@ -39,7 +40,6 @@ export function GenericChat() {
             if(!doc) return;
             let reversed = doc.data().messages
             setMessages(reversed)
-            console.log(auth().currentUser)
      }) 
     
     if(!auth().currentUser){
@@ -90,6 +90,8 @@ export function GenericChat() {
         _id: user_id,
       }}
       inverted={false}
+      renderUsernameOnMessage={true}
+      
     />
   )
 }
