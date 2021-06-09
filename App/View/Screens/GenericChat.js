@@ -88,6 +88,45 @@ useEffect(() => {
      })
      return subscriber
   }, [])
+
+  onLongPress=(context, message) => {
+    console.log(message)
+    if(!auth().currentUser)
+    {
+        return
+    }
+    if(message.user._id === auth().currentUser.email || userRole ==='admin'){
+    const options = ['Copy','Delete Message', 'Cancel'];
+    const cancelButtonIndex = options.length - 1;
+    context.actionSheet().showActionSheetWithOptions({
+        options,
+        cancelButtonIndex
+    }, (buttonIndex) => {
+        switch (buttonIndex) {
+            case 0:
+                Clipboard.setString(message.text);
+                break;
+            case 1:
+                firestore().collection('chats').doc(chat_id).update({ messages: firestore.FieldValue.arrayRemove(message) })
+                break;
+        }
+    });
+        }
+    else{
+    const options = ['Copy','Cancel'];
+    const cancelButtonIndex = options.length - 1;
+    context.actionSheet().showActionSheetWithOptions({
+        options,
+        cancelButtonIndex
+    }, (buttonIndex) => {
+        switch (buttonIndex) {
+            case 0:
+                Clipboard.setString(message.text);
+                break;
+        }
+    });
+    }
+    }
  
   const onSend = useCallback((message = []) => { // that function happes when somone sends a msg on the chat
                                                  // in that function we build the stracture of the message we want to send to the server
@@ -122,6 +161,7 @@ useEffect(() => {
       renderUsernameOnMessage={true}
       showAvatarForEveryMessage={true}
       renderAvatarOnTop={true}
+      onLongPress={(context, message)=>onLongPress(context, message)}
       
       
     />
