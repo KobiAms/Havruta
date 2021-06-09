@@ -11,7 +11,6 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import IconIo from 'react-native-vector-icons/Ionicons';
-import IconFA5 from 'react-native-vector-icons/FontAwesome5';
 import IconFA from 'react-native-vector-icons/FontAwesome';
 import PostInMain from '../Components/PostInMain';
 
@@ -42,7 +41,7 @@ function MainScreen({ navigation, route }) {
 
   return (
     <View style={styles.main}>
-      <View style={{ flexDirection: 'row-reverse', alignItems: 'center', justifyContent: 'space-evenly' }}>
+      <View style={styles.header}>
         <Text>{hebrewDate}</Text>
         <TouchableOpacity onPress={() => navigation.navigate('ChatScreen')} style={styles.toScreen}>
           <IconIo name={'chatbubbles'} size={20} color={'#0d5794'} />
@@ -54,7 +53,7 @@ function MainScreen({ navigation, route }) {
         </TouchableOpacity>
       </View>
       <ScrollView style={styles.main}>
-
+        <View style={{ height: 50 }} />
         <View style={styles.category_title_container}>
           <Text style={styles.category_title_text}>Category one</Text>
         </View>
@@ -157,6 +156,15 @@ const styles = StyleSheet.create({
     shadowRadius: 1.41,
     elevation: 2,
   },
+  header: {
+    backgroundColor: '#fffd',
+    zIndex: 1,
+    position: 'absolute',
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+    width: '100%'
+  }
 });
 
 export default MainScreen;

@@ -19,27 +19,6 @@ dateToReadbleFormat = (date) => date.getDate() + '.' + (date.getMonth() + 1) + '
 * and request the relevant data (if exsists) from firestore
 **/// ---------------------------------------------------
 export default function GenericFeed({ navigation, route }) {
-  // console.log(route.params)
-  let category_id;
-  if (route.params && route.params.toSearch) {
-    // console.log('toSearch')
-    category_id = 'search=' + route.params.toSearch
-  } else {
-    // console.log('by category')
-    if (route.name == 'Community') {
-      category_id = 'categories=122'
-    } else if (route.name == 'Judaism') {
-      category_id = 'categories=117'
-    } else {
-      if (!route.params || !route.params.category_id)
-        return new Error('GenericFeed: category_id must received by the route')
-      category_id = route.params.category_id;
-    }
-  }
-  // set the category to the required category.
-  // if the component called from the tab_navigator
-  // set the category manully
-
 
   // attribute to hold the articles with the data from FB
   const [fullArticles, setFullArticles] = useState([, , , ,]);
@@ -48,9 +27,26 @@ export default function GenericFeed({ navigation, route }) {
   const baseURL = 'https://havruta.org.il/wp-json'
   let api = axios.create({ baseURL });
 
+  let parameter;
+  let feedTitle;
+
+  // check if parameter to show received
+  if (route.params) {
+    // check if in search mode
+    if (route.params.toSearch) {
+      parameter = 'search=' + route.params.toSearch
+      feedTitle = route.params.toSearch
+    } else {
+      parameter = 'categories=' + route.params.category_id
+    }
+  } else {
+    return new Error('GenericFeed: parameter to show must received by the route')
+  }
+
   /**function to get articles from wordpress */
   async function getArticlesFromWP() {
-    let articles = await api.get('/wp/v2/posts?' + category_id);
+
+    let articles = await api.get('/wp/v2/posts?' + parameter);
     let arr = [];
     for (let i = 0; i < articles.data.length; i++) {
       let obj = {
@@ -134,6 +130,7 @@ export default function GenericFeed({ navigation, route }) {
     getArticlesFromWP()
     wait(2000).then(() => setRefreshing(false));
   }, []);
+
 
 
   return (

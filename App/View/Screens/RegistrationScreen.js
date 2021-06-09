@@ -28,18 +28,16 @@ RegistrationScreen = ({ navigation }) => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => (
-        <View
-          style={[styles.loading_comp, { backgroundColor: '#fffffff' }]}
-        >
-          {loading ?
-            <ActivityIndicator color={'black'} size={'small'} />
-            : null
-          }
-        </View>
-      ),
+      title: user ? user.displayName : 'התחברות'
     });
   }, [navigation])
+
+  function setUserState(user) {
+    navigation.setOptions({
+      title: user ? user.displayName : 'התחברות'
+    });
+    setUser(user)
+  }
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -47,14 +45,14 @@ RegistrationScreen = ({ navigation }) => {
         <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
         <SafeAreaView style={styles.main}>
           {user ? (
-            <UserForm style={{ flex: 1 }} setUser={setUser} navigation={navigation} setLoading={setLoading} />
+            <UserForm style={{ flex: 1 }} setUser={setUserState} navigation={navigation} setLoading={setLoading} />
           ) : (
             <View style={styles.body}>
               <View style={styles.form}>
                 {login_mode ? (
-                  <LoginForm setUser={setUser} />
+                  <LoginForm setUser={setUserState} />
                 ) : (
-                  <SignupForm setUser={setUser} />
+                  <SignupForm setUser={setUserState} />
                 )}
                 <TouchableOpacity
                   style={{

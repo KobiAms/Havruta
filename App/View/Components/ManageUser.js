@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import {
     View,
     StyleSheet,
@@ -25,6 +25,13 @@ export default ManageUser = ({ navigation, route }) => {
     const [loading, setLoading] = useState(false);
     const [userAvatar, setUserAvatar] = useState(route.params.data.photo ? { uri: route.params.data.photo } : require('../../Assets/POWERPNT_frXVLHdxnI.png'));
     const [userRole, setuserRole] = useState('');
+
+    // set header title
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            title: route.params.data.name
+        });
+    }, [navigation])
 
     /**functionality of the admin swith */
     const toggleAdmin = () => {

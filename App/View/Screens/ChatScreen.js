@@ -114,7 +114,7 @@ function ChatScreen({ navigation, route }) {
 
     useLayoutEffect(() => {
         navigation.setOptions({
-            title: 'Chats',
+            title: 'צ׳אטים',
         });
     }, [])
 

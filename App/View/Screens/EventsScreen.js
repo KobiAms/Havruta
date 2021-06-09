@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useLayoutEffect } from 'react';
 import {
     Text,
     StyleSheet,
@@ -13,11 +13,13 @@ import { SafeAreaView } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import IconIo from 'react-native-vector-icons/Ionicons';
 import firestore from '@react-native-firebase/firestore';
+import SkeletonContent from 'react-native-skeleton-content-nonexpo';
+
 
 /** A screen that displays all the events in the that is in the firestore collection */
 function EventsScreen({ navigation }) {
     const [loading, setLoading] = useState(true);
-    const [events, setEvents] = useState([]);
+    const [events, setEvents] = useState(['loading', 'loading', 'loading', 'loading']);
     const [list_to_show, setShow] = useState(events);
     const [isAdmin, setIsAdmin] = useState(false);
 
@@ -26,18 +28,24 @@ function EventsScreen({ navigation }) {
         const subscriber = firestore()
             .collection('users')
             .doc(auth().currentUser.email)
-            .get().then(doc => {
+            .onSnapshot(doc => {
                 if (!doc) return;
                 if (doc.data().role === 'admin') setIsAdmin(true);
             })
-            .catch(err => console.log(err.code))
         return subscriber;
     }, []);
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            title: 'האירועים שלנו',
+        });
+    }, [])
 
     /*this useEffect update the state array "events" and "list_to_show", and put an array of objects.
    each object contains all the information about an event in the collection
    this goes onSnapshot, which mean every update that happen on the server side will be push automaticly to the local device */
     useEffect(() => {
+        setLoading(true);
         const subscriber = firestore()
             .collection('Events')
             .onSnapshot(querySnapshot => {
@@ -61,7 +69,6 @@ function EventsScreen({ navigation }) {
     function EventItem({ data }) {
         const [isAttend, setisAttend] = useState(auth().currentUser && data.attendings ? data.attendings.includes(auth().currentUser.email) : false)
         const [participent, setParticipent] = useState([]);
-
         /** this function is add you or remove from a certian event in firebase */
         function attend(key) {
             if (auth().currentUser) {
@@ -102,12 +109,12 @@ function EventsScreen({ navigation }) {
                             <Text style={{ fontSize: 22, fontWeight: 'bold', padding: 8, textAlign: 'right' }}>{data.name}</Text>
                         </View>
                         <View style={styles.textRow}>
-                            <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{participent}</Text>
                             <Text style={{ padding: 8 }}> משתמשים אישרו הגעה.</Text>
+                            <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{participent}</Text>
                         </View>
                         <View style={{}}>
-                            <Text>תיאור: </Text>
                             <Text style={{ fontSize: 17, fontWeight: 'bold', padding: 8, textAlign: 'right' }}>{data.description}</Text>
+                            <Text>תיאור: </Text>
                         </View>
                     </View>
                     <TouchableOpacity style={isAttend ? styles.unattend : styles.attend}
@@ -123,19 +130,42 @@ function EventsScreen({ navigation }) {
         );
     };
 
+    // this function return the correct item to render, choose between: skeleton,item,end
+    function item_to_render(item) {
+        if (item == 'loading') {
+            return (
+                <SkeletonContent
+                    containerStyle={styles.skeleton}
+                    layout={[
+                        { width: 100, height: Dimensions.get('screen').height * 0.02, marginBottom: 10, },
+                        { width: 200, height: Dimensions.get('screen').height * 0.04, marginBottom: 10, },
+                        { width: '100%', height: Dimensions.get('screen').height * 0.10, marginBottom: 10, },
+                        { width: "100%", height: Dimensions.get('screen').height * 0.04, }
+                    ]}
+                    isLoading={loading}
+                    highlightColor={'#f3f3f4'}
+                    boneColor={'#dfdfdf'}>
+                </SkeletonContent>
+            )
+        } else if (item == 'end_list') {
+            return (<View style={{ height: 40 }} />)
+        } else {
+            return (
+                <EventItem data={item} />
+            )
+        }
+    }
+
     /**the render of "EventScreen" */
     return (
-        <SafeAreaView style={styles.main}>
+        <View style={styles.main}>
             <View style={styles.body}>
                 <View style={styles.list_container}>
-                    {loading ? (
-                        <ActivityIndicator size="large" color="dodgerblue" />
-                    ) : (
-                        <FlatList
-                            data={list_to_show}
-                            renderItem={({ item }) => (<EventItem data={item} />)}
-                        />
-                    )}
+                    <FlatList
+                        data={[...list_to_show, 'end_list']}
+                        renderItem={({ item }) => item_to_render(item)}
+                        keyExtractor={(item, idx) => idx}
+                    />
                 </View>
                 {isAdmin ?
                     <TouchableOpacity
@@ -144,7 +174,7 @@ function EventsScreen({ navigation }) {
                         <IconIo name={'add-circle'} color={'#0d5794'} size={65} />
                     </TouchableOpacity> : null}
             </View>
-        </SafeAreaView>
+        </View>
     );
 };
 
@@ -193,7 +223,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     item: {
-        width: Dimensions.get('window').width * (97 / 100),
+        width: Dimensions.get('window').width * 0.97,
         borderRadius: 5,
         alignSelf: 'center',
         backgroundColor: '#fff',
@@ -220,5 +250,22 @@ const styles = StyleSheet.create({
         bottom: 10,
         right: 10,
     },
+    skeleton: {
+        margin: 5,
+        borderRadius: 5,
+        backgroundColor: '#fff',
+        minWidth: '97%',
+        padding: 20,
+        alignItems: 'flex-end',
+        justifyContent: 'flex-start',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 5,
+        },
+        shadowOpacity: 1,
+        shadowRadius: 3.27,
+        elevation: 5,
+    }
 });
 export default EventsScreen;

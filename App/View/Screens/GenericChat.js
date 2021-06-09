@@ -36,7 +36,7 @@ const ListFooterComponent = () => {
 
 /*this function dicompose the doc of the coplete chat into small object where as any object represent one msg item inside our chat*/
 function GenericChat({ navigation, route }) {
-    const chat_id = route.name == 'Reporters' ? 'reporters' : route.params.id;
+    const chat_id = route.name == 'צ׳אט הכתבים' ? 'reporters' : route.params.id;
     const [newMessage, setNewMessage] = useState('');
     const [chat_data, set_chat_data] = useState([]);
     const [user, setUser] = useState();

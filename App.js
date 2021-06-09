@@ -8,12 +8,15 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, StyleSheet, TouchableOpacity, Image, Dimensions, TextInput } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import IconMI from 'react-native-vector-icons/MaterialIcons';
 import OtherScreen from './App/View/Screens/OtherScreen';
 import GenericChat from './App/View/Screens/GenericChat';
 import MainScreen from './App/View/Screens/MainScreen';
 import Wizard from './App/View/Components/NewUserWizard'
 import GenericFeed from './App/View/Screens/GenericFeed'
+import GenericFeed_2 from './App/View/Screens/GenericFeed_2'
 import ArticleScreen from './App/View/Screens/ArticleScreen'
+import ArticleScreen_2 from './App/View/Screens/ArticleScreen_2'
 import auth from '@react-native-firebase/auth'
 import RegistrationScreen from './App/View/Screens/RegistrationScreen';
 import ManageUsers from './App/View/Components/ManageUsers';
@@ -48,15 +51,28 @@ MainScreenNavigator = () => {
         activeTintColor: '#0d5794',
         inactiveTintColor: 'gray',
       }}>
-      <Tab.Screen name="MainScreen" component={MainScreen}
+      <Tab.Screen
+        name="חדשות"
+        component={GenericFeed_2}
+        initialParams={{ category_id: '122' }}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="file-contract" size={25} color={color} />), })} />
-      <Tab.Screen name="Community" component={GenericFeed}
+      <Tab.Screen
+        name="קהילה"
+        component={GenericFeed}
+        initialParams={{ category_id: '122' }}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="transgender" size={25} color={color} />), })} />
-      <Tab.Screen name="Reporters" component={GenericChat}
+      <Tab.Screen
+        name="צ׳אט הכתבים"
+        component={GenericChat}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="comment-alt" size={25} color={color} />), })} />
-      <Tab.Screen name="Judaism" component={GenericFeed}
+      <Tab.Screen
+        name="יהדות"
+        component={GenericFeed}
+        initialParams={{ category_id: '117' }}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="torah" size={25} color={color} />), })} />
-      <Tab.Screen name="Other" component={OtherScreen}
+      <Tab.Screen
+        name=" "
+        component={OtherScreen}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="bars" size={25} color={color} />), })} />
     </Tab.Navigator>
   );
@@ -82,7 +98,7 @@ App = () => {
               const [close, setClose] = useState(true);
               const [toSearch, setToSearch] = useState('');
               return ({
-                title: 'Havruta',
+                title: 'חברותא',
                 headerLeft: () => {
                   if (close) {
                     return (
@@ -91,7 +107,7 @@ App = () => {
                   } else {
                     return (
                       <TouchableOpacity style={{ padding: 10 }} onPress={() => { setToSearch(''); setClose(true) }}>
-                        <Icon style={styles.search_icon} color={'#fff'} size={20} name={'chevron-left'} />
+                        <IconMI style={styles.search_icon} color={'#fff'} size={20} name={'cancel'} />
                       </TouchableOpacity>
                     )
                   }
@@ -108,12 +124,12 @@ App = () => {
                           <TextInput
                             value={toSearch}
                             onChangeText={setToSearch}
-                            placeholder={'Search Here...'}
+                            placeholder={'חפש עכשיו...'}
                             placeholderTextColor={'#fffa'}
                             returnKeyType={'search'}
                             style={styles.stack_search}
                             autoFocus={true}
-                            onSubmitEditing={() => toSearch.length == 0 ? setClose(true) : navigation.navigate('GenericFeed', { toSearch: toSearch })}
+                            onSubmitEditing={() => toSearch.length == 0 ? setClose(true) : navigation.navigate('GenericFeed_2', { toSearch: toSearch })}
                           />
                       }
                     </View>
@@ -132,7 +148,7 @@ App = () => {
                     )
                   } else {
                     return (
-                      <TouchableOpacity style={{ padding: 10 }} onPress={() => toSearch.length == 0 ? setClose(true) : navigation.navigate('GenericFeed', { toSearch: toSearch })}>
+                      <TouchableOpacity style={{ padding: 10 }} onPress={() => toSearch.length == 0 ? setClose(true) : navigation.navigate('GenericFeed_2', { toSearch: toSearch })}>
                         <Icon style={styles.search_icon} color={'#fff'} size={20} name={'search'} />
                       </TouchableOpacity>
                     )
@@ -147,7 +163,7 @@ App = () => {
           <Stack.Screen
             name="Manage Users"
             component={ManageUsers}
-            options={{ title: 'Manage Users', }} />
+            options={{ title: 'ניהול', }} />
           <Stack.Screen
             name="Manage User"
             component={ManageUser}
@@ -155,14 +171,22 @@ App = () => {
           <Stack.Screen
             name="Wizard"
             component={Wizard}
-            options={{ title: 'Welcome', }} />
+            options={{ title: 'ברוכים הבאים', }} />
           <Stack.Screen
             name="GenericFeed"
             component={GenericFeed}
           />
           <Stack.Screen
+            name="GenericFeed_2"
+            component={GenericFeed_2}
+          />
+          <Stack.Screen
             name="ArticleScreen"
             component={ArticleScreen}
+          />
+          <Stack.Screen
+            name="ArticleScreen_2"
+            component={ArticleScreen_2}
           />
           <Stack.Screen
             name="ChatScreen"
@@ -239,7 +263,8 @@ const styles = StyleSheet.create({
   stack_search: {
     width: Dimensions.get('screen').width * 0.6,
     height: '100%',
-    color: '#fff'
+    color: '#fff',
+    textAlign: 'right'
   },
   search_icon: {
     shadowColor: '#111',
