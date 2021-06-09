@@ -28,19 +28,32 @@ export function GenericChat() {
   
   const [messages, setMessages] = useState([]);
   const [name , setName] = useState()
-
-  auth().onAuthStateChanged(()=>{
-    if(auth().currentUser){
-      firestore()
-     .collection('users')
-     .doc(auth().currentUser.email)
-     .get()
-     .then(doc =>{
-         let autorDetailes = doc.data();
-         setName(autorDetailes ? autorDetailes.name : 'ghost')
-     })
+  const [user,setUser]=useState(auth().currentUser)
+  function onAuthStateChanged(user_state) {
+   setUser()
+    if (user_state) {
+        firestore().collection('users').doc(user_state.email).get()
+            .then(doc => {
+                if (!doc.data()) {
+                    setUser(undefined)
+                } else {
+                    const user_tmp = doc.data()
+                    setUser(user_tmp);
+                    setName(doc.data().name)
+                  
+                }
+            })
+            .catch(err => {
+                console.log(err)
+                setUser(undefined)
+            })
+    } else {
+        setUser(user_state);
     }
-  })
+}
+useEffect(() => {
+    auth().onAuthStateChanged(onAuthStateChanged);
+}, []);
  
   useEffect(() => {
 
@@ -100,7 +113,7 @@ export function GenericChat() {
       user={{
         _id: user_id,
       }}
-      inverted={false}
+      
       renderInputToolbar={!auth().currentUser?() => null:null}
       renderUsernameOnMessage={true}
       showAvatarForEveryMessage={true}
