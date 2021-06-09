@@ -26,6 +26,7 @@ function ChatScreen({ navigation, route }) {
                         const user_tmp = doc.data()
                         setUser(user_tmp);
                         setIsAdmin(user_tmp.role == 'admin')
+                        
                     }
                 })
                 .catch(err => {
@@ -37,7 +38,8 @@ function ChatScreen({ navigation, route }) {
         }
     }
     useEffect(() => {
-        auth().onAuthStateChanged(onAuthStateChanged);
+        const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+        return subscriber
     }, []);
 
     /*this useEffect update the state array "chatName", and put an array of objects.

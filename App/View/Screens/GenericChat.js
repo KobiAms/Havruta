@@ -20,23 +20,28 @@ import {
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
+import { set } from 'react-native-reanimated';
  
 
 
 export function GenericChat({navigation,route}) {
   user_id=auth().currentUser?auth().currentUser.email:auth().currentUser
   const chat_id = route.name == 'Reporters' ? 'reporters' : route.params.id;
+
+
   const [userRole, setUserRole] = useState();
-  const [docName , setDocName] = useState();
+ 
   const [permission , setPermission] = useState();
   const [messages, setMessages] = useState([]);
   const [name , setName] = useState()
   const [user,setUser]=useState(auth().currentUser)
   function onAuthStateChanged(user_state) { // listener to every change of the user id and updates the details about that new user that logged
    setUser()
+   setUserRole()
     if (user_state) {
         firestore().collection('users').doc(user_state.email).get()
             .then(doc => {
+                refreshChat()
                 if (!doc.data()) {
                     setUser(undefined)
                 } else {
@@ -49,6 +54,7 @@ export function GenericChat({navigation,route}) {
                 }
             })
             .catch(err => {
+                refreshChat()
                 console.log(err)
                 setUser(undefined)
             })
@@ -57,9 +63,24 @@ export function GenericChat({navigation,route}) {
     }
 }
 useEffect(() => {
-    auth().onAuthStateChanged(onAuthStateChanged);
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber
 }, []);
- 
+
+  refreshChat=() =>{
+    firestore()
+        .collection('chats')
+        .doc(chat_id)
+        .get()
+        .then(doc=> {
+            if(!doc) return;
+            let reversed = doc.data().messages.reverse()
+            setMessages(reversed)
+            
+     }).catch((err)=>{
+         console.log(err)
+     }) 
+  }
   useEffect(() => { // we pull all the messages array from the data base and then using our hook to that file so we can preview it
 
     const subscriber = firestore()
@@ -69,29 +90,15 @@ useEffect(() => {
             if(!doc) return;
             let reversed = doc.data().messages.reverse()
             setMessages(reversed)
-            setDocName(doc.data().name)
             setPermission(doc.data().premission)
             
      }) 
-    
-    if(!auth().currentUser){ // this section is about pulling the user display name if theres no users we skip on that part
-        return subscriber
-    } 
-     firestore()
-     .collection('users')
-     .doc(auth().currentUser.email)
-     .get()
-     .then(doc =>{
-         let autorDetailes = doc.data();
-         setName(autorDetailes ? autorDetailes.name : 'ghost')
-         setUserRole(doc.data().role)
-     })
      return subscriber
-  }, [])
+}, []);
 
-  onLongPress=(context, message) => {
-    console.log(message)
-    if(!auth().currentUser)
+  onLongPress=(context, message) => { // onlongpress function we have 2 methods of action first we check if the user is logged in
+    console.log(message)              // if theres no user logged we dont show any menu on the other hand we divided between the actions
+    if(!auth().currentUser)           // that users can do and admins can do. users can delete their own messages and admins can delete any message
     {
         return
     }
@@ -126,7 +133,7 @@ useEffect(() => {
         }
     });
     }
-    }
+};
  
   const onSend = useCallback((message = []) => { // that function happes when somone sends a msg on the chat
                                                  // in that function we build the stracture of the message we want to send to the server
@@ -147,7 +154,9 @@ useEffect(() => {
     .update({
         messages : firestore.FieldValue.arrayUnion(tempMsg)
     })
-  }, )
+}, );
+
+
  
   return (
     <GiftedChat
@@ -162,6 +171,8 @@ useEffect(() => {
       showAvatarForEveryMessage={true}
       renderAvatarOnTop={true}
       onLongPress={(context, message)=>onLongPress(context, message)}
+      isTyping ={true}
+      scrollToBottom={true}
       
       
     />
