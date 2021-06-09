@@ -88,6 +88,12 @@ function ChatScreen({ navigation, route }) {
                             width: '90%',
                             height: Dimensions.get('screen').height * 0.03,
                             marginBottom: 5,
+                        },
+                        {
+                            width: 100,
+                            height: Dimensions.get('screen').height * 0.03,
+                            borderRadius: 0,
+                            margin: 10,
                         }
                     ]}
                     isLoading={loading}>
@@ -122,18 +128,20 @@ function ChatScreen({ navigation, route }) {
                         <SkeletonContent
                             containerStyle={styles.skeleton}
                             layout={[
+                                { width: 60, height: 60, borderRadius: 1000, margin: 5, marginBottom: -50, },
                                 {
-                                    width: 200,
-                                    height: Dimensions.get('screen').height * 0.02,
-                                    marginBottom: 5,
+                                    width: 200, height: Dimensions.get('screen').height * 0.02, marginBottom: 5,
+                                    marginLeft: Dimensions.get('screen').width * (20 / 100),
                                 },
                                 {
-                                    width: '90%',
-                                    height: Dimensions.get('screen').height * 0.035,
-                                    marginBottom: 5,
-                                }
+                                    width: '60%', height: Dimensions.get('screen').height * 0.035, marginBottom: 5,
+                                    marginLeft: Dimensions.get('screen').width * (20 / 100),
+                                },
                             ]}
-                            isLoading={loading}>
+                            isLoading={loading}
+                            highlightColor={'#f3f3f4'}
+                            boneColor={'#dfdfdf'}
+                        >
                         </SkeletonContent>
                     )}
                     keyExtractor={(item, idx) => idx}
