@@ -21,12 +21,12 @@ import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
  
-const user_id=auth().currentUser?auth().currentUser.email:NULL
+user_id=auth().currentUser?auth().currentUser.email:NULL
  
  
 export function GenericChat() {
   const [messages, setMessages] = useState([]);
-  const [name , setName] = useState("Loading...")
+  const [name , setName] = useState()
  
   useEffect(() => {
     const subscriber = firestore()
@@ -38,20 +38,24 @@ export function GenericChat() {
             setMessages(reversed)
             console.log(auth().currentUser)
      }) 
+    
+    if(!auth().currentUser){
+        return subscriber
+    }
+     firestore()
+     .collection('users')
+     .doc(auth().currentUser.email)
+     .get()
+     .then(doc =>{
+         let autorDetailes = doc.data();
+         setName(autorDetailes ? autorDetailes.name : 'ghost')
+     })
      return subscriber
   }, [])
  
   const onSend = useCallback((message = []) => {
     console.log(message[0].user._id)
     
-    firestore()
-    .collection('users')
-    .doc(message[0].user._id)
-    .get()
-    .then(doc =>{
-        let autorDetailes = doc.data();
-        setName(autorDetailes ? autorDetailes.name : 'ghost')
-    })
     console.log(name)
     let tempMsg = {
         _id:message[0]._id,
@@ -77,7 +81,7 @@ export function GenericChat() {
       messages={messages}
       onSend={message => onSend(message)}
       user={{
-        _id: auth().currentUser.email,
+        _id: name,
       }}
       inverted={false}
     />
