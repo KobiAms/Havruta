@@ -62,6 +62,7 @@ MainScreenNavigator = () => {
       <Tab.Screen
         name="צ׳אט הכתבים"
         component={GenericChat}
+        initialParams={{ id: 'צ׳אט הכתבים' }}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="comment-alt" size={25} color={color} />), })} />
       <Tab.Screen
         name="יהדות"

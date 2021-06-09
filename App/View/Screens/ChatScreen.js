@@ -12,10 +12,6 @@ function ChatScreen({ navigation, route }) {
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(auth().currentUser);
 
-
-    /*this useEffect update the state "isAdmin" after checking it's role on firebase*/
-    const [user, setUser] = useState(auth().currentUser);
-
     // listen to auth state and get the user data if is log-in
     function onAuthStateChanged(user_state) {
         setIsAdmin(false)
@@ -121,7 +117,7 @@ function ChatScreen({ navigation, route }) {
         } else {
             return (
                 <Pressable
-                    onPress={() => navigation.navigate('GenericChat', { id: item.id, data: item.data })}
+                    onPress={() => navigation.navigate('GenericChat', { id: item.id })}
                     onLongPress={() => deleteChat(item)}>
                     <Chat item={item} />
                 </Pressable>
