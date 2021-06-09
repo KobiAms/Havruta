@@ -47,7 +47,7 @@ function EventsScreen({ navigation }) {
         navigation.setOptions({
             title: 'האירועים שלנו',
         });
-    }, [])
+    }, [navigation])
 
     function loadEvents() {
         setEvents(['loading', 'loading', 'loading', 'loading']);

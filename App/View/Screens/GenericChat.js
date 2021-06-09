@@ -3,11 +3,14 @@ import { GiftedChat } from 'react-native-gifted-chat'
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
+import { KeyboardAvoidingView } from 'react-native';
+import { Platform, Keyboard, Pressable } from 'react-native';
+
 
 
 
 export function GenericChat({ navigation, route }) {
-    user_id = auth().currentUser ? auth().currentUser.email : auth().currentUser
+    let user_id = auth().currentUser ? auth().currentUser.email : auth().currentUser
     if (!(route.params && route.params.id)) {
         return new Error('Error: chat id must be received by the route')
     }
@@ -19,6 +22,7 @@ export function GenericChat({ navigation, route }) {
     const [messages, setMessages] = useState([]);
     const [name, setName] = useState()
     const [user, setUser] = useState(auth().currentUser)
+
     function onAuthStateChanged(user_state) { // listener to every change of the user id and updates the details about that new user that logged
         setUser()
         setUserRole()
@@ -43,6 +47,7 @@ export function GenericChat({ navigation, route }) {
                     setUser(undefined)
                 })
         } else {
+            refreshChat()
             setUser(user_state);
         }
     }
@@ -58,7 +63,7 @@ export function GenericChat({ navigation, route }) {
         });
     }, [navigation])
 
-    refreshChat = () => {
+    function refreshChat() {
         firestore()
             .collection('chats')
             .doc(chat_id)
@@ -87,7 +92,7 @@ export function GenericChat({ navigation, route }) {
         return subscriber
     }, []);
 
-    onLongPress = (context, message) => { // onlongpress function we have 2 methods of action first we check if the user is logged in
+    function onLongPress(context, message) { // onlongpress function we have 2 methods of action first we check if the user is logged in
         console.log(message)              // if theres no user logged we dont show any menu on the other hand we divided between the actions
         if (!auth().currentUser)           // that users can do and admins can do. users can delete their own messages and admins can delete any message
         {
@@ -150,21 +155,23 @@ export function GenericChat({ navigation, route }) {
 
 
     return (
-        <GiftedChat
-            messages={messages}
-            onSend={message => onSend(message)}
-            user={{
-                _id: user_id,
-            }}
-            inverted={true}
-            renderInputToolbar={(!auth().currentUser || (permission != 'user' && userRole === 'user') || (permission === 'admin' && userRole != 'admin')) ? () => null : null}
-            renderUsernameOnMessage={true}
-            showAvatarForEveryMessage={true}
-            renderAvatarOnTop={true}
-            onLongPress={(context, message) => onLongPress(context, message)}
-            isTyping={true}
-            scrollToBottom={true}
-        />
+        <Pressable style={{ flex: 1 }} onPress={() => Keyboard.dismiss()}>
+            <GiftedChat
+                messages={messages}
+                onSend={message => onSend(message)}
+                user={{
+                    _id: user_id,
+                }}
+                inverted={true}
+                renderInputToolbar={(!auth().currentUser || (permission != 'user' && userRole === 'user') || (permission === 'admin' && userRole != 'admin')) ? () => null : null}
+                renderUsernameOnMessage={true}
+                showAvatarForEveryMessage={true}
+                renderAvatarOnTop={true}
+                onLongPress={(context, message) => onLongPress(context, message)}
+                isTyping={true}
+                scrollToBottom={true}
+            />
+        </Pressable>
     )
 }
 

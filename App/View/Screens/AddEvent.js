@@ -1,14 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useLayoutEffect } from 'react';
 import { View, Text, Dimensions, StyleSheet, TouchableWithoutFeedback, Keyboard, TextInput, Alert } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { useHeaderHeight } from '@react-navigation/stack';
+import { Platform } from 'react-native';
+import { KeyboardAvoidingView } from 'react-native';
 
 function AddEvent({ navigation, route }) {
     const [eventName, setEventName] = useState('');
     const [eventDesc, setEventDesc] = useState('');
     const [eventTime, setEventTime] = useState(new Date());
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+    const headerHeight = useHeaderHeight()
 
     // create a readble date dd.mm.yyyy hh:mm from Date obj
     dateToReadbleFormat = (date) => date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear() + ' ' + (date.getHours() < 10 ? ('0' + date.getHours()) : date.getHours()) + ':' + (date.getMinutes() < 10 ? ('0' + date.getMinutes()) : date.getMinutes());
@@ -16,6 +20,13 @@ function AddEvent({ navigation, route }) {
         setEventTime(date)
         setDatePickerVisibility(false);
     };
+
+    // set header title
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            title: 'צור אירוע חדש'
+        });
+    }, [navigation])
 
     function makeid(length) {  //function to generate random chat id incase that the id is already in use.
         var result = [];
@@ -55,19 +66,24 @@ function AddEvent({ navigation, route }) {
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View style={styles.main}>
-                <View style={{ margin: 10, alignItems: 'center' }}>
-                    <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>
+            <KeyboardAvoidingView
+                keyboardVerticalOffset={headerHeight}
+                style={styles.main}
+                behavior={"padding"} >
+                <View style={{ alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 5 }}>
                         אנא בחר את שם האירוע החדש
                     </Text>
                     <TextInput
                         style={styles.editable}
                         value={eventName}
+                        autoCorrect={false}
+                        autoCompleteType={'off'}
                         onChangeText={setEventName}
                         placeholder={'הכנס את שם האירוע כאן...'} />
                 </View>
-                <View style={{ margin: 10, alignItems: 'center' }}>
-                    <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>
+                <View style={{ alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 5 }}>
                         הוסף תיאור לאירוע
                     </Text>
                     <TextInput
@@ -76,11 +92,11 @@ function AddEvent({ navigation, route }) {
                         onChangeText={setEventDesc}
                         placeholder={'הכנס את התיאור כאן...'} />
                 </View>
-                <View style={{ margin: 10, alignItems: 'center' }}>
-                    <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>
+                <View style={{ alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 5 }}>
                         מתי יתקיים האירוע?
                     </Text>
-                    <TouchableOpacity onPress={() => setDatePickerVisibility(true)} style={[styles.editable, { minWidth: 100 }]}>
+                    <TouchableOpacity onPress={() => setDatePickerVisibility(true)} style={styles.editable}>
                         <Text style={{ fontSize: 18 }}>{dateToReadbleFormat(eventTime)}</Text>
                     </TouchableOpacity>
                 </View>
@@ -96,7 +112,7 @@ function AddEvent({ navigation, route }) {
                     onPress={() => createEvent()}>
                     <Text style={{ fontSize: 22, color: '#fff', fontWeight: 'bold' }}>קבע את האירוע</Text>
                 </TouchableOpacity>
-            </View >
+            </KeyboardAvoidingView>
         </TouchableWithoutFeedback>
     )
 }
@@ -110,7 +126,8 @@ const styles = StyleSheet.create({
         padding: 15
     },
     editable: {
-        // minWidth: 200,
+        minWidth: 100,
+        textAlign: 'right',
         borderWidth: 1,
         borderRadius: 10,
         borderColor: '#aaa',
@@ -131,7 +148,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 50,
         height: 12 + Dimensions.get('screen').width / 10,
-        margin: Dimensions.get('screen').width / 10,
         justifyContent: 'center',
     }
 });

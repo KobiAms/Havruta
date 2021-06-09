@@ -18,6 +18,7 @@ dateToReadbleFormat = (date) => date.getDate() + '.' + (date.getMonth() + 1) + '
 export default function EventItem({ data, isAdmin, navigation }) {
     const [isAttend, setisAttend] = useState(auth().currentUser && data.attendings ? data.attendings.includes(auth().currentUser.email) : false)
     const [participent, setParticipent] = useState(data.attendings ? data.attendings.length : 0);
+    const [eventData, setEventData] = useState(data)
     const [deleted, setDeleted] = useState(false);
     const [deleteLoading, setDeleteLoading] = useState(false)
     /** this function is add you or remove from a certian event in firebase */
@@ -72,12 +73,7 @@ export default function EventItem({ data, isAdmin, navigation }) {
                     alert(err);
                 })
         } else {
-            firestore().collection('Events').doc(key).set({
-                attendings: data.attendings,
-                description: data.description,
-                details: data.details,
-                name: data.name
-            })
+            firestore().collection('Events').doc(key).set(eventData)
                 .then(() => {
                     setDeleted(false)
                     setDeleteLoading(false)
@@ -106,16 +102,16 @@ export default function EventItem({ data, isAdmin, navigation }) {
                 {
                     isAdmin && !deleteLoading ? (
 
-                        <TouchableOpacity onPress={() => deleteEvent(data.key)} style={{ position: 'absolute', padding: 10, left: 10 }}>
+                        <TouchableOpacity onPress={() => deleteEvent(data.key)} style={{ position: 'absolute', padding: 10, left: 0 }}>
                             <IconMI color={deleted ? '#060' : '#500'} size={30} name={deleted ? 'replay-circle-filled' : 'cancel'} />
                         </TouchableOpacity>
                     )
                         :
                         null
                 }
-                <Text style={{ fontSize: 22, fontWeight: 'bold', padding: 8 }}>{data.name}</Text>
                 <Text style={{ position: 'absolute', right: 10, fontSize: 17, color: '#444', padding: 8 }}>{dateToReadbleFormat(data.details.toDate())}</Text>
             </View>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', padding: 8 }}>{data.name}</Text>
             <Text style={{ fontSize: 17, padding: 8, width: '90%', textAlign: 'right' }}>{data.description}</Text>
             <TouchableOpacity style={[isAttend ? styles.unattend : styles.attend, { margin: 20 }]}
                 onPress={() => attend(data.key)}>
@@ -137,7 +133,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         backgroundColor: '#fff',
         alignItems: 'center',
-        padding: 10,
+        padding: 20,
         margin: 5,
         flex: 1,
         minWidth: '97%',
