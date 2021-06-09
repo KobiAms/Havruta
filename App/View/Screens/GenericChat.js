@@ -23,9 +23,12 @@ import auth from '@react-native-firebase/auth';
  
 
 
-export function GenericChat() {
+export function GenericChat({navigation,route}) {
   user_id=auth().currentUser?auth().currentUser.email:auth().currentUser
-  
+  const chat_id = route.name == 'Reporters' ? 'reporters' : route.params.id;
+  const [userRole, setUserRole] = useState();
+  const [docName , setDocName] = useState();
+  const [permission , setPermission] = useState();
   const [messages, setMessages] = useState([]);
   const [name , setName] = useState()
   const [user,setUser]=useState(auth().currentUser)
@@ -40,6 +43,8 @@ export function GenericChat() {
                     const user_tmp = doc.data()
                     setUser(user_tmp); // here we pull all the data about our user
                     setName(doc.data().name) // getting the name of the current user
+                    setUserRole(doc.data().role)
+                    console.log("text:"+userRole)
                   
                 }
             })
@@ -59,11 +64,14 @@ useEffect(() => {
 
     const subscriber = firestore()
         .collection('chats')
-        .doc('GiftedTest')
+        .doc(chat_id)
         .onSnapshot(doc=> {
             if(!doc) return;
             let reversed = doc.data().messages
             setMessages(reversed)
+            setDocName(doc.data().name)
+            setPermission(doc.data().premission)
+            
      }) 
     
     if(!auth().currentUser){ // this section is about pulling the user display name if theres no users we skip on that part
@@ -76,17 +84,14 @@ useEffect(() => {
      .then(doc =>{
          let autorDetailes = doc.data();
          setName(autorDetailes ? autorDetailes.name : 'ghost')
+         setUserRole(doc.data().role)
      })
      return subscriber
   }, [])
  
   const onSend = useCallback((message = []) => { // that function happes when somone sends a msg on the chat
-    console.log(message[0].user._id)             // in that function we build the stracture of the message we want to send to the server
+                                                 // in that function we build the stracture of the message we want to send to the server
                                                  //after we built the message object we send it with query to firebase
-    console.log(name)
-    if(user_id!=auth().currentUser.email){
-      user_id=auth().currentUser.email
-    }
     let tempMsg = {
         _id:message[0]._id,
         text:message[0].text,
@@ -96,11 +101,10 @@ useEffect(() => {
             name:name
         }
     }
-    console.log(tempMsg)
     
     firestore()
     .collection('chats')
-    .doc('GiftedTest')
+    .doc(chat_id)
     .update({
         messages : firestore.FieldValue.arrayUnion(tempMsg)
     })
@@ -113,8 +117,8 @@ useEffect(() => {
       user={{
         _id: user_id,
       }}
-      
-      renderInputToolbar={!auth().currentUser?() => null:null}
+      inverted={true}
+      renderInputToolbar={(!auth().currentUser|| (permission!='user' && userRole==='user') || (permission==='admin' && userRole!='admin'))?() => null:null}
       renderUsernameOnMessage={true}
       showAvatarForEveryMessage={true}
       

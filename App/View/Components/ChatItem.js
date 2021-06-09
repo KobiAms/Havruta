@@ -15,13 +15,13 @@ function ChatItem({ id, item }) {
         let last_m;
         last_m = item.data.messages[item.data.messages.length - 1]
         if (last_m) {
-            firestore().collection('users').doc(last_m.user_id).get()
+            firestore().collection('users').doc(last_m.user._id).get()
                 .then(doc => {
-                    setLastSenderName(doc.data().name);
-                    if (last_m.message.length > 20) {
-                        setlastMessage(last_m.message.substring(0, 20).concat("..."));
+                    setLastSenderName(last_m.user.name);
+                    if (last_m.text.length > 20) {
+                        setlastMessage(last_m.text.substring(0, 20).concat("..."));
                     } else {
-                        setlastMessage(last_m.message);
+                        setlastMessage(last_m.text);
                     }
                 })
                 .catch(err => {

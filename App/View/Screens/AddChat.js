@@ -6,6 +6,7 @@ import SwitchSelector from "react-native-switch-selector";
 import { launchImageLibrary } from 'react-native-image-picker';
 import { Image } from 'react-native';
 import { ActivityIndicator } from 'react-native';
+import auth from '@react-native-firebase/auth';
 
 function AddChat({ navigation, route }) {
     const existChat = route.params.data
@@ -57,9 +58,13 @@ function AddChat({ navigation, route }) {
                 // save the new chat data into the chats collection
                 firestore().collection('chats').doc(id).set({
                     messages: [{
-                        user_id: 'admin@test.com',
-                        message: 'Welcome to Havruta! plese keep respectfull language',
-                        date: new Date(),
+                        _id:1,
+                        text:'ברוכים הבאים לצ\'אט של חברותא! נא לשמור על שפה נאותה ותרבות דיון',
+                        createdAt: String(new Date()),
+                        user:{
+                            _id:auth().currentUser.email,
+                            name:'מנהל'
+                        }
                     }],
                     imageUrl: url,
                     name: name,
@@ -73,9 +78,13 @@ function AddChat({ navigation, route }) {
             // if image is not selected, upload only the chat Initialize to firestore
             firestore().collection('chats').doc(id).set({
                 messages: [{
-                    user_id: 'admin@test.com',
-                    message: 'Welcome to Havruta! plese keep respectfull language',
-                    date: new Date(),
+                    _id:1,
+                    text:'ברוכים הבאים לצ\'אט של חברותא! נא לשמור על שפה נאותה ותרבות דיון',
+                    createdAt: String(new Date()),
+                    user:{
+                        _id:auth().currentUser.email,
+                        name:'מנהל'
+                    }
                 }],
                 name: name,
                 premission: premission,
