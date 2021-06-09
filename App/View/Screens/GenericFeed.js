@@ -1,14 +1,12 @@
 /* eslint-disable prettier/prettier */
-import React, { useState, useEffect } from 'react';
-import { Dimensions, Text, StyleSheet, View, SafeAreaView } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Dimensions, RefreshControl, StyleSheet, View, SafeAreaView } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import PostInFeed from '../Components/PostInFeed';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-import { RefreshControl } from 'react-native';
 import axios from 'axios'
 import SkeletonContent from 'react-native-skeleton-content-nonexpo';
-import { useCallback } from 'react';
 
 // function to parse date object to required format: dd.mm.yyyy
 dateToReadbleFormat = (date) => date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear();
@@ -20,200 +18,181 @@ dateToReadbleFormat = (date) => date.getDate() + '.' + (date.getMonth() + 1) + '
 **/// ---------------------------------------------------
 export default function GenericFeed({ navigation, route }) {
 
-  // attribute to hold the articles with the data from FB
-  const [fullArticles, setFullArticles] = useState([, , , ,]);
-  const [user, setUser] = useState();
-  const [loading, setLoading] = useState(true)
-  const baseURL = 'https://havruta.org.il/wp-json'
-  let api = axios.create({ baseURL });
+    // attribute to hold the articles with the data from FB
+    const [fullArticles, setFullArticles] = useState(['loading', 'loading', 'loading', 'loading', 'loading', 'loading', 'loading']);
+    const [user, setUser] = useState();
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [range, setRange] = useState()
+    const [loading, setLoading] = useState(true)
+    const baseURL = 'https://havruta.org.il/wp-json'
+    let api = axios.create({ baseURL });
 
-  let parameter;
-  let feedTitle;
+    let parameter;
+    let feedTitle;
 
-  // check if parameter to show received
-  if (route.params) {
-    // check if in search mode
-    if (route.params.toSearch) {
-      parameter = 'search=' + route.params.toSearch
-      feedTitle = route.params.toSearch
-    } else {
-      parameter = 'categories=' + route.params.category_id
-    }
-  } else {
-    return new Error('GenericFeed: parameter to show must received by the route')
-  }
-
-  /**function to get articles from wordpress */
-  async function getArticlesFromWP() {
-
-    let articles = await api.get('/wp/v2/posts?' + parameter);
-    let arr = [];
-    for (let i = 0; i < articles.data.length; i++) {
-      let obj = {
-        id: articles.data[i].id + '',
-        content: articles.data[i].content.rendered,
-        short: articles.data[i].excerpt.rendered,
-        date: dateToReadbleFormat(new Date(articles.data[i].date)),
-        autor: articles.data[i].author,
-        headline: articles.data[i].title.rendered,
-      }
-      arr.push(obj)
-    }
-    getArticlesDataFromFB(arr)
-    return;
-  };
-
-  // function to gets the data of the articles from firebase 
-  function getArticlesDataFromFB(articles_from_wp) {
-    let promises_fs = []
-    articles_from_wp.forEach((val) => {
-      let cur_promise = firestore().collection('article').doc(val.id).get();
-      promises_fs.push(cur_promise);
-    })
-    Promise.all(promises_fs)
-      .then(responses => {
-        responses.forEach((val, i) => {
-          if (val.data()) {
-            articles_from_wp[i].likes = val.data().likes
-            articles_from_wp[i].comments = val.data().comments
-            articles_from_wp[i].lock = val.data().lock
-            articles_from_wp[i].full = true
-            articles_from_wp[i].new_post = false
-          } else {
-            articles_from_wp[i].likes = []
-            articles_from_wp[i].comments = []
-            articles_from_wp[i].full = false
-            articles_from_wp[i].lock = true
-            articles_from_wp[i].new_post = true
-          }
-        })
-        setFullArticles(articles_from_wp)
-        setLoading(false)
-      })
-      .catch(errors => {
-        console.log(errors)
-      })
-  }
-
-  // listen to auth state 
-  function onAuthStateChanged(user) {
-    setUser(user);
-  }
-
-  /**this useEffect get all the articles from wp and then from fb */
-  useEffect(() => {
-    getArticlesFromWP()
-  }, [])
-
-  useEffect(() => {
-    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    if (auth().currentUser) {
-      firestore()
-        .collection('users')
-        .doc(auth().currentUser.email)
-        .get().then(doc => {
-          if (!doc) return;
-          let userDetails = doc.data();
-          setUser(userDetails);
-        })
-        .catch(err => console.log(err))
-    }
-    return subscriber;
-  }, [setUser]);
-
-  const [refreshing, setRefreshing] = useState(false);
-  const wait = (timeout) => {
-    return new Promise(resolve => setTimeout(resolve, timeout));
-  }
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    getArticlesFromWP()
-    wait(2000).then(() => setRefreshing(false));
-  }, []);
-
-
-
-  return (
-    <View style={styles.main}>
-      <SafeAreaView style={{ flex: 0, backgroundColor: '' }} />
-      <View style={styles.main}>
-        {loading ?
-          <FlatList
-            data={fullArticles}
-            renderItem={({ item }) => (
-              <SkeletonContent
-                containerStyle={styles.skeleton}
-                layout={[
-                  { width: 100, height: Dimensions.get('screen').height * 0.02, marginBottom: 10, },
-                  { width: 200, height: Dimensions.get('screen').height * 0.04, marginBottom: 10, },
-                  { width: '100%', height: Dimensions.get('screen').height * 0.10, marginBottom: 10, },
-                  { width: "100%", height: Dimensions.get('screen').height * 0.04, }
-                ]}
-                isLoading={loading}
-                highlightColor={'#f3f3f4'}
-                boneColor={'#dfdfdf'}>
-              </SkeletonContent>
-            )}
-            keyExtractor={(item, idx) => idx}
-          />
-          :
-          <FlatList
-            data={[...fullArticles, 'end_list']}
-            scrollIndicatorInsets={{ right: 1 }}
-            onEndReached={() => { console.log('list ended'); }}
-            refreshControl={
-              <RefreshControl
-                enabled={true}
-                refreshing={refreshing}
-                onRefresh={onRefresh}
-              />
-            }
-            renderItem={({ item }) => item == 'end_list' ?
-              <View style={{ height: 40, width: '100%' }}></View>
-              :
-              <PostInFeed
-                onPress={(postLock) => navigation.navigate('ArticleScreen', { data: item, user: user, idAdmin: auth().currentUser ? user.role == 'admin' : false, lock: postLock })}
-                data={item}
-                isAdmin={auth().currentUser ? user.role == 'admin' : false}
-              />
-            }
-            keyExtractor={(item, idx) => idx}
-          />
+    // check if parameter to show received
+    if (route.params) {
+        // check if in search mode
+        if (route.params.toSearch) {
+            parameter = 'search=' + route.params.toSearch
+            feedTitle = route.params.toSearch
+        } else {
+            parameter = 'categories=' + route.params.category_id
         }
-      </View>
-    </View>
-  );
+    } else {
+        return new Error('GenericFeed: parameter to show must received by the route')
+    }
+
+    async function getArticles(params, toAppend) {
+        if (toAppend) {
+            console.log('need appending')
+            return
+        }
+        let articles = await api.get('/wp/v2/posts?' + params);
+        let arts_wp = [];
+        for (let i = 0; i < articles.data.length; i++) {
+            let obj = {
+                id: articles.data[i].id + '',
+                content: articles.data[i].content.rendered,
+                short: articles.data[i].excerpt.rendered,
+                date: dateToReadbleFormat(new Date(articles.data[i].date)),
+                autor: articles.data[i].author,
+                headline: articles.data[i].title.rendered,
+            }
+            arts_wp.push(obj)
+        }
+        if (toAppend) {
+            setFullArticles([...fullArticles, ...arts_wp])
+        } else {
+            setFullArticles(arts_wp)
+        }
+
+    }
+
+
+    // listen to auth state and get the user data if is log-in
+    function onAuthStateChanged(user_state) {
+        setIsAdmin(false)
+        if (user_state) {
+            firestore().collection('users').doc(user_state.email).get()
+                .then(doc => {
+                    if (!doc.data()) {
+                        setUser(undefined)
+                    } else {
+                        const user_tmp = doc.data()
+                        setUser(user_tmp);
+                        setIsAdmin(user_tmp.role == 'admin')
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                    setUser(undefined)
+                })
+        } else {
+            setUser(user_state);
+        }
+    }
+    useEffect(() => {
+        auth().onAuthStateChanged(onAuthStateChanged);
+    }, []);
+
+    /**this useEffect get all the articles from wp and then from fb */
+    useEffect(() => {
+        getArticles(parameter)
+    }, [])
+
+
+    // this function return the correct item to render, choose between: skeleton,item,end
+    function item_to_render(item) {
+        if (item == 'loading') {
+            return (
+                <SkeletonContent
+                    containerStyle={styles.skeleton}
+                    layout={[
+                        { width: 100, height: Dimensions.get('screen').height * 0.02, marginBottom: 10, },
+                        { width: 200, height: Dimensions.get('screen').height * 0.04, marginBottom: 10, },
+                        { width: '100%', height: Dimensions.get('screen').height * 0.10, marginBottom: 10, },
+                        { width: "100%", height: Dimensions.get('screen').height * 0.04, }
+                    ]}
+                    isLoading={loading}
+                    highlightColor={'#f3f3f4'}
+                    boneColor={'#dfdfdf'}>
+                </SkeletonContent>
+            )
+        } else if (item == 'end_list') {
+            return (<View style={{ height: 40 }} />)
+        } else {
+            return (
+                <PostInFeed
+                    onPress={(extraData) => navigation.navigate('ArticleScreen', { data: item, extraData: extraData })}
+                    data={item}
+                    isAdmin={auth().currentUser ? user.role == 'admin' : false}
+                />
+            )
+        }
+    }
+
+    // trolly loading animation to give the user the filling of the refresh option
+    const [refreshing, setRefreshing] = useState(false);
+    const wait = (timeout) => { return new Promise(resolve => setTimeout(resolve, timeout)); }
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        wait(2000).then(() => setRefreshing(false));
+    }, []);
+
+    return (
+        <View style={styles.main}>
+            <SafeAreaView style={{ flex: 0, backgroundColor: '' }} />
+            <View style={styles.main}>
+                <FlatList
+                    data={[...fullArticles, 'end_list']}
+                    scrollIndicatorInsets={{ right: 1 }}
+                    refreshControl={
+                        <RefreshControl
+                            enabled={true}
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                        />
+                    }
+                    onEndReachedThreshold={0.5}
+                    onEndReached={() => { console.log('reachhhh') }}
+                    renderItem={({ item }) => item_to_render(item)}
+                    keyExtractor={(item, idx) => idx}
+                />
+            </View>
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({
-  main: {
-    flex: 1,
-    backgroundColor: '#f0fbff',
-  },
-  headline: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: 'rgb(0,127,255)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    textAlign: 'center',
-  },
-  skeleton: {
-    margin: 5,
-    borderRadius: 5,
-    backgroundColor: '#fff',
-    minWidth: '97%',
-    padding: 20,
-    alignItems: 'flex-end',
-    justifyContent: 'flex-start',
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 5,
+    main: {
+        flex: 1,
+        backgroundColor: '#f0fbff',
     },
-    shadowOpacity: 1,
-    shadowRadius: 3.27,
-    elevation: 5,
-  }
+    headline: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: 'rgb(0,127,255)',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1,
+        textAlign: 'center',
+    },
+    skeleton: {
+        margin: 5,
+        borderRadius: 5,
+        backgroundColor: '#fff',
+        minWidth: '97%',
+        padding: 20,
+        alignItems: 'flex-end',
+        justifyContent: 'flex-start',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 5,
+        },
+        shadowOpacity: 1,
+        shadowRadius: 3.27,
+        elevation: 5,
+    }
 });

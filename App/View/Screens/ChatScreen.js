@@ -10,21 +10,32 @@ function ChatScreen({ navigation, route }) {
     const [chats, setChats] = useState([, , , , , , , , , ,])
     const [isAdmin, setIsAdmin] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState(auth().currentUser);
 
-    /*this useEffect update the state "isAdmin" after checking it's role on firebase*/
+    // listen to auth state and get the user data if is log-in
+    function onAuthStateChanged(user_state) {
+        setIsAdmin(false)
+        if (user_state) {
+            firestore().collection('users').doc(user_state.email).get()
+                .then(doc => {
+                    if (!doc.data()) {
+                        setUser(undefined)
+                    } else {
+                        const user_tmp = doc.data()
+                        setUser(user_tmp);
+                        setIsAdmin(user_tmp.role == 'admin')
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                    setUser(undefined)
+                })
+        } else {
+            setUser(user_state);
+        }
+    }
     useEffect(() => {
-        const subscriber = firestore()
-            .collection('users')
-            .doc(auth().currentUser.email)
-            .onSnapshot(doc => {
-                if (!doc) return;
-                if (doc.data().role === 'admin') {
-                    setIsAdmin(true);
-                } else {
-                    setIsAdmin(false);
-                }
-            })
-        return subscriber;
+        auth().onAuthStateChanged(onAuthStateChanged);
     }, []);
 
     /*this useEffect update the state array "chatName", and put an array of objects.

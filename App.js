@@ -14,9 +14,7 @@ import GenericChat from './App/View/Screens/GenericChat';
 import MainScreen from './App/View/Screens/MainScreen';
 import Wizard from './App/View/Components/NewUserWizard'
 import GenericFeed from './App/View/Screens/GenericFeed'
-import GenericFeed_2 from './App/View/Screens/GenericFeed_2'
 import ArticleScreen from './App/View/Screens/ArticleScreen'
-import ArticleScreen_2 from './App/View/Screens/ArticleScreen_2'
 import auth from '@react-native-firebase/auth'
 import RegistrationScreen from './App/View/Screens/RegistrationScreen';
 import ManageUsers from './App/View/Components/ManageUsers';
@@ -53,7 +51,7 @@ MainScreenNavigator = () => {
       }}>
       <Tab.Screen
         name="חדשות"
-        component={GenericFeed_2}
+        component={MainScreen}
         initialParams={{ category_id: '122' }}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="file-contract" size={25} color={color} />), })} />
       <Tab.Screen
@@ -106,7 +104,7 @@ App = () => {
                     )
                   } else {
                     return (
-                      <TouchableOpacity style={{ padding: 10 }} onPress={() => { setToSearch(''); setClose(true) }}>
+                      <TouchableOpacity style={{ padding: 10, marginLeft: 10, }} onPress={() => { setToSearch(''); setClose(true) }}>
                         <IconMI style={styles.search_icon} color={'#fff'} size={20} name={'cancel'} />
                       </TouchableOpacity>
                     )
@@ -129,7 +127,7 @@ App = () => {
                             returnKeyType={'search'}
                             style={styles.stack_search}
                             autoFocus={true}
-                            onSubmitEditing={() => toSearch.length == 0 ? setClose(true) : navigation.navigate('GenericFeed_2', { toSearch: toSearch })}
+                            onSubmitEditing={() => toSearch.length == 0 ? setClose(true) : navigation.navigate('GenericFeed', { toSearch: toSearch })}
                           />
                       }
                     </View>
@@ -148,7 +146,7 @@ App = () => {
                     )
                   } else {
                     return (
-                      <TouchableOpacity style={{ padding: 10 }} onPress={() => toSearch.length == 0 ? setClose(true) : navigation.navigate('GenericFeed_2', { toSearch: toSearch })}>
+                      <TouchableOpacity style={{ padding: 10, marginRight: 10 }} onPress={() => toSearch.length == 0 ? setClose(true) : navigation.navigate('GenericFeed', { toSearch: toSearch })}>
                         <Icon style={styles.search_icon} color={'#fff'} size={20} name={'search'} />
                       </TouchableOpacity>
                     )
@@ -177,16 +175,8 @@ App = () => {
             component={GenericFeed}
           />
           <Stack.Screen
-            name="GenericFeed_2"
-            component={GenericFeed_2}
-          />
-          <Stack.Screen
             name="ArticleScreen"
             component={ArticleScreen}
-          />
-          <Stack.Screen
-            name="ArticleScreen_2"
-            component={ArticleScreen_2}
           />
           <Stack.Screen
             name="ChatScreen"
@@ -259,6 +249,7 @@ const styles = StyleSheet.create({
   image_title: {
     height: 50,
     width: 50,
+    marginLeft: 10,
   },
   stack_search: {
     width: Dimensions.get('screen').width * 0.6,
