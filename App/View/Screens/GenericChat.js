@@ -22,7 +22,10 @@ import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
  
 user_id=auth().currentUser?auth().currentUser.email:NULL
- 
+GetUserId=()=>{
+  user_id=auth().currentUser?auth().currentUser.email:NULL
+  return user_id
+}
  
 export function GenericChat() {
   const [messages, setMessages] = useState([]);
@@ -57,6 +60,9 @@ export function GenericChat() {
     console.log(message[0].user._id)
     
     console.log(name)
+    if(user_id!=auth().currentUser.email){
+      user_id=auth().currentUser.email
+    }
     let tempMsg = {
         _id:message[0]._id,
         text:message[0].text,
@@ -81,7 +87,7 @@ export function GenericChat() {
       messages={messages}
       onSend={message => onSend(message)}
       user={{
-        _id: name,
+        _id: user_id,
       }}
       inverted={false}
     />
