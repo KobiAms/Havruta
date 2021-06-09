@@ -29,7 +29,7 @@ export function GenericChat() {
   const [messages, setMessages] = useState([]);
   const [name , setName] = useState()
   const [user,setUser]=useState(auth().currentUser)
-  function onAuthStateChanged(user_state) {
+  function onAuthStateChanged(user_state) { // listener to every change of the user id and updates the details about that new user that logged
    setUser()
     if (user_state) {
         firestore().collection('users').doc(user_state.email).get()
@@ -38,8 +38,8 @@ export function GenericChat() {
                     setUser(undefined)
                 } else {
                     const user_tmp = doc.data()
-                    setUser(user_tmp);
-                    setName(doc.data().name)
+                    setUser(user_tmp); // here we pull all the data about our user
+                    setName(doc.data().name) // getting the name of the current user
                   
                 }
             })
@@ -55,7 +55,7 @@ useEffect(() => {
     auth().onAuthStateChanged(onAuthStateChanged);
 }, []);
  
-  useEffect(() => {
+  useEffect(() => { // we pull all the messages array from the data base and then using our hook to that file so we can preview it
 
     const subscriber = firestore()
         .collection('chats')
@@ -66,9 +66,9 @@ useEffect(() => {
             setMessages(reversed)
      }) 
     
-    if(!auth().currentUser){
+    if(!auth().currentUser){ // this section is about pulling the user display name if theres no users we skip on that part
         return subscriber
-    }
+    } 
      firestore()
      .collection('users')
      .doc(auth().currentUser.email)
@@ -80,9 +80,9 @@ useEffect(() => {
      return subscriber
   }, [])
  
-  const onSend = useCallback((message = []) => {
-    console.log(message[0].user._id)
-    
+  const onSend = useCallback((message = []) => { // that function happes when somone sends a msg on the chat
+    console.log(message[0].user._id)             // in that function we build the stracture of the message we want to send to the server
+                                                 //after we built the message object we send it with query to firebase
     console.log(name)
     if(user_id!=auth().currentUser.email){
       user_id=auth().currentUser.email
