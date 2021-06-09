@@ -117,10 +117,11 @@ useEffect(() => {
       user={{
         _id: user_id,
       }}
-      inverted={true}
+      inverted={false}
       renderInputToolbar={(!auth().currentUser|| (permission!='user' && userRole==='user') || (permission==='admin' && userRole!='admin'))?() => null:null}
       renderUsernameOnMessage={true}
       showAvatarForEveryMessage={true}
+      renderAvatarOnTop={true}
       
       
     />
