@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Dimensions, Text, StyleSheet, View, SafeAreaView } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import PostInFeed from './PostInFeed';
+import PostInFeed from '../Components/PostInFeed';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import { RefreshControl } from 'react-native';
@@ -138,7 +138,7 @@ export default function GenericFeed({ navigation, route }) {
 
   return (
     <View style={styles.main}>
-      <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
+      <SafeAreaView style={{ flex: 0, backgroundColor: '' }} />
       <View style={styles.main}>
         {loading ?
           <FlatList
@@ -147,27 +147,14 @@ export default function GenericFeed({ navigation, route }) {
               <SkeletonContent
                 containerStyle={styles.skeleton}
                 layout={[
-                  {
-                    width: 100,
-                    height: Dimensions.get('screen').height * 0.02,
-                    marginBottom: 10,
-                  },
-                  {
-                    width: 200,
-                    height: Dimensions.get('screen').height * 0.04,
-                    marginBottom: 10,
-                  },
-                  {
-                    width: '100%',
-                    height: Dimensions.get('screen').height * 0.10,
-                    marginBottom: 10,
-                  },
-                  {
-                    width: "100%",
-                    height: Dimensions.get('screen').height * 0.04,
-                  }
+                  { width: 100, height: Dimensions.get('screen').height * 0.02, marginBottom: 10, },
+                  { width: 200, height: Dimensions.get('screen').height * 0.04, marginBottom: 10, },
+                  { width: '100%', height: Dimensions.get('screen').height * 0.10, marginBottom: 10, },
+                  { width: "100%", height: Dimensions.get('screen').height * 0.04, }
                 ]}
-                isLoading={loading}>
+                isLoading={loading}
+                highlightColor={'#f3f3f4'}
+                boneColor={'#dfdfdf'}>
               </SkeletonContent>
             )}
             keyExtractor={(item, idx) => idx}
