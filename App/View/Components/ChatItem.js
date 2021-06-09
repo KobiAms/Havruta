@@ -13,29 +13,26 @@ function ChatItem({ id, item }) {
     /**this useEffect triger firestore call to get the name of the user who send the last message in the chat. */
     useEffect(() => {
         let last_m;
-        if (item) {
-            if (item.data.messages) {
-                last_m = item.data.messages[item.data.messages.length - 1]
-                if (last_m) {
-                    firestore().collection('users').doc(last_m.user_id).get()
-                        .then(doc => {
-                            setLastSenderName(doc.data().name);
-                            if (last_m.message.length > 20) {
-                                setlastMessage(last_m.message.substring(0, 20).concat("..."));
-                            } else {
-                                setlastMessage(last_m.message);
-                            }
-                        })
-                        .catch(err => {
-                            setLastSenderName('Error');
-                            setlastMessage('Cannot Load Meassage');
-                            console.log('Last message not loaded: ', err)
-                        })
-                } else {
-                    setLastSenderName('');
-                    setlastMessage('');
-                }
-            }
+        last_m = item.data.messages[item.data.messages.length - 1]
+        if (last_m) {
+            firestore().collection('users').doc(last_m.user._id).get()
+                .then(doc => {
+                    setLastSenderName(last_m.user.name);
+                    if (last_m.text.length > 20) {
+                        setlastMessage(last_m.text.substring(0, 20).concat("..."));
+                    } else {
+                        setlastMessage(last_m.text);
+                    }
+                })
+                .catch(err => {
+                    setLastSenderName('Error');
+                    setlastMessage('Cannot Load Meassage');
+                    console.log('Last message not loaded: ', err)
+                })
+        } else {
+            setLastSenderName('');
+            setlastMessage('');
+
         }
     }, [setLastSenderName, setlastMessage])
 

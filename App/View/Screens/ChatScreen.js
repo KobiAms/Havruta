@@ -12,6 +12,10 @@ function ChatScreen({ navigation, route }) {
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(auth().currentUser);
 
+
+    /*this useEffect update the state "isAdmin" after checking it's role on firebase*/
+    const [user, setUser] = useState(auth().currentUser);
+
     // listen to auth state and get the user data if is log-in
     function onAuthStateChanged(user_state) {
         setIsAdmin(false)
@@ -24,6 +28,7 @@ function ChatScreen({ navigation, route }) {
                         const user_tmp = doc.data()
                         setUser(user_tmp);
                         setIsAdmin(user_tmp.role == 'admin')
+
                     }
                 })
                 .catch(err => {
@@ -36,7 +41,7 @@ function ChatScreen({ navigation, route }) {
     }
     useEffect(() => {
         const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-        return subscriber;
+        return subscriber
     }, []);
 
     /*this useEffect update the state array "chatName", and put an array of objects.
