@@ -67,7 +67,7 @@ useEffect(() => {
         .doc(chat_id)
         .onSnapshot(doc=> {
             if(!doc) return;
-            let reversed = doc.data().messages
+            let reversed = doc.data().messages.reverse()
             setMessages(reversed)
             setDocName(doc.data().name)
             setPermission(doc.data().premission)
@@ -117,7 +117,7 @@ useEffect(() => {
       user={{
         _id: user_id,
       }}
-      inverted={false}
+      inverted={true}
       renderInputToolbar={(!auth().currentUser|| (permission!='user' && userRole==='user') || (permission==='admin' && userRole!='admin'))?() => null:null}
       renderUsernameOnMessage={true}
       showAvatarForEveryMessage={true}
