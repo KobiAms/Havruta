@@ -122,32 +122,32 @@ function AddChat({ navigation, route }) {
                 </TouchableOpacity>
                 <View style={{ margin: 10, alignItems: 'center' }}>
                     <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>
-                        Please chose the new chat name
+                        אנא בחר את שם הצ'אט החדש
                     </Text>
                     <TextInput
                         style={styles.editable}
                         value={chatName}
                         onChangeText={setChatName}
-                        placeholder={'Add your about here...'} />
+                        placeholder={`  הזן שם צ'אט...    `} />
                 </View>
                 <View style={{ margin: 10, alignItems: 'center' }}>
-                    <Text>Who can send messages in this chat?</Text>
+                    <Text>מי יכול לשלוח הודעות בצ'אט הזה?</Text>
                     <SwitchSelector
                         options={[
-                            { label: 'All useres', value: 'user' },
-                            { label: 'Authorized only', value: 'reporter' },
-                            { label: 'Admin only', value: 'admin' }
+                            { label: 'כל המשתמשים', value: 'user' },
+                            { label: 'כתבים', value: 'reporter' },
+                            { label: 'מנהלים בלבד', value: 'admin' }
                         ]}
                         textColor={'#000'}
                         onPress={value => setPremission(value)}
                         hasPadding
-                        buttonColor={'rgb(40,120,190)'}
+                        buttonColor={'#0d5794'}
                         style={{ margin: 10, width: Dimensions.get('screen').width * (85 / 100), }}
                     />
                 </View>
                 {
                     loading ?
-                        <ActivityIndicator color={'rgb(120,90,140)'} size={'small'} />
+                        <ActivityIndicator color={'#0d5794'} size={'small'} />
                         :
                         <TouchableOpacity
                             style={styles.submit}
@@ -155,7 +155,7 @@ function AddChat({ navigation, route }) {
                                 chatName && premission ? add_chat_to_FB(chatName, premission) : fillAllFields()
                             }
                             }>
-                            <Text style={{ fontSize: 22, color: '#fff', fontWeight: 'bold' }}>Submit</Text>
+                            <Text style={{ fontSize: 22, color: '#fff', fontWeight: 'bold' }}>צור את הצ'אט</Text>
                         </TouchableOpacity>
                 }
 
@@ -169,12 +169,13 @@ const styles = StyleSheet.create({
         justifyContent: 'space-evenly',
         flex: 1,
         alignItems: 'center',
-        backgroundColor: 'rgb(200,200,220)',
+        backgroundColor: '#f2f2f3',
         padding: 15
     },
     editable: {
         borderWidth: 1,
         borderRadius: 10,
+        borderColor: '#aaa',
         backgroundColor: '#FFFFFF',
         shadowColor: '#000',
         shadowOffset: {
@@ -183,11 +184,11 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.32,
         shadowRadius: 5.46,
-        elevation: 6,
-        padding: 8,
+        elevation: 3,
+        padding: 7
     },
     submit: {
-        backgroundColor: 'rgb(40,120,190)',
+        backgroundColor: '#0d5794',
         width: Dimensions.get('screen').width * (85 / 100),
         alignItems: 'center',
         borderRadius: 50,

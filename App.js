@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   NavigationContainer,
   getFocusedRouteNameFromRoute,
 } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Image, Dimensions, TextInput } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import IconMI from 'react-native-vector-icons/MaterialIcons';
 import OtherScreen from './App/View/Screens/OtherScreen';
 import GenericChat from './App/View/Screens/GenericChat';
 import MainScreen from './App/View/Screens/MainScreen';
@@ -45,22 +46,36 @@ MainScreenNavigator = () => {
   return (
     <Tab.Navigator
       tabBarOptions={{
-        activeTintColor: 'rgb(0,110,220)',
+        activeTintColor: '#0d5794',
         inactiveTintColor: 'gray',
       }}>
-      <Tab.Screen name="MainScreen" component={MainScreen}
+      <Tab.Screen
+        name="חדשות"
+        component={MainScreen}
+        initialParams={{ category_id: '122' }}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="file-contract" size={25} color={color} />), })} />
-      <Tab.Screen name="Community" component={GenericFeed}
+      <Tab.Screen
+        name="קהילה"
+        component={GenericFeed}
+        initialParams={{ category_id: '122' }}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="transgender" size={25} color={color} />), })} />
-      <Tab.Screen name="Reporters" component={GenericChat}
+      <Tab.Screen
+        name="צ׳אט הכתבים"
+        component={GenericChat}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="comment-alt" size={25} color={color} />), })} />
-      <Tab.Screen name="Judaism" component={GenericFeed}
+      <Tab.Screen
+        name="יהדות"
+        component={GenericFeed}
+        initialParams={{ category_id: '117' }}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="torah" size={25} color={color} />), })} />
-      <Tab.Screen name="Other" component={OtherScreen}
+      <Tab.Screen
+        name=" "
+        component={OtherScreen}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="bars" size={25} color={color} />), })} />
     </Tab.Navigator>
   );
 };
+
 
 App = () => {
   return (
@@ -75,21 +90,70 @@ App = () => {
           <Stack.Screen
             name="MainScreenNavigator"
             component={MainScreenNavigator}
-            options={({ navigation }) => ({
-              title: 'Havruta',
-              headerTitle: <Image style={styles.image_title} source={require('./App/Assets/logo.png')} />,
-              headerRight: () => (
-                <TouchableOpacity
-                  style={styles.register}
-                  onPress={() => navigation.navigate('Registration')}>
-                  {auth().currentUser && auth().currentUser.photoURL ?
-                    <Image style={styles.user_image} source={{ uri: auth().currentUser.photoURL }} />
-                    :
-                    <Icon color={'#fff'} name={'user-alt'} size={20} />
+            // set the main header to show logo, search and user 
+            options={({ navigation }) => {
+              // state for search box open or close and state fo rthe search text
+              const [close, setClose] = useState(true);
+              const [toSearch, setToSearch] = useState('');
+              return ({
+                title: 'חברותא',
+                headerLeft: () => {
+                  if (close) {
+                    return (
+                      <Image style={styles.image_title} source={require('./App/Assets/logo.png')} />
+                    )
+                  } else {
+                    return (
+                      <TouchableOpacity style={{ padding: 10, marginLeft: 10, }} onPress={() => { setToSearch(''); setClose(true) }}>
+                        <IconMI style={styles.search_icon} color={'#fff'} size={20} name={'cancel'} />
+                      </TouchableOpacity>
+                    )
                   }
-                </TouchableOpacity>
-              ),
-            })} />
+                },
+                headerTitle: () => {
+                  return (
+                    <View style={{ justifyContent: 'flex-end', flexDirection: 'row' }}>
+                      {
+                        close ?
+                          <TouchableOpacity style={{ padding: 10 }} onPress={() => close ? setClose(false) : console.log(toSearch)}>
+                            <Icon style={styles.search_icon} color={'#fff'} size={20} name={'search'} />
+                          </TouchableOpacity>
+                          :
+                          <TextInput
+                            value={toSearch}
+                            onChangeText={setToSearch}
+                            placeholder={'חפש עכשיו...'}
+                            placeholderTextColor={'#fffa'}
+                            returnKeyType={'search'}
+                            style={styles.stack_search}
+                            autoFocus={true}
+                            onSubmitEditing={() => toSearch.length == 0 ? setClose(true) : navigation.navigate('GenericFeed', { toSearch: toSearch })}
+                          />
+                      }
+                    </View>
+                  )
+                }
+                ,
+                // this butten show the Profile button
+                headerRight: () => {
+                  if (close) {
+                    return (
+                      <TouchableOpacity
+                        style={styles.register}
+                        onPress={() => navigation.navigate('Registration')}>
+                        <Icon color={auth().currentUser ? '#fff' : '#f0fbff'} name={'user-alt'} size={20} />
+                      </TouchableOpacity>
+                    )
+                  } else {
+                    return (
+                      <TouchableOpacity style={{ padding: 10, marginRight: 10 }} onPress={() => toSearch.length == 0 ? setClose(true) : navigation.navigate('GenericFeed', { toSearch: toSearch })}>
+                        <Icon style={styles.search_icon} color={'#fff'} size={20} name={'search'} />
+                      </TouchableOpacity>
+                    )
+                  }
+                },
+              })
+            }} />
           <Stack.Screen
             name="Registration"
             component={RegistrationScreen}
@@ -97,7 +161,7 @@ App = () => {
           <Stack.Screen
             name="Manage Users"
             component={ManageUsers}
-            options={{ title: 'Manage Users', }} />
+            options={{ title: 'ניהול', }} />
           <Stack.Screen
             name="Manage User"
             component={ManageUser}
@@ -105,7 +169,7 @@ App = () => {
           <Stack.Screen
             name="Wizard"
             component={Wizard}
-            options={{ title: 'Welcome', }} />
+            options={{ title: 'ברוכים הבאים', }} />
           <Stack.Screen
             name="GenericFeed"
             component={GenericFeed}
@@ -138,6 +202,7 @@ App = () => {
             name="AddEvent"
             component={AddEvent}
           />
+
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
@@ -155,7 +220,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   stack_header: {
-    backgroundColor: 'rgb(120,90,140)',
+    backgroundColor: '#0d5794',
     borderBottomWidth: 1,
     borderBottomColor: 'rgb(200,200,200)',
   },
@@ -163,35 +228,43 @@ const styles = StyleSheet.create({
     color: "#fff"
   },
   register: {
-    padding: 5,
-    paddingRight: 20,
-    paddingLeft: 20,
+    padding: 10,
+    marginRight: 10,
     borderRadius: 15,
     overflow: 'hidden',
-    shadowColor: '#fff',
+    shadowColor: '#111',
     shadowOffset: {
       width: 0,
       height: 4,
     },
     shadowOpacity: 0.80,
-    shadowRadius: 5,
+    shadowRadius: 4,
   },
   user_image: {
-    height: 35,
-    width: 35,
+    height: 25,
+    width: 25,
     borderRadius: 20,
     overflow: 'hidden'
   },
   image_title: {
-    height: 40,
-    width: 80,
-    shadowColor: '#fff',
+    height: 50,
+    width: 50,
+    marginLeft: 10,
+  },
+  stack_search: {
+    width: Dimensions.get('screen').width * 0.6,
+    height: '100%',
+    color: '#fff',
+    textAlign: 'right'
+  },
+  search_icon: {
+    shadowColor: '#111',
     shadowOffset: {
       width: 0,
       height: 4,
     },
     shadowOpacity: 0.80,
-    shadowRadius: 5,
+    shadowRadius: 4,
   }
 
 });

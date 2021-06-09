@@ -11,7 +11,7 @@ function AddEvent({ navigation, route }) {
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
     // create a readble date dd.mm.yyyy hh:mm from Date obj
-    dateToReadbleFormat = (date) => date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes();
+    dateToReadbleFormat = (date) => date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear() + ' ' + (date.getHours() < 10 ? ('0' + date.getHours()) : date.getHours()) + ':' + (date.getMinutes() < 10 ? ('0' + date.getMinutes()) : date.getMinutes());
     const handleDateConfirm = (date) => {
         setEventTime(date)
         setDatePickerVisibility(false);
@@ -58,26 +58,28 @@ function AddEvent({ navigation, route }) {
             <View style={styles.main}>
                 <View style={{ margin: 10, alignItems: 'center' }}>
                     <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>
-                        Please chose the new Event name
+                        אנא בחר את שם האירוע החדש
                     </Text>
                     <TextInput
                         style={styles.editable}
                         value={eventName}
                         onChangeText={setEventName}
-                        placeholder={'Add your event name here...'} />
+                        placeholder={'הכנס את שם האירוע כאן...'} />
                 </View>
                 <View style={{ margin: 10, alignItems: 'center' }}>
                     <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>
-                        You can add some description about this new event
+                        הוסף תיאור לאירוע
                     </Text>
                     <TextInput
                         style={styles.editable}
                         value={eventDesc}
                         onChangeText={setEventDesc}
-                        placeholder={'Add your description for the event here...'} />
+                        placeholder={'הכנס את התיאור כאן...'} />
                 </View>
                 <View style={{ margin: 10, alignItems: 'center' }}>
-                    <Text>When the event will take place?</Text>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>
+                        מתי יתקיים האירוע?
+                    </Text>
                     <TouchableOpacity onPress={() => setDatePickerVisibility(true)} style={[styles.editable, { minWidth: 100 }]}>
                         <Text style={{ fontSize: 18 }}>{dateToReadbleFormat(eventTime)}</Text>
                     </TouchableOpacity>
@@ -92,7 +94,7 @@ function AddEvent({ navigation, route }) {
                 <TouchableOpacity
                     style={styles.submit}
                     onPress={() => createEvent()}>
-                    <Text style={{ fontSize: 22, color: '#fff', fontWeight: 'bold' }}>Submit</Text>
+                    <Text style={{ fontSize: 22, color: '#fff', fontWeight: 'bold' }}>קבע את האירוע</Text>
                 </TouchableOpacity>
             </View >
         </TouchableWithoutFeedback>
@@ -104,13 +106,14 @@ const styles = StyleSheet.create({
         justifyContent: 'space-evenly',
         flex: 1,
         alignItems: 'center',
-        backgroundColor: 'rgb(200,200,220)',
+        backgroundColor: '#f2f2f3',
         padding: 15
     },
     editable: {
-        minWidth: 200,
+        // minWidth: 200,
         borderWidth: 1,
         borderRadius: 10,
+        borderColor: '#aaa',
         backgroundColor: '#FFFFFF',
         shadowColor: '#000',
         shadowOffset: {
@@ -119,11 +122,11 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.32,
         shadowRadius: 5.46,
-        elevation: 6,
-        padding: 8,
+        elevation: 3,
+        padding: 8
     },
     submit: {
-        backgroundColor: 'rgb(40,120,190)',
+        backgroundColor: '#0d5794',
         width: Dimensions.get('screen').width * (85 / 100),
         alignItems: 'center',
         borderRadius: 50,

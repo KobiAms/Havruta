@@ -24,7 +24,7 @@ import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 import NewUserWizard from './NewUserWizard';
 
 /**the main component of any user. when a user is loged in, this component is rendered */
-export default function UserForm({ setUser, navigation, setLoading }) {
+export default function UserForm({ setUser, navigation }) {
   const [userRole, setUserRole] = useState();
   const [defaultStyle, setDefaultStyle] = useState(true);
   const [userName, setuserName] = useState('');
@@ -32,6 +32,7 @@ export default function UserForm({ setUser, navigation, setLoading }) {
   const [userAbout, setUserAbout] = useState();
   const [userAvatar, setUserAvatar] = useState();
   const [loadingAvatar, setLoadingAvatar] = useState(true);
+  const [loading, setLoading] = useState(false)
   const [editable, setEditable] = useState(false);
   const [editName, setEditName] = useState();
   const [editDate, setEditDate] = useState();
@@ -84,6 +85,8 @@ export default function UserForm({ setUser, navigation, setLoading }) {
 
   /** function activated by pressing the edit icon. allow changes in the user name, date of birth, about */
   function setToEditable() {
+    if (loading)
+      return
     if (editable) {
       // the length of the new name < 5 Discard Changes
       if (editName.length < 5) {
@@ -161,11 +164,12 @@ export default function UserForm({ setUser, navigation, setLoading }) {
           />
           <View style={styles.backline} />
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
+
             <TouchableOpacity onPress={() => setToEditable()}>
               <View style={{ alignItems: 'center', flexDirection: 'row', backgroundColor: '#ffffff80', padding: 5, borderRadius: 20 }}>
                 <IconFeather
                   name={editable ? 'check-square' : 'edit'}
-                  color={editable ? '#008800' : '#000000'}
+                  color={editable ? '#5ba92c' : '#333'}
                   size={30}
                   style={{ margin: 5 }} />
               </View>
@@ -182,7 +186,7 @@ export default function UserForm({ setUser, navigation, setLoading }) {
               <View style={{ alignItems: 'center', flexDirection: 'row', backgroundColor: '#ffffff80', padding: 5, borderRadius: 20, borderColor: '#990000', opacity: editable ? 1 : 0 }}>
                 <IconFeather
                   name={'x-square'}
-                  color={'#990000'}
+                  color={'#e55a5a'}
                   size={30}
                   style={{ margin: 5 }} />
               </View>
@@ -192,66 +196,67 @@ export default function UserForm({ setUser, navigation, setLoading }) {
             {
               editable ?
                 <TextInput
-                  style={[styles.name, styles.editable]}
+                  style={[styles.name, styles.editable, { color: '#000' }]}
                   value={editName}
                   onChangeText={setEditName} />
                 :
                 <Text style={[styles.name, styles.editcont]}>{userName}</Text>
             }
           </View>
-          <View style={styles.row}>
-            <Text style={{ fontWeight: 'bold', fontSize: 21 }}>Date of Birth:</Text>
+          <View style={[styles.row, { flexDirection: 'row' }]}>
             {
               editable ?
                 <TouchableOpacity onPress={() => setDatePickerVisibility(true)} style={styles.editable}>
-                  <Text style={{ fontSize: 18 }}>{userDOB}</Text>
+                  <Text style={{ fontSize: 18, textAlign: 'right' }}>{userDOB}</Text>
                 </TouchableOpacity>
                 :
-                <Text style={[{ fontSize: 18, padding: 4 }, styles.editcont]}>{userDOB}</Text>
+                <Text style={[{ fontSize: 18, padding: 4, color: '#333', textAlign: 'right' }, styles.editcont]}>{userDOB}</Text>
             }
+            <Text style={{ fontWeight: 'bold', fontSize: 21, color: '#333' }}>תאריך לידה:</Text>
           </View>
           <View style={{ padding: 20 }}>
-            <Text style={{ fontWeight: 'bold', fontSize: 21, paddingLeft: 8 }}>About Me:</Text>
+            <Text style={{ fontWeight: 'bold', fontSize: 21, paddingLeft: 8, color: '#333', textAlign: 'right' }}>עלי:</Text>
             {
               editable ?
                 <AutoGrowingTextInput
-                  style={[styles.editable, { fontSize: 17 }]}
+                  style={[styles.editable, { fontSize: 17, textAlign: 'right' }]}
                   value={editAbout}
                   onChangeText={setEditAbout} />
                 :
-                <Text style={[{ fontSize: 17, padding: 4 }, styles.editcont]}>{userAbout}</Text>
+                <Text style={[{ fontSize: 17, padding: 4, color: '#333', textAlign: 'right' }, styles.editcont]}>{userAbout}</Text>
             }
           </View>
         </ScrollView >
         {/*the following view contain the logout / manage users buttons*/}
         <View style={styles.chose}>
-          {userRole && userRole == 'admin' ? (
-            <TouchableOpacity
-              style={styles.option}
-              onPress={() => navigation.navigate('Manage Users')}>
-              <Text style={{ color: '#000000', fontSize: 20 }}>Manage Users</Text>
-              <IconFAW5 name={'user-cog'} color={'#666666'} size={20} />
-            </TouchableOpacity>
-          ) : null}
+
           <TouchableOpacity
-            style={styles.option}
+            style={[styles.option, styles.logout]}
             onPress={() =>
               auth()
                 .signOut()
                 .then(() => setUser(auth().currentUser))
             }>
-            <Text style={{ color: '#ff0000', fontSize: 20 }}>Log Out</Text>
-            <IconFeather name={'log-out'} color={'#ff0000'} size={20} />
+            <Text style={{ color: '#e55a5a', fontSize: 20 }}>התנתקות</Text>
+            <IconFeather name={'log-out'} color={'#e55a5a'} size={20} style={{ transform: [{ rotateY: '180deg' }] }} />
           </TouchableOpacity>
+          {userRole && userRole == 'admin' ? (
+            <TouchableOpacity
+              style={styles.option}
+              onPress={() => navigation.navigate('Manage Users')}>
+              <Text style={{ color: '#fff', fontSize: 20 }}>ניהול משתמשים</Text>
+              <IconFAW5 name={'user-cog'} color={'#fff'} size={20} style={{ margin: 3 }} />
+            </TouchableOpacity>
+          ) : null}
         </View>
-      </View>
+      </View >
   );
 }
 
 const styles = StyleSheet.create({
   main: {
     flex: 1,
-    backgroundColor: 'rgb(200,200,220)',
+    backgroundColor: '#f2f2f3',
     marginBottom: 5 + Dimensions.get('screen').height / 10,
   },
   row: {
@@ -266,10 +271,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     margin: 5,
     padding: 4,
+    color: '#333'
   },
   editable: {
     borderWidth: 1,
     borderRadius: 10,
+    borderColor: '#aaa',
     backgroundColor: '#FFFFFF',
     shadowColor: '#000',
     shadowOffset: {
@@ -278,7 +285,7 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.32,
     shadowRadius: 5.46,
-    elevation: 6,
+    elevation: 3,
     padding: 8,
   },
   editcont: {
@@ -301,7 +308,7 @@ const styles = StyleSheet.create({
   },
   option: {
     flex: 1,
-    backgroundColor: 'rgb(240,240,255)',
+    backgroundColor: '#0d5794',
     alignItems: 'center',
     justifyContent: 'space-between',
     flexDirection: 'row',
@@ -311,7 +318,7 @@ const styles = StyleSheet.create({
 
   },
   backline: {
-    backgroundColor: 'rgb(160,160,200)',
+    backgroundColor: '#a3cbe0',
     height: Dimensions.get('screen').height / 8,
     marginBottom: -Dimensions.get('screen').height / 10,
     justifyContent: "flex-start",
@@ -321,11 +328,16 @@ const styles = StyleSheet.create({
     height: 12 + Dimensions.get('screen').width / 3,
     width: 12 + Dimensions.get('screen').width / 3,
     borderRadius: Dimensions.get('screen').width / 1.5,
-    backgroundColor: 'rgb(200,200,220)',
-    borderColor: 'rgb(160,160,200)',
+    backgroundColor: '#f2f2f3',
+    borderColor: '#a3cbe0',
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
+  },
+  logout: {
+    backgroundColor: '#f2f2f3',
+    borderWidth: 1,
+    borderColor: '#e55a5a'
   },
 });

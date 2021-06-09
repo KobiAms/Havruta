@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import {
     View,
     StyleSheet,
@@ -25,6 +25,13 @@ export default ManageUser = ({ navigation, route }) => {
     const [loading, setLoading] = useState(false);
     const [userAvatar, setUserAvatar] = useState(route.params.data.photo ? { uri: route.params.data.photo } : require('../../Assets/POWERPNT_frXVLHdxnI.png'));
     const [userRole, setuserRole] = useState('');
+
+    // set header title
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            title: route.params.data.name
+        });
+    }, [navigation])
 
     /**functionality of the admin swith */
     const toggleAdmin = () => {
@@ -68,15 +75,15 @@ export default ManageUser = ({ navigation, route }) => {
 
     function delete_user() {
         Alert.alert(
-            'Delete User Permanently!',
-            'Are you sure?',
+            'מחיקת משתמש לצמיתות!',
+            'האם אתה בטוח?',
             [
                 {
-                    text: "Cancel",
+                    text: "ביטול",
                     style: "cancel"
                 },
                 {
-                    text: "OK",
+                    text: "מחק",
                     onPress: () => {
                     },
                     style: 'destructive'
@@ -104,25 +111,25 @@ export default ManageUser = ({ navigation, route }) => {
 
     return (
         <View style={styles.main}>
-            <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
+            <SafeAreaView style={{ flex: 0, backgroundColor: '#0d5794' }} />
             <View style={styles.main}>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
                     <View style={styles.aview}>
                         <Image source={userAvatar} style={{ width: '100%', height: '100%' }} />
                     </View>
                     <View>
-                        <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{userName}</Text>
-                        <Text style={{ fontSize: 16 }}>Date of birth: {userDOB}</Text>
-                        <Text style={{ fontSize: 16 }}>user id: {userEmail}</Text>
+                        <Text style={{ color: '#333', fontWeight: 'bold', fontSize: 18 }}>{userName}</Text>
+                        <Text style={{ color: '#333', fontSize: 16 }}>תאריך לידה: {userDOB}</Text>
+                        <Text style={{ color: '#333', fontSize: 16 }}>מזהה משתמש: {userEmail}</Text>
                     </View>
                 </View>
                 <View style={{ padding: 10 }}>
-                    <Text style={{ fontWeight: 'bold', fontSize: 18 }}>About {userName}:</Text>
-                    <Text style={{ fontSize: 16 }}> {userAbout}</Text>
+                    <Text style={{ color: '#333', fontWeight: 'bold', fontSize: 18 }}>אודות המשתמש {userName}:</Text>
+                    <Text style={{ color: '#333', fontSize: 16 }}> {userAbout}</Text>
                 </View>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
+                <View style={{ flexDirection: 'row-reverse', justifyContent: 'space-evenly' }}>
                     <View style={styles.switch}>
-                        <Text style={{ fontWeight: 'bold', fontSize: 18, padding: 5 }}>{isBlocked ? 'Unblock' : 'Block'}</Text>
+                        <Text style={{ color: '#333', fontWeight: 'bold', fontSize: 18, padding: 5 }}>{isBlocked ? 'בטל חסימה' : '      חסום     '}</Text>
                         <Switch
                             style={{ transform: [{ scaleX: 1.5 }, { scaleY: 1.5 }], margin: 15 }}
                             trackColor={{ false: '#444', true: '#DA0000' }}
@@ -133,7 +140,7 @@ export default ManageUser = ({ navigation, route }) => {
                         />
                     </View>
                     <View style={styles.switch}>
-                        <Text style={{ fontWeight: 'bold', fontSize: 18, padding: 5 }}>Reporter</Text>
+                        <Text style={{ color: '#333', fontWeight: 'bold', fontSize: 18, padding: 5 }}>כתב</Text>
                         <Switch
                             style={{ transform: [{ scaleX: 1.5 }, { scaleY: 1.5 }], margin: 15 }}
                             trackColor={{ false: '#444', true: '#0075AF' }}
@@ -144,7 +151,7 @@ export default ManageUser = ({ navigation, route }) => {
                         />
                     </View>
                     <View style={styles.switch}>
-                        <Text style={{ fontWeight: 'bold', fontSize: 18, padding: 5 }}>Admin</Text>
+                        <Text style={{ color: '#333', fontWeight: 'bold', fontSize: 18, padding: 5 }}>מנהל</Text>
                         <Switch
                             style={{ transform: [{ scaleX: 1.5 }, { scaleY: 1.5 }], margin: 15 }}
                             trackColor={{ false: '#444', true: '#1DAF00' }}
@@ -157,10 +164,10 @@ export default ManageUser = ({ navigation, route }) => {
                 </View >
                 <TouchableOpacity style={styles.delete} onPress={() => delete_user()}>
                     <Text style={{
-                        color: 'rgb(255,40,40)',
+                        color: '#e55a5a',
                         fontSize: 18,
                         fontWeight: 'bold',
-                    }}>Delete this user</Text>
+                    }}>מחק את המשתמש הזה</Text>
                 </TouchableOpacity>
             </View >
         </View >
@@ -171,8 +178,9 @@ const styles = StyleSheet.create({
     main: {
         flex: 1,
         justifyContent: 'space-between',
-        backgroundColor: 'rgb(200,200,220)',
-        paddingTop: Dimensions.get('screen').height / 35
+        backgroundColor: '#f2f2f3',
+        paddingTop: Dimensions.get('screen').height / 35,
+        direction: 'rtl',
     },
     switch: {
         margin: 10,
@@ -192,7 +200,7 @@ const styles = StyleSheet.create({
         margin: 10,
     },
     delete: {
-        backgroundColor: 'rgb(240,240,255)',
+        backgroundColor: '#f2f2f3',
         justifyContent: 'center',
         width: Dimensions.get('screen').width * (85 / 100),
         height: 12 + Dimensions.get('screen').width / 10,
@@ -200,7 +208,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         margin: Dimensions.get('screen').width / 10,
         borderRadius: 50,
-        borderColor: 'rgb(255,40,40)',
+        borderColor: '#e55a5a',
         borderWidth: 1,
     },
 });

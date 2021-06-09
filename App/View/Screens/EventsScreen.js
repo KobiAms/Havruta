@@ -1,174 +1,139 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useLayoutEffect } from 'react';
 import {
-    Text,
     StyleSheet,
     TouchableOpacity,
     View,
-    Alert,
     Dimensions,
-    ActivityIndicator,
+    RefreshControl,
     FlatList,
 } from 'react-native';
-import { SafeAreaView } from 'react-native';
-import auth from '@react-native-firebase/auth';
 import IconIo from 'react-native-vector-icons/Ionicons';
+import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import SkeletonContent from 'react-native-skeleton-content-nonexpo';
+import EventItem from '../Components/EventItem'
+
 
 /** A screen that displays all the events in the that is in the firestore collection */
 function EventsScreen({ navigation }) {
     const [loading, setLoading] = useState(true);
-    const [events, setEvents] = useState([]);
-    const [list_to_show, setShow] = useState(events);
+    const [refreshing, setRefreshing] = useState(false);
+    const [events, setEvents] = useState(['loading', 'loading', 'loading', 'loading']);
     const [isAdmin, setIsAdmin] = useState(false);
 
-    /*this useEffect update the state "isAdmin" after checking it's role on firebase*/
+    // listen to auth state and get the user data if is log-in
+    function onAuthStateChanged(user_state) {
+        setIsAdmin(false)
+        if (user_state) {
+            firestore().collection('users').doc(user_state.email).get()
+                .then(doc => {
+                    if (!doc) {
+                        return
+                    } else {
+                        setIsAdmin(doc.data().role == 'admin')
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        }
+    }
     useEffect(() => {
-        const subscriber = firestore()
-            .collection('users')
-            .doc(auth().currentUser.email)
-            .get().then(doc => {
-                if (!doc) return;
-                if (doc.data().role === 'admin') setIsAdmin(true);
-            })
-            .catch(err => console.log(err.code))
+        const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
         return subscriber;
     }, []);
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            title: 'האירועים שלנו',
+        });
+    }, [])
+
+    function loadEvents() {
+        setEvents(['loading', 'loading', 'loading', 'loading']);
+        firestore()
+            .collection('Events')
+            .get().then(docs => {
+                const updated_events = [];
+                if (!docs) return;
+                docs.forEach(documentSnapshot => {
+                    updated_events.push({
+                        ...documentSnapshot.data(),
+                        key: documentSnapshot.id,
+                    });
+                });
+                setEvents(updated_events);
+                setRefreshing(false)
+            });
+    }
 
     /*this useEffect update the state array "events" and "list_to_show", and put an array of objects.
    each object contains all the information about an event in the collection
    this goes onSnapshot, which mean every update that happen on the server side will be push automaticly to the local device */
     useEffect(() => {
-        const subscriber = firestore()
-            .collection('Events')
-            .onSnapshot(querySnapshot => {
-                const events = [];
-                if (!querySnapshot) return;
-                querySnapshot.forEach(documentSnapshot => {
-                    events.push({
-                        ...documentSnapshot.data(),
-                        key: documentSnapshot.id,
-                    });
-                });
-                setEvents(events);
-                setShow(events);
-                setLoading(false);
-            });
-        return subscriber;
+        loadEvents()
     }, []);
 
-
-    /**an item in the list. shows the details about the event. also makes it possible to attend/unattend */
-    function EventItem({ data }) {
-        const [isAttend, setisAttend] = useState(auth().currentUser && data.attendings ? data.attendings.includes(auth().currentUser.email) : false)
-        const [participent, setParticipent] = useState([]);
-
-        /** this function is add you or remove from a certian event in firebase */
-        function attend(key) {
-            if (auth().currentUser) {
-                if (!isAttend) {
-                    firestore().collection('Events').doc(key).update({
-                        attendings: firestore.FieldValue.arrayUnion(auth().currentUser.email)
-                    })
-                        .then(() => { setisAttend(true); Alert.alert("We will inform you the time and location!"); })
-                        .catch(err => console.log(err.code))
-                }
-                else {
-                    firestore().collection('Events').doc(key).update({
-                        attendings: firestore.FieldValue.arrayRemove(auth().currentUser.email)
-                    })
-                        .then(() => { setisAttend(false); Alert.alert("you have been removed yourself from attending this event") })
-                        .catch(err => console.log(err.code))
-                }
-            }
-            else {
-                Alert.alert("You must be registered in order to attend an event");
-            }
+    // this function return the correct item to render, choose between: skeleton,item,end
+    function item_to_render(item) {
+        if (item == 'loading') {
+            return (
+                <SkeletonContent
+                    containerStyle={styles.skeleton}
+                    layout={[
+                        { width: 100, height: Dimensions.get('screen').height * 0.02, marginBottom: 10, },
+                        { width: 200, height: Dimensions.get('screen').height * 0.04, marginBottom: 10, },
+                        { width: '100%', height: Dimensions.get('screen').height * 0.10, marginBottom: 10, },
+                        { width: "100%", height: Dimensions.get('screen').height * 0.04, }
+                    ]}
+                    isLoading={true}
+                    highlightColor={'#f3f3f4'}
+                    boneColor={'#dfdfdf'}>
+                </SkeletonContent>
+            )
+        } else if (item == 'end_list') {
+            return (<View style={{ height: 40 }} />)
+        } else {
+            return (
+                <EventItem data={item} isAdmin={isAdmin} navigation={navigation} />
+            )
         }
-        /**on render, this useEffect update the number of participents.  */
-        useEffect(() => {
-            if (data) {
-                if (data.attendings) setParticipent(data.attendings.length);
-                else setParticipent(0);
-            }
-        }, [])
-
-        /**the render of the "EventItem" */
-        return (
-            <View style={styles.item}>
-                {data ? (<View>
-                    <View>
-                        <View style={styles.textRow}>
-                            <Text>Event name: </Text>
-                            <Text style={{ fontSize: 22, fontWeight: 'bold', padding: 8 }}>{data.name}</Text>
-                        </View>
-                        <View style={styles.textRow}>
-                            <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{participent}</Text>
-                            <Text style={{ padding: 8 }}> participants have so far confirmed their arrival</Text>
-                        </View>
-                        <View style={styles.textRow}>
-                            <Text>Description: </Text>
-                            <Text style={{ fontSize: 17, fontWeight: 'bold', width: '85%', padding: 8 }}>{data.description}</Text>
-                        </View>
-                    </View>
-                    <TouchableOpacity style={styles.attend}
-                        onPress={() => attend(data.key)}>
-                        <IconIo name={isAttend ? 'albums' : 'albums-outline'} size={20} style={{ margin: 8 }}></IconIo>
-                        {isAttend ?
-                            <Text>Unattend to {data.name}</Text>
-                            : <Text>attend to {data.name}</Text>
-                        }
-                    </TouchableOpacity>
-                </View>) : null}
-            </View>
-        );
-    };
+    }
 
     /**the render of "EventScreen" */
     return (
-        <SafeAreaView style={styles.main}>
-            <View style={styles.body}>
-                <View style={styles.list_container}>
-                    {loading ? (
-                        <ActivityIndicator size="large" color="dodgerblue" />
-                    ) : (
-                        <FlatList
-                            data={list_to_show}
-                            renderItem={({ item }) => (<EventItem data={item} />)}
+        <View style={styles.main}>
+            <View style={styles.list_container}>
+                <FlatList
+                    data={[...events, 'end_list']}
+                    renderItem={({ item }) => item_to_render(item)}
+                    keyExtractor={(item, idx) => idx}
+                    refreshControl={
+                        <RefreshControl
+                            enabled={true}
+                            refreshing={refreshing}
+                            onRefresh={() => { setRefreshing(true); loadEvents(); }}
                         />
-                    )}
-                </View>
-                {isAdmin ?
-                    <TouchableOpacity
-                        style={styles.adder}
-                        onPress={() => navigation.navigate('AddEvent', { data: events })}>
-                        <IconIo name={'add-circle'} color={'rgb(120,90,140)'} size={65} />
-                    </TouchableOpacity> : null}
+                    }
+                />
             </View>
-        </SafeAreaView>
+            {isAdmin ?
+                <TouchableOpacity
+                    style={styles.adder}
+                    onPress={() => navigation.navigate('AddEvent', { data: events })}>
+                    <IconIo name={'add-circle'} color={'#0d5794'} size={65} />
+                </TouchableOpacity> : null}
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
     main: {
         flex: 1,
-        backgroundColor: 'rgb(200,200,220)',
-    },
-    body: {
-        height: '100%',
-        width: '100%',
-    },
-    attend: {
-        backgroundColor: '#fad000',
-        flexDirection: 'row',
-        alignItems: 'center',
-        alignSelf: 'center',
-        justifyContent: 'center',
-        padding: 10,
-        borderRadius: Dimensions.get('screen').width / 3,
-        width: Dimensions.get('screen').width * (70 / 100),
+        backgroundColor: '#f0fbff',
     },
     textRow: {
-        flexDirection: 'row',
+        flexDirection: 'row-reverse',
         alignItems: 'center',
         margin: 10,
     },
@@ -178,27 +143,50 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     item: {
-        padding: 20,
-        width: Dimensions.get('window').width,
-        backgroundColor: 'rgb(250,250,255)',
-        marginBottom: 4,
+        width: Dimensions.get('window').width * 0.97,
+        borderRadius: 5,
+        backgroundColor: '#fff',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 10,
+        margin: 5,
+        flex: 1,
+        minWidth: '97%',
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
-            height: 1,
+            height: 5,
         },
-        shadowOpacity: 0.20,
-        shadowRadius: 1.41,
-        elevation: 2,
+        shadowOpacity: 1,
+        shadowRadius: 3.27,
+        elevation: 5,
     },
     adder: {
-        justifyContent: 'flex-end',
-        alignItems: 'flex-end',
+        borderRadius: 38,
+        alignItems: 'center',
+        justifyContent: 'center',
         zIndex: 1,
         margin: 20,
         position: 'absolute',
         bottom: 10,
         right: 10,
     },
+    skeleton: {
+        margin: 5,
+        borderRadius: 5,
+        backgroundColor: '#fff',
+        minWidth: '97%',
+        padding: 20,
+        alignItems: 'flex-end',
+        justifyContent: 'flex-start',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 5,
+        },
+        shadowOpacity: 1,
+        shadowRadius: 3.27,
+        elevation: 5,
+    }
 });
 export default EventsScreen;

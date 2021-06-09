@@ -7,7 +7,6 @@ import SignupForm from '../Components/SignupForm';
 import UserForm from '../Components/UserForm';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { SafeAreaView } from 'react-native';
-import { ActivityIndicator } from 'react-native';
 
 GoogleSignin.configure({
   webClientId: '',
@@ -16,7 +15,6 @@ GoogleSignin.configure({
 RegistrationScreen = ({ navigation }) => {
   const [login_mode, setLogin_mode] = useState(true);
   const [user, setUser] = useState(auth().currentUser);
-  const [loading, setLoading] = useState(false)
   async function signInGoogle() {
     return;
     const { idToken } = await GoogleSignin.signIn();
@@ -28,18 +26,16 @@ RegistrationScreen = ({ navigation }) => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => (
-        <View
-          style={[styles.loading_comp, { backgroundColor: '#fffffff' }]}
-        >
-          {loading ?
-            <ActivityIndicator color={'black'} size={'small'} />
-            : null
-          }
-        </View>
-      ),
+      title: user ? user.displayName : 'התחברות'
     });
   }, [navigation])
+
+  function setUserState(user) {
+    navigation.setOptions({
+      title: user ? user.displayName : 'התחברות'
+    });
+    setUser(user)
+  }
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -47,14 +43,14 @@ RegistrationScreen = ({ navigation }) => {
         <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
         <SafeAreaView style={styles.main}>
           {user ? (
-            <UserForm style={{ flex: 1 }} setUser={setUser} navigation={navigation} setLoading={setLoading} />
+            <UserForm style={{ flex: 1 }} setUser={setUserState} navigation={navigation} />
           ) : (
             <View style={styles.body}>
               <View style={styles.form}>
                 {login_mode ? (
-                  <LoginForm setUser={setUser} />
+                  <LoginForm setUser={setUserState} />
                 ) : (
-                  <SignupForm setUser={setUser} />
+                  <SignupForm setUser={setUserState} />
                 )}
                 <TouchableOpacity
                   style={{
@@ -108,24 +104,7 @@ const styles = StyleSheet.create({
   main: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: 'rgb(200,200,220)',
-  },
-  header: {
-    width: '100%',
-    height: Dimensions.get('screen').height / 10,
-    backgroundColor: 'rgb(120,90,140)',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderColor: '#999',
-    borderBottomWidth: 1,
-    paddingLeft: 10,
-    paddingRight: 10,
-  },
-  screen_title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: 'rgb(255,255,255)',
+    backgroundColor: '#f2f2f3',
   },
   headline: {
     fontSize: 15,
@@ -144,28 +123,10 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingTop: '10%',
   },
-  container: {
-    height: '50%',
-    width: '100%',
-    justifyContent: 'center',
-    flexDirection: 'column',
-    backgroundColor: 'green',
-  },
   form: {
     height: '50%',
     alignItems: 'center',
     justifyContent: 'space-between',
-  },
-  login_button: {
-    width: '50%',
-    borderColor: 'rgb(0,0,0)',
-    borderWidth: 1,
-    borderRadius: 20,
-    padding: 5,
-    margin: 5,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   social_login: {
     height: '30%',
@@ -177,12 +138,22 @@ const styles = StyleSheet.create({
   social_login_button: {
     flexDirection: 'row',
     width: '80%',
-    padding: 5,
     alignItems: 'center',
     justifyContent: 'space-evenly',
-    backgroundColor: '#fff',
-    borderRadius: 30,
     borderWidth: 1,
+    borderRadius: 30,
+    borderColor: '#aaa',
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.32,
+    shadowRadius: 5.46,
+    elevation: 3,
+    padding: 8,
+    margin: 5
   },
 });
 

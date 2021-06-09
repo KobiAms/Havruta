@@ -1,18 +1,19 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native'
 import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 import Icon from 'react-native-vector-icons/AntDesign';
 import IconIos from 'react-native-vector-icons/Ionicons';
 import HTMLRend from 'react-native-render-html';
+import auth from '@react-native-firebase/auth'
 
 /**the first element in every article screen. this component displays the article from wordpress */
-export default function FullArticleComponent({ data, addComment, likeUpdate, isLiked, likes, isRegister, lock }) {
+export default function FullArticleComponent({ data, extraData, addComment, likeUpdate }) {
     const [commentInput, setCommentInput] = useState('')
+
     return (
         <View>
             <View style={[styles.row, { padding: 10 }]} /** user info - icon, name and date of publish */>
                 <View>
-                    {/* <Text style={{ fontWeight: 'bold' }}>{data.autor}</Text> */}
                     <Text>{data.date}</Text>
                     <HTMLRend
                         source={{ html: data.headline }}
@@ -22,6 +23,7 @@ export default function FullArticleComponent({ data, addComment, likeUpdate, isL
                             alignItems: 'flex-end',
                             textAlign: 'right',
                             fontWeight: 'bold',
+                            color: '#333'
                         }}
                     ></HTMLRend>
                     <HTMLRend
@@ -29,13 +31,13 @@ export default function FullArticleComponent({ data, addComment, likeUpdate, isL
                         contentWidth={Dimensions.get('screen').width * (95 / 100)}
                         tagsStyles={{ h5: { fontSize: 17, } }}
                         baseFontStyle={{
-                            textAlign: 'right',
+                            textAlign: 'right', color: '#333'
                         }}
                     ></HTMLRend>
                 </View>
             </View>
             {
-                data.full && !lock ?
+                extraData && !extraData.lock ?
                     <View>
                         <View style={styles.line} />
                         <View
@@ -43,19 +45,21 @@ export default function FullArticleComponent({ data, addComment, likeUpdate, isL
                         >
                             <TouchableOpacity
                                 style={styles.row}
-                                onPress={isRegister ? () => likeUpdate() : null}>
-                                <Icon name={'like1'} size={20} style={styles.pad} color={isLiked ? 'rgb(120,90,140)' : '#000'} />
-                                <Text style={{ color: isLiked ? 'rgb(120,90,140)' : '#000' }}>likes: {likes.length}</Text>
+                                onPress={auth().currentUser ? () => likeUpdate() : null}>
+                                <Icon name={'like1'} size={20} style={styles.pad} color={auth().currentUser && extraData.likes.includes(auth().currentUser.email) ? '#2e98c5' : '#333'} />
+                                <Text style={{ color: auth().currentUser && extraData.likes.includes(auth().currentUser.email) ? '#2e98c5' : '#333' }}>likes: {extraData.likes.length}</Text>
                             </TouchableOpacity>
-                            <Text>comments: {data.comments ? data.comments.length : 0}</Text>
+                            <Text style={{ color: '#333' }}>comments: {extraData.comments ? extraData.comments.length : 0}</Text>
                         </View>
                         <View style={styles.new_comment_box} /** text input to add new comment */>
                             <AutoGrowingTextInput
-                                placeholder={isRegister ? 'Add your comment...' : 'comments avilable to register users only'}
-                                style={[styles.input, isRegister ? null : { backgroundColor: '#ddd' }]}
+                                placeholder={auth().currentUser ? 'Add your comment...' : 'comments avilable to register users only'}
+                                style={[styles.input, auth().currentUser ? null : { backgroundColor: '#ddd' }]}
+                                multiline
                                 onChangeText={setCommentInput}
                                 value={commentInput}
-                                editable={isRegister ? true : false}
+                                returnKeyType={'send'}
+                                editable={auth().currentUser ? true : false}
                             />
                             <TouchableOpacity
                                 onPress={() => {
@@ -64,9 +68,9 @@ export default function FullArticleComponent({ data, addComment, likeUpdate, isL
                                     addComment(commentInput)
                                     setCommentInput('')
                                 }}
-                                style={{ marginLeft: 10 }}
+                                style={{ marginLeft: 10, }}
                             >
-                                <IconIos name={'send'} size={25} />
+                                <IconIos name={'send'} size={25} color={'#2e98c5'} />
                             </TouchableOpacity>
                         </View>
                     </View> : null}
@@ -95,6 +99,7 @@ const styles = StyleSheet.create({
         height: 40,
         borderWidth: 1,
         borderRadius: 10,
+        borderColor: '#aaa',
         backgroundColor: '#FFFFFF',
         shadowColor: '#000',
         shadowOffset: {
@@ -103,7 +108,7 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.32,
         shadowRadius: 5.46,
-        elevation: 6,
+        elevation: 3,
         padding: 7
     },
     new_comment_box: {
@@ -116,6 +121,7 @@ const styles = StyleSheet.create({
     line: {
         height: 1,
         margin: 10,
-        backgroundColor: '#000000',
+        marginBottom: 17,
+        backgroundColor: '#cfcfcf',
     },
 })

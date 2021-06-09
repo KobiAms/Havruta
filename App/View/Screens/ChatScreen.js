@@ -10,6 +10,8 @@ function ChatScreen({ navigation, route }) {
     const [chats, setChats] = useState([, , , , , , , , , ,])
     const [isAdmin, setIsAdmin] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState(auth().currentUser);
+
 
     /*this useEffect update the state "isAdmin" after checking it's role on firebase*/
     const [user, setUser] = useState(auth().currentUser);
@@ -26,7 +28,7 @@ function ChatScreen({ navigation, route }) {
                         const user_tmp = doc.data()
                         setUser(user_tmp);
                         setIsAdmin(user_tmp.role == 'admin')
-                        
+
                     }
                 })
                 .catch(err => {
@@ -103,6 +105,12 @@ function ChatScreen({ navigation, route }) {
                             width: '90%',
                             height: Dimensions.get('screen').height * 0.03,
                             marginBottom: 5,
+                        },
+                        {
+                            width: 100,
+                            height: Dimensions.get('screen').height * 0.03,
+                            borderRadius: 0,
+                            margin: 10,
                         }
                     ]}
                     isLoading={loading}>
@@ -123,7 +131,7 @@ function ChatScreen({ navigation, route }) {
 
     useLayoutEffect(() => {
         navigation.setOptions({
-            title: 'Chats',
+            title: 'צ׳אטים',
         });
     }, [])
 
@@ -137,18 +145,20 @@ function ChatScreen({ navigation, route }) {
                         <SkeletonContent
                             containerStyle={styles.skeleton}
                             layout={[
+                                { width: 60, height: 60, borderRadius: 1000, margin: 5, marginBottom: -50, },
                                 {
-                                    width: 200,
-                                    height: Dimensions.get('screen').height * 0.02,
-                                    marginBottom: 5,
+                                    width: 200, height: Dimensions.get('screen').height * 0.02, marginBottom: 5,
+                                    marginLeft: Dimensions.get('screen').width * (20 / 100),
                                 },
                                 {
-                                    width: '90%',
-                                    height: Dimensions.get('screen').height * 0.035,
-                                    marginBottom: 5,
-                                }
+                                    width: '60%', height: Dimensions.get('screen').height * 0.035, marginBottom: 5,
+                                    marginLeft: Dimensions.get('screen').width * (20 / 100),
+                                },
                             ]}
-                            isLoading={loading}>
+                            isLoading={loading}
+                            highlightColor={'#f3f3f4'}
+                            boneColor={'#dfdfdf'}
+                        >
                         </SkeletonContent>
                     )}
                     keyExtractor={(item, idx) => idx}
@@ -166,7 +176,7 @@ function ChatScreen({ navigation, route }) {
                     <TouchableOpacity
                         style={styles.adder}
                         onPress={() => navigation.navigate('AddChat', { data: chats })}>
-                        <IconIo name={'add-circle'} color={'rgb(120,90,140)'} size={65} />
+                        <IconIo name={'add-circle'} color={'#0d5794'} size={65} />
                     </TouchableOpacity> : null}
             </View>
         </View>
@@ -177,7 +187,7 @@ const styles = StyleSheet.create({
     main: {
         flex: 1,
         flexDirection: 'column',
-        backgroundColor: 'rgb(220,220,240)',
+        backgroundColor: '#f0fbff',
     },
     list: {
         height: '100%',
@@ -190,7 +200,7 @@ const styles = StyleSheet.create({
         margin: 20,
     },
     skeleton: {
-        backgroundColor: 'rgb(220,220,240)',
+        backgroundColor: '#fff',
         minWidth: '97%',
         padding: 5,
         justifyContent: 'flex-start',
@@ -203,7 +213,7 @@ const styles = StyleSheet.create({
         shadowRadius: 3.27,
         elevation: 10,
         borderBottomWidth: 1,
-        borderBottomColor: 'rgb(160,160,180)'
+        borderBottomColor: '#cfcfcf'
     }
 });
 

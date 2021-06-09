@@ -108,7 +108,7 @@ function SignupForm({ setUser }) {
                 secureTextEntry={true}
             />
             <TouchableOpacity style={styles.signup_button} onPress={() => signup()}>
-                {loading ? <ActivityIndicator size={'small'} color={'#000000'} /> : <Text>Sign-Up Now!</Text>}
+                {loading ? <ActivityIndicator size={'small'} color={'#0d5794'} /> : <Text>Sign-Up Now!</Text>}
             </TouchableOpacity>
         </View>
     )
@@ -122,20 +122,36 @@ const styles = StyleSheet.create({
     },
     input: {
         width: '80%',
-        borderColor: 'rgb(0,0,0)',
-        backgroundColor: 'rgb(255,255,255)',
         borderWidth: 1,
         borderRadius: 20,
-        padding: 10,
+        borderColor: '#aaa',
+        backgroundColor: '#FFFFFF',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity: 0.32,
+        shadowRadius: 5.46,
+        elevation: 3,
+        padding: 8,
         margin: 5
     },
     signup_button: {
         width: '50%',
-        borderColor: 'rgb(0,127,255)',
-        backgroundColor: 'rgb(255,255,255)',
         borderWidth: 1,
         borderRadius: 20,
-        padding: 10,
+        borderColor: '#0d5794',
+        backgroundColor: '#FFFFFF',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity: 0.32,
+        shadowRadius: 5.46,
+        elevation: 3,
+        padding: 8,
         margin: 5,
         flexDirection: 'row',
         alignItems: 'center',

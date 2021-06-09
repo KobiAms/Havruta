@@ -32,8 +32,8 @@ function ChatItem({ id, item }) {
         } else {
             setLastSenderName('');
             setlastMessage('');
-        }
 
+        }
     }, [setLastSenderName, setlastMessage])
 
     return (
@@ -47,7 +47,6 @@ function ChatItem({ id, item }) {
                 </View>
             </View>
             <Icon2
-                style={styles.arrow_right}
                 name={'right'}
                 size={20}
                 color={'gray'}
@@ -63,9 +62,9 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         padding: 10,
         width: Dimensions.get('window').width,
-        backgroundColor: 'rgb(250,250,255)',
+        backgroundColor: '#fff',
         borderBottomWidth: 1,
-        borderBottomColor: 'rgb(220,220,255)',
+        borderBottomColor: '#cfcfcf',
         shadowColor: "#000",
         shadowOffset: {
             width: 0,

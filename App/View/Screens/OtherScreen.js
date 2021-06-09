@@ -17,17 +17,6 @@ OtherScreen = ({ navigation, route }) => {
     return (
 
         <View style={styles.main}>
-
-            <TouchableOpacity
-                onPress={() => navigation.navigate('ChatScreen')}
-                style={styles.toScreen}>
-                <IconIo
-                    name={'chatbubbles'}
-                    size={20}
-                    color={'rgb(120,90,140)'}
-                />
-                <Text>Chats</Text>
-            </TouchableOpacity>
             <TouchableOpacity
                 onPress={() => navigation.navigate('DonationScreen')}
                 style={styles.toScreen}>
@@ -38,18 +27,6 @@ OtherScreen = ({ navigation, route }) => {
                 />
                 <Text>Donate</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-                onPress={() => navigation.navigate('EventsScreen')}
-                style={styles.toScreen}>
-                <IconFA
-                    name={'calendar'}
-                    size={20}
-                    color={'rgb(120,90,140)'}
-                />
-                <Text>Events</Text>
-            </TouchableOpacity>
-
-
         </View>
 
     )

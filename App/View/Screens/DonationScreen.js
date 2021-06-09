@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Dimensions } from 'react-native';
 import { Text, View, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import HTMLRend from 'react-native-render-html';
+import { WebView } from 'react-native-webview';
 
 function DonationScreen() {
     const html = `
@@ -21,7 +22,7 @@ function DonationScreen() {
 			    </ul>
             <donate>
         </div>`
-
+    const donate = `https://havruta.org.il/donate/`
 
     return (
         <ScrollView style={{ flex: 1, padding: 10 }}>
@@ -30,10 +31,9 @@ function DonationScreen() {
                 baseFontStyle={{
                     textAlign: 'right',
                 }}
-            // contentWidth={Dimensions.get('screen').width * (95 / 100)}
             >
-
             </HTMLRend>
+            {/* <WebView source={{ uri: 'https://havruta.org.il/donate/' }} /> */}
             <View style={{ height: 40 }}></View>
         </ScrollView>
     )

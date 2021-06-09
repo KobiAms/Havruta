@@ -28,7 +28,6 @@ export function GenericChat({navigation,route}) {
   user_id=auth().currentUser?auth().currentUser.email:auth().currentUser
   const chat_id = route.name == 'Reporters' ? 'reporters' : route.params.id;
 
-
   const [userRole, setUserRole] = useState();
  
   const [permission , setPermission] = useState();
@@ -145,6 +144,7 @@ useEffect(() => {
         user:{
             _id:user_id,
             name:name
+
         }
     }
     
@@ -157,7 +157,6 @@ useEffect(() => {
 }, );
 
 
- 
   return (
     <GiftedChat
       messages={messages}
@@ -180,3 +179,4 @@ useEffect(() => {
 }
  
 export default GenericChat
+
