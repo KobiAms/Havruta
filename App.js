@@ -45,7 +45,7 @@ MainScreenNavigator = () => {
   return (
     <Tab.Navigator
       tabBarOptions={{
-        activeTintColor: 'rgb(0,110,220)',
+        activeTintColor: '#0d5794',
         inactiveTintColor: 'gray',
       }}>
       <Tab.Screen name="MainScreen" component={MainScreen}
@@ -127,7 +127,7 @@ App = () => {
                       <TouchableOpacity
                         style={styles.register}
                         onPress={() => navigation.navigate('Registration')}>
-                        <Icon color={auth().currentUser ? '#fff' : '#f00'} name={'user-alt'} size={20} />
+                        <Icon color={auth().currentUser ? '#fff' : '#f0fbff'} name={'user-alt'} size={20} />
                       </TouchableOpacity>
                     )
                   } else {

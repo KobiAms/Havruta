@@ -73,15 +73,10 @@ export default function ChatMessageComponent({ item }) {
     );
 }
 const styles = StyleSheet.create({
-
-
-
-
     userId: {
         fontSize: 11,
         color: '#333333',
     },
-
     date: {
         fontSize: 11,
         color: '#333333',

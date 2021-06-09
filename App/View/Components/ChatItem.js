@@ -50,7 +50,6 @@ function ChatItem({ id, item }) {
                 </View>
             </View>
             <Icon2
-                style={styles.arrow_right}
                 name={'right'}
                 size={20}
                 color={'gray'}

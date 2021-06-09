@@ -110,12 +110,12 @@ function EventsScreen({ navigation }) {
                             <Text style={{ fontSize: 17, fontWeight: 'bold', padding: 8, textAlign: 'right' }}>{data.description}</Text>
                         </View>
                     </View>
-                    <TouchableOpacity style={styles.attend}
+                    <TouchableOpacity style={isAttend ? styles.unattend : styles.attend}
                         onPress={() => attend(data.key)}>
-                        <IconIo name={isAttend ? 'albums' : 'albums-outline'} size={20} style={{ margin: 8 }}></IconIo>
+                        <IconIo name={isAttend ? 'albums' : 'albums-outline'} size={22} style={{ margin: 8 }} color={isAttend ? '#e55a5a' : '#5ba92c'}></IconIo>
                         {isAttend ?
-                            <Text>אני לא אגיע ל {data.name}</Text>
-                            : <Text>אני מגיע ל{data.name}</Text>
+                            <Text style={{ color: '#e55a5a', fontWeight: 'bold' }}>אני לא אגיע ל {data.name}</Text>
+                            : <Text style={{ color: '#5ba92c', fontWeight: 'bold' }}>אני מגיע ל{data.name}</Text>
                         }
                     </TouchableOpacity>
                 </View>) : null}
@@ -159,12 +159,26 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     attend: {
-        backgroundColor: '#fad000',
+        //backgroundColor: '#5ba92c',
+        borderColor: '#5ba92c',
+        borderWidth: 3.5,
         flexDirection: 'row',
         alignItems: 'center',
         alignSelf: 'center',
         justifyContent: 'center',
-        padding: 10,
+        padding: 5,
+        borderRadius: Dimensions.get('screen').width / 3,
+        width: Dimensions.get('screen').width * (70 / 100),
+    },
+    unattend: {
+        //backgroundColor: '#e55a5a',
+        borderColor: '#e55a5a',
+        borderWidth: 3.5,
+        flexDirection: 'row',
+        alignItems: 'center',
+        alignSelf: 'center',
+        justifyContent: 'center',
+        padding: 5,
         borderRadius: Dimensions.get('screen').width / 3,
         width: Dimensions.get('screen').width * (70 / 100),
     },

@@ -233,7 +233,7 @@ function GenericChat({ navigation, route }) {
             style={styles.main}
             keyboardVerticalOffset={Platform.OS == 'ios' ? KEYBOARD_VERTICAL_OFFSET : -(headerHeight + 0)} // tabBarHeight
         >
-            <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
+            <SafeAreaView style={{ flex: 0, backgroundColor: '#0d5794' }} />
             <SafeAreaView style={{ flex: 1, backgroundColor: 'rgb(140, 140, 180)' }}>
                 <View style={styles.main}>
                     {chat_data ? <FlatList
