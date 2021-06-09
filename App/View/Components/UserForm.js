@@ -24,7 +24,7 @@ import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 import NewUserWizard from './NewUserWizard';
 
 /**the main component of any user. when a user is loged in, this component is rendered */
-export default function UserForm({ setUser, navigation, setLoading }) {
+export default function UserForm({ setUser, navigation }) {
   const [userRole, setUserRole] = useState();
   const [defaultStyle, setDefaultStyle] = useState(true);
   const [userName, setuserName] = useState('');
@@ -32,6 +32,7 @@ export default function UserForm({ setUser, navigation, setLoading }) {
   const [userAbout, setUserAbout] = useState();
   const [userAvatar, setUserAvatar] = useState();
   const [loadingAvatar, setLoadingAvatar] = useState(true);
+  const [loading, setLoading] = useState(false)
   const [editable, setEditable] = useState(false);
   const [editName, setEditName] = useState();
   const [editDate, setEditDate] = useState();
@@ -84,6 +85,8 @@ export default function UserForm({ setUser, navigation, setLoading }) {
 
   /** function activated by pressing the edit icon. allow changes in the user name, date of birth, about */
   function setToEditable() {
+    if (loading)
+      return
     if (editable) {
       // the length of the new name < 5 Discard Changes
       if (editName.length < 5) {
@@ -161,6 +164,7 @@ export default function UserForm({ setUser, navigation, setLoading }) {
           />
           <View style={styles.backline} />
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly' }}>
+
             <TouchableOpacity onPress={() => setToEditable()}>
               <View style={{ alignItems: 'center', flexDirection: 'row', backgroundColor: '#ffffff80', padding: 5, borderRadius: 20 }}>
                 <IconFeather
@@ -199,27 +203,27 @@ export default function UserForm({ setUser, navigation, setLoading }) {
                 <Text style={[styles.name, styles.editcont]}>{userName}</Text>
             }
           </View>
-          <View style={[styles.row, { textAlign: 'auto' }]}>
-            <Text style={{ fontWeight: 'bold', fontSize: 21, color: '#333' }}>תאריך לידה:</Text>
+          <View style={[styles.row, { flexDirection: 'row' }]}>
             {
               editable ?
                 <TouchableOpacity onPress={() => setDatePickerVisibility(true)} style={styles.editable}>
-                  <Text style={{ fontSize: 18, }}>{userDOB}</Text>
+                  <Text style={{ fontSize: 18, textAlign: 'right' }}>{userDOB}</Text>
                 </TouchableOpacity>
                 :
-                <Text style={[{ fontSize: 18, padding: 4, color: '#333' }, styles.editcont]}>{userDOB}</Text>
+                <Text style={[{ fontSize: 18, padding: 4, color: '#333', textAlign: 'right' }, styles.editcont]}>{userDOB}</Text>
             }
+            <Text style={{ fontWeight: 'bold', fontSize: 21, color: '#333' }}>תאריך לידה:</Text>
           </View>
           <View style={{ padding: 20 }}>
-            <Text style={{ fontWeight: 'bold', fontSize: 21, paddingLeft: 8, color: '#333' }}>עלי:</Text>
+            <Text style={{ fontWeight: 'bold', fontSize: 21, paddingLeft: 8, color: '#333', textAlign: 'right' }}>עלי:</Text>
             {
               editable ?
                 <AutoGrowingTextInput
-                  style={[styles.editable, { fontSize: 17 }]}
+                  style={[styles.editable, { fontSize: 17, textAlign: 'right' }]}
                   value={editAbout}
                   onChangeText={setEditAbout} />
                 :
-                <Text style={[{ fontSize: 17, padding: 4, color: '#333' }, styles.editcont]}>{userAbout}</Text>
+                <Text style={[{ fontSize: 17, padding: 4, color: '#333', textAlign: 'right' }, styles.editcont]}>{userAbout}</Text>
             }
           </View>
         </ScrollView >
@@ -254,11 +258,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f2f2f3',
     marginBottom: 5 + Dimensions.get('screen').height / 10,
-    direction: 'rtl',
-    textAlign: "left",
   },
   row: {
-    flexDirection: 'row-reverse',
+    flexDirection: 'row',
     alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'center',
@@ -292,7 +294,6 @@ const styles = StyleSheet.create({
     borderColor: '#00000000',
     backgroundColor: '#FFFFFF00',
     padding: 8,
-    direction: 'rtl',
   },
   chose: {
     alignItems: 'flex-end',

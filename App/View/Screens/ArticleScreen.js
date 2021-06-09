@@ -8,7 +8,6 @@ import { useHeaderHeight } from '@react-navigation/stack';
 import auth from '@react-native-firebase/auth';
 import { Pressable } from 'react-native';
 import { Platform } from 'react-native';
-import { Dimensions } from 'react-native';
 import { KeyboardAvoidingView } from 'react-native';
 
 
@@ -84,27 +83,29 @@ function ArticleScreen({ navigation, route }) {
     * admin function to delete comment from the comments array at firebase
     *///---------------------------------------------------------------
     function deleteComment(comment_to_delete) {
-        // ask user to prevent mistakes
-        Alert.alert(
-            'Delete Comment',
-            'Are you sure you want to delete this comment?',
-            [{
-                text: "Cancel",
-                style: "cancel"
-            },
-            {
-                text: "OK",
-                onPress: () => {
-                    // delete the comment object from comment array at firestore
-                    firestore().collection('article').doc(route.params.data.id).update({
-                        comments: firestore.FieldValue.arrayRemove(comment_to_delete)
-                    })
-                        .catch(err => {
-                            console.log('error delete comment: ', err)
-                        })
+        if (route.params.isAdmin) {
+            // ask user to prevent mistakes
+            Alert.alert(
+                'Delete Comment',
+                'Are you sure you want to delete this comment?',
+                [{
+                    text: "Cancel",
+                    style: "cancel"
                 },
-                style: 'destructive'
-            }])
+                {
+                    text: "OK",
+                    onPress: () => {
+                        // delete the comment object from comment array at firestore
+                        firestore().collection('article').doc(route.params.data.id).update({
+                            comments: firestore.FieldValue.arrayRemove(comment_to_delete)
+                        })
+                            .catch(err => {
+                                console.log('error delete comment: ', err)
+                            })
+                    },
+                    style: 'destructive'
+                }])
+        }
     }
 
     useLayoutEffect(() => {

@@ -52,76 +52,13 @@ function MainScreen({ navigation, route }) {
           <Text style={{ marginLeft: 10 }}>אירועים</Text>
         </TouchableOpacity>
       </View>
-      <ScrollView style={styles.main}>
-        <View style={{ height: 50 }} />
-        <View style={styles.category_title_container}>
-          <Text style={styles.category_title_text}>Category one</Text>
-        </View>
-        <FlatList
-          data={category_1}
-          horizontal={true}
-          renderItem={({ item }) => (
-            <PostInMain data={item} onPress={() => console.log('wow you can really dance')} />
-          )}
-          keyExtractor={(item, idx) => idx}
-        />
-        <View style={styles.category_title_container}>
-          <Text style={styles.category_title_text}>Category Two</Text>
-        </View>
-        <FlatList
-          data={category_2}
-          horizontal={true}
-          renderItem={({ item }) => (
-            <View style={{ padding: 20, backgroundColor: 'gold', margin: 5, height: 300, width: 300 }}>
-
-              <Text>{item}</Text>
-            </View>
-          )}
-          keyExtractor={(item, idx) => idx}
-        />
-        <View style={styles.category_title_container}>
-          <Text style={styles.category_title_text}>Category Three</Text>
-        </View>
-        <FlatList
-          data={category_3}
-          horizontal={true}
-          renderItem={({ item }) => (
-            <View style={{ padding: 20, backgroundColor: 'gold', margin: 5, height: 300, width: 300 }}>
-
-              <Text>{item}</Text>
-            </View>
-          )}
-          keyExtractor={(item, idx) => idx}
-        />
-        <View style={styles.category_title_container}>
-          <Text style={styles.category_title_text}>Category four</Text>
-        </View>
-        <FlatList
-          data={category_4}
-          horizontal={true}
-          renderItem={({ item }) => (
-            <View style={{ padding: 20, backgroundColor: 'gold', margin: 5, height: 300, width: 300 }}>
-
-              <Text>{item}</Text>
-            </View>
-          )}
-          keyExtractor={(item, idx) => idx}
-        />
-        <View style={styles.category_title_container}>
-          <Text style={styles.category_title_text}>Category five</Text>
-        </View>
-        <FlatList
-          data={category_5}
-          horizontal={true}
-          renderItem={({ item }) => (
-            <View style={{ padding: 20, backgroundColor: 'gold', margin: 5, height: 300, width: 300 }}>
-
-              <Text>{item}</Text>
-            </View>
-          )}
-          keyExtractor={(item, idx) => idx}
-        />
-      </ScrollView>
+      <FlatList
+        data={['head_list', ...category_1]}
+        renderItem={({ item }) => item == 'head_list' ? <View style={{ height: 60 }} /> :
+          <PostInMain data={item} onPress={() => console.log('wow you can really dance')} />
+        }
+        keyExtractor={(item, idx) => idx}
+      />
     </View>
   );
 };
@@ -147,19 +84,13 @@ const styles = StyleSheet.create({
     padding: 10,
     margin: 10,
     maxWidth: '27%',
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.20,
-    shadowRadius: 1.41,
-    elevation: 2,
+
   },
   header: {
     backgroundColor: '#fffd',
-    zIndex: 1,
     position: 'absolute',
+    top: 0,
+    zIndex: 1,
     flexDirection: 'row-reverse',
     alignItems: 'center',
     justifyContent: 'space-evenly',

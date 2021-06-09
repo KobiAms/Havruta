@@ -7,7 +7,6 @@ import SignupForm from '../Components/SignupForm';
 import UserForm from '../Components/UserForm';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { SafeAreaView } from 'react-native';
-import { ActivityIndicator } from 'react-native';
 
 GoogleSignin.configure({
   webClientId: '',
@@ -16,7 +15,6 @@ GoogleSignin.configure({
 RegistrationScreen = ({ navigation }) => {
   const [login_mode, setLogin_mode] = useState(true);
   const [user, setUser] = useState(auth().currentUser);
-  const [loading, setLoading] = useState(false)
   async function signInGoogle() {
     return;
     const { idToken } = await GoogleSignin.signIn();
@@ -45,7 +43,7 @@ RegistrationScreen = ({ navigation }) => {
         <SafeAreaView style={{ flex: 0, backgroundColor: 'rgb(120,90,140)' }} />
         <SafeAreaView style={styles.main}>
           {user ? (
-            <UserForm style={{ flex: 1 }} setUser={setUserState} navigation={navigation} setLoading={setLoading} />
+            <UserForm style={{ flex: 1 }} setUser={setUserState} navigation={navigation} />
           ) : (
             <View style={styles.body}>
               <View style={styles.form}>

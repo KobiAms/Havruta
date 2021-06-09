@@ -22,7 +22,7 @@ export default function GenericFeed({ navigation, route }) {
     const [fullArticles, setFullArticles] = useState(['loading', 'loading', 'loading', 'loading', 'loading', 'loading', 'loading']);
     const [user, setUser] = useState();
     const [isAdmin, setIsAdmin] = useState(false);
-    const [range, setRange] = useState()
+    const [range, setRange] = useState(0)
     const [loading, setLoading] = useState(true)
     const baseURL = 'https://havruta.org.il/wp-json'
     let api = axios.create({ baseURL });
@@ -44,11 +44,14 @@ export default function GenericFeed({ navigation, route }) {
     }
 
     async function getArticles(params, toAppend) {
-        if (toAppend) {
-            console.log('need appending')
+        let articles;
+        try {
+            articles = await api.get('/wp/v2/posts?' + params + "&page=" + (range + 1));
+            setRange(prev => prev + 1)
+        } catch (error) {
+            console.log(error)
             return
         }
-        let articles = await api.get('/wp/v2/posts?' + params);
         let arts_wp = [];
         for (let i = 0; i < articles.data.length; i++) {
             let obj = {
@@ -93,7 +96,8 @@ export default function GenericFeed({ navigation, route }) {
         }
     }
     useEffect(() => {
-        auth().onAuthStateChanged(onAuthStateChanged);
+        const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+        return subscriber
     }, []);
 
     /**this useEffect get all the articles from wp and then from fb */
@@ -124,9 +128,9 @@ export default function GenericFeed({ navigation, route }) {
         } else {
             return (
                 <PostInFeed
-                    onPress={(extraData) => navigation.navigate('ArticleScreen', { data: item, extraData: extraData })}
+                    onPress={(extraData) => navigation.navigate('ArticleScreen', { data: item, extraData: extraData, isAdmin: isAdmin })}
                     data={item}
-                    isAdmin={auth().currentUser ? user.role == 'admin' : false}
+                    isAdmin={auth().currentUser && user ? user.role == 'admin' : false}
                 />
             )
         }
@@ -155,7 +159,7 @@ export default function GenericFeed({ navigation, route }) {
                         />
                     }
                     onEndReachedThreshold={0.5}
-                    onEndReached={() => { console.log('reachhhh') }}
+                    onEndReached={() => getArticles(parameter, true)}
                     renderItem={({ item }) => item_to_render(item)}
                     keyExtractor={(item, idx) => idx}
                 />

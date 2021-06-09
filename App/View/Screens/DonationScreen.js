@@ -31,9 +31,7 @@ function DonationScreen() {
                 baseFontStyle={{
                     textAlign: 'right',
                 }}
-            // contentWidth={Dimensions.get('screen').width * (95 / 100)}
             >
-
             </HTMLRend>
             {/* <WebView source={{ uri: 'https://havruta.org.il/donate/' }} /> */}
             <View style={{ height: 40 }}></View>

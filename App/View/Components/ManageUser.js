@@ -75,15 +75,15 @@ export default ManageUser = ({ navigation, route }) => {
 
     function delete_user() {
         Alert.alert(
-            'Delete User Permanently!',
-            'Are you sure?',
+            'מחיקת משתמש לצמיתות!',
+            'האם אתה בטוח?',
             [
                 {
-                    text: "Cancel",
+                    text: "ביטול",
                     style: "cancel"
                 },
                 {
-                    text: "OK",
+                    text: "מחק",
                     onPress: () => {
                     },
                     style: 'destructive'

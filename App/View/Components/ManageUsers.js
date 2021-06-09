@@ -61,7 +61,7 @@ export default function ManageUsers({ navigation }) {
         <Text>{headline}</Text>
         <Icon2
           style={{}}
-          name={'left'}
+          name={'right'}
           size={20}
           color={'gray'}
         />
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   item: {
-    flexDirection: 'row-reverse',
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: 10,
