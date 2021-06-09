@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react'
-import { GiftedChat } from 'react-native-gifted-chat'
+import { GiftedChat, InputToolbar } from 'react-native-gifted-chat'
 import {
     View,
     StyleSheet,
@@ -29,7 +29,18 @@ export function GenericChat() {
   const [messages, setMessages] = useState([]);
   const [name , setName] = useState()
 
-  // auth().onAuthStateChanged(()=>)
+  auth().onAuthStateChanged(()=>{
+    if(auth().currentUser){
+      firestore()
+     .collection('users')
+     .doc(auth().currentUser.email)
+     .get()
+     .then(doc =>{
+         let autorDetailes = doc.data();
+         setName(autorDetailes ? autorDetailes.name : 'ghost')
+     })
+    }
+  })
  
   useEffect(() => {
 
@@ -90,7 +101,10 @@ export function GenericChat() {
         _id: user_id,
       }}
       inverted={false}
+      renderInputToolbar={!auth().currentUser?() => null:null}
       renderUsernameOnMessage={true}
+      showAvatarForEveryMessage={true}
+      
       
     />
   )
