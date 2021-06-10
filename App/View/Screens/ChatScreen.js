@@ -141,14 +141,14 @@ function ChatScreen({ navigation, route }) {
                         <SkeletonContent
                             containerStyle={styles.skeleton}
                             layout={[
-                                { width: 60, height: 60, borderRadius: 1000, margin: 5, marginBottom: -50, },
+                                { width: 50, height: 50, borderRadius: 1000, marginLeft: Dimensions.get('screen').width - 80, marginBottom: -50, },
                                 {
-                                    width: 200, height: Dimensions.get('screen').height * 0.02, marginBottom: 5,
-                                    marginLeft: Dimensions.get('screen').width * (20 / 100),
+                                    width: '40%', height: Dimensions.get('screen').height * 0.02, marginBottom: 8,
+                                    marginLeft: Dimensions.get('screen').width * (37.5 / 100),
                                 },
                                 {
-                                    width: '60%', height: Dimensions.get('screen').height * 0.035, marginBottom: 5,
-                                    marginLeft: Dimensions.get('screen').width * (20 / 100),
+                                    width: '60%', height: Dimensions.get('screen').height * 0.035, marginBottom: 8, marginTop: 5,
+                                    marginLeft: Dimensions.get('screen').width * (18 / 100),
                                 },
                             ]}
                             isLoading={loading}
