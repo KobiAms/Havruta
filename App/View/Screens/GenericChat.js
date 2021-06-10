@@ -6,11 +6,9 @@ import {
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
-import { KeyboardAvoidingView } from 'react-native';
-import { Platform, Keyboard, Pressable } from 'react-native';
+import { Platform, Keyboard, Pressable, View } from 'react-native';
 import Icon from 'react-native-vector-icons/EvilIcons';
 import { launchImageLibrary } from 'react-native-image-picker';
-import { BottomTabBar } from '@react-navigation/bottom-tabs';
 
 
 
@@ -243,6 +241,7 @@ export function GenericChat({ navigation, route }) {
                 {...props}
                 options={{
                     ['Send Image']: handlePickImage,
+                    ['Cancel']: () => { },
                 }}
                 icon={() => (
                     <Icon size={28} name={'camera'} color={"#00254d"} />
@@ -265,9 +264,7 @@ export function GenericChat({ navigation, route }) {
                 inverted={true}
                 showUserAvatar={true}
                 renderAvatar={null}
-
                 renderInputToolbar={(route.params.show_input === false || !auth().currentUser || (permission != 'user' && userRole === 'user') || (permission === 'admin' && userRole != 'admin')) ? () => <View style={{ height: 0 }} /> : null}
-
                 renderUsernameOnMessage={true}
                 renderAvatarOnTop={true}
                 onLongPress={(context, message) => onLongPress(context, message)}
