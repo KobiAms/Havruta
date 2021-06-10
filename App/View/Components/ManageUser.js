@@ -13,6 +13,7 @@ import {
     SafeAreaView
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
+import LoadingComponent from './LoadingComponent';
 
 export default ManageUser = ({ navigation, route }) => {
     const [isBlocked, setIsBlocked] = useState(false);
@@ -111,65 +112,68 @@ export default ManageUser = ({ navigation, route }) => {
 
     return (
         <View style={styles.main}>
-            <SafeAreaView style={{ flex: 0, backgroundColor: '#0d5794' }} />
-            <View style={styles.main}>
-                <View style={{ flexDirection: 'row-reverse', alignItems: 'center' }}>
-                    <View style={styles.aview}>
-                        <Image source={userAvatar} style={{ width: '100%', height: '100%' }} />
-                    </View>
-                    <View>
-                        <Text style={{ color: '#333', fontWeight: 'bold', fontSize: 18 }}>{userName}</Text>
-                        <Text style={{ color: '#333', fontSize: 16 }}>תאריך לידה: {userDOB}</Text>
-                        <Text style={{ color: '#333', fontSize: 16 }}>מזהה משתמש: {userEmail}</Text>
-                    </View>
+            <View style={{ flexDirection: 'row-reverse' }}>
+                <View style={styles.aview}>
+                    <Image source={userAvatar} style={{ width: '100%', height: '100%' }} />
                 </View>
-                <View style={{ padding: 10 }}>
-                    <Text style={{ color: '#333', fontWeight: 'bold', fontSize: 18 }}>אודות המשתמש {userName}:</Text>
-                    <Text style={{ color: '#333', fontSize: 16 }}> {userAbout}</Text>
+                <View style={{ alignItems: 'flex-end' }}>
+                    <Text style={{ color: '#333', fontWeight: 'bold', fontSize: 18 }}>{userName}</Text>
+                    <Text style={{ color: '#333', fontSize: 16 }}>תאריך לידה: {userDOB}</Text>
+                    <Text style={{ color: '#333', fontSize: 16 }}>מזהה משתמש: {userEmail}</Text>
                 </View>
-                <View style={{ flexDirection: 'row-reverse', justifyContent: 'space-evenly' }}>
-                    <View style={styles.switch}>
-                        <Text style={{ color: '#333', fontWeight: 'bold', fontSize: 18, padding: 5 }}>{isBlocked ? 'בטל חסימה' : '      חסום     '}</Text>
-                        <Switch
-                            style={{ transform: [{ scaleX: 1.5 }, { scaleY: 1.5 }], margin: 15 }}
-                            trackColor={{ false: '#444', true: '#DA0000' }}
-                            thumbColor={isBlocked ? '#F75757' : '#bbb'}
-                            ios_backgroundColor="#3e3e3e"
-                            onValueChange={toggleBlock}
-                            value={isBlocked}
-                        />
-                    </View>
-                    <View style={styles.switch}>
-                        <Text style={{ color: '#333', fontWeight: 'bold', fontSize: 18, padding: 5 }}>כתב</Text>
-                        <Switch
-                            style={{ transform: [{ scaleX: 1.5 }, { scaleY: 1.5 }], margin: 15 }}
-                            trackColor={{ false: '#444', true: '#0075AF' }}
-                            thumbColor={isReporter ? '#94C0D5' : '#bbb'}
-                            ios_backgroundColor="#3e3e3e"
-                            onValueChange={toggleReporter}
-                            value={isReporter}
-                        />
-                    </View>
-                    <View style={styles.switch}>
-                        <Text style={{ color: '#333', fontWeight: 'bold', fontSize: 18, padding: 5 }}>מנהל</Text>
-                        <Switch
-                            style={{ transform: [{ scaleX: 1.5 }, { scaleY: 1.5 }], margin: 15 }}
-                            trackColor={{ false: '#444', true: '#1DAF00' }}
-                            thumbColor={isAdmin ? '#9BD5A1' : '#bbb'}
-                            ios_backgroundColor="#3e3e3e"
-                            onValueChange={toggleAdmin}
-                            value={isAdmin}
-                        />
-                    </View>
-                </View >
-                <TouchableOpacity style={styles.delete} onPress={() => delete_user()}>
-                    <Text style={{
-                        color: '#e55a5a',
-                        fontSize: 18,
-                        fontWeight: 'bold',
-                    }}>מחק את המשתמש הזה</Text>
-                </TouchableOpacity>
+            </View>
+            <View style={{ padding: 10, alignItems: 'flex-end' }}>
+                <Text style={{ color: '#333', fontWeight: 'bold', fontSize: 18 }}>אודות המשתמש {userName}:</Text>
+                <Text style={{ color: '#333', fontSize: 16 }}> {userAbout}</Text>
+            </View>
+            <View style={{ flexDirection: 'row-reverse', justifyContent: 'space-evenly' }}>
+                <View style={styles.switch}>
+                    <Text style={{ color: '#333', fontWeight: 'bold', fontSize: 18, padding: 5 }}>חסום</Text>
+                    <Switch
+                        style={{ transform: [{ scaleX: 1.5 }, { scaleY: 1.5 }], margin: 15 }}
+                        trackColor={{ false: '#444', true: '#DA0000' }}
+                        thumbColor={isBlocked ? '#F75757' : '#bbb'}
+                        ios_backgroundColor="#3e3e3e"
+                        onValueChange={toggleBlock}
+                        value={isBlocked}
+                    />
+                </View>
+                <View style={styles.switch}>
+                    <Text style={{ color: '#333', fontWeight: 'bold', fontSize: 18, padding: 5 }}>כתב</Text>
+                    <Switch
+                        style={{ transform: [{ scaleX: 1.5 }, { scaleY: 1.5 }], margin: 15 }}
+                        trackColor={{ false: '#444', true: '#0075AF' }}
+                        thumbColor={isReporter ? '#94C0D5' : '#bbb'}
+                        ios_backgroundColor="#3e3e3e"
+                        onValueChange={toggleReporter}
+                        value={isReporter}
+                    />
+                </View>
+                <View style={styles.switch}>
+                    <Text style={{ color: '#333', fontWeight: 'bold', fontSize: 18, padding: 5 }}>מנהל</Text>
+                    <Switch
+                        style={{ transform: [{ scaleX: 1.5 }, { scaleY: 1.5 }], margin: 15 }}
+                        trackColor={{ false: '#444', true: '#1DAF00' }}
+                        thumbColor={isAdmin ? '#9BD5A1' : '#bbb'}
+                        ios_backgroundColor="#3e3e3e"
+                        onValueChange={toggleAdmin}
+                        value={isAdmin}
+                    />
+                </View>
             </View >
+            <TouchableOpacity style={styles.delete} onPress={() => delete_user()}>
+                <Text style={{
+                    color: '#e55a5a',
+                    fontSize: 18,
+                    fontWeight: 'bold',
+                }}>מחק את המשתמש הזה</Text>
+            </TouchableOpacity>
+            {
+                loading ?
+                    <LoadingComponent />
+                    :
+                    null
+            }
         </View >
     );
 };
@@ -180,7 +184,6 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         backgroundColor: '#f2f2f3',
         paddingTop: Dimensions.get('screen').height / 35,
-        direction: 'rtl',
     },
     switch: {
         margin: 10,
@@ -191,7 +194,6 @@ const styles = StyleSheet.create({
         height: 12 + Dimensions.get('screen').width / 9,
         width: 12 + Dimensions.get('screen').width / 9,
         borderRadius: Dimensions.get('screen').width / 1.5,
-        backgroundColor: 'rgb(200,200,220)',
         borderColor: '#999',
         borderWidth: 1,
         alignItems: 'center',

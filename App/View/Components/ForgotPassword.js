@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, ActivityInd
 import auth from '@react-native-firebase/auth'
 
 
-function LoginForm({ setUser }) {
+function ForgotPassword({ setUser }) {
     const [password, setPassword] = useState("12344321")
     const [email, setEmail] = useState("testy@test.com")
     const [loading, setLoading] = useState(false)
@@ -52,7 +52,7 @@ function LoginForm({ setUser }) {
                 secureTextEntry={true}
             />
             <TouchableOpacity style={styles.login_button} onPress={() => login()}>
-                {loading ? <ActivityIndicator size={'small'} color={'#0d5794'} /> : <Text>התחבר</Text>}
+                {loading ? <ActivityIndicator size={'small'} color={'#0d5794'} /> : <Text>Log-In</Text>}
             </TouchableOpacity>
         </View>
     )
@@ -102,4 +102,4 @@ const styles = StyleSheet.create({
         margin: 5
     }
 });
-export default LoginForm
+export default ForgotPassword

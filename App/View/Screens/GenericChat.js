@@ -10,7 +10,7 @@ import { KeyboardAvoidingView } from 'react-native';
 import { Platform, Keyboard, Pressable } from 'react-native';
 import Icon from 'react-native-vector-icons/EvilIcons';
 import { launchImageLibrary } from 'react-native-image-picker';
-
+import { BottomTabBar } from '@react-navigation/bottom-tabs';
 
 
 
@@ -19,10 +19,9 @@ export function GenericChat({ navigation, route }) {
     if (!(route.params && route.params.id)) {
         return new Error('Error: chat id must be received by the route')
     }
-    const chat_id = route.params.id == 'צ׳אט הכתבים' ? 'reporters' : route.params.id;
+    const chat_id = route.params.id;
 
     const [userRole, setUserRole] = useState();
-
     const [permission, setPermission] = useState();
     const [messages, setMessages] = useState([]);
     const [name, setName] = useState()
@@ -266,8 +265,9 @@ export function GenericChat({ navigation, route }) {
                 inverted={true}
                 showUserAvatar={true}
                 renderAvatar={null}
-             //   renderMessageImage={(props)=>renderMessageImage(props)}
-                renderInputToolbar={(!auth().currentUser || (permission != 'user' && userRole === 'user') || (permission === 'admin' && userRole != 'admin')) ? () => null : null}
+
+                renderInputToolbar={(route.params.show_input === false || !auth().currentUser || (permission != 'user' && userRole === 'user') || (permission === 'admin' && userRole != 'admin')) ? () => <View style={{ height: 0 }} /> : null}
+
                 renderUsernameOnMessage={true}
                 renderAvatarOnTop={true}
                 onLongPress={(context, message) => onLongPress(context, message)}

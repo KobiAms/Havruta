@@ -1,8 +1,10 @@
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, Dimensions, TouchableWithoutFeedback } from 'react-native';
+import { Text, Image, View, StyleSheet, TouchableOpacity, Dimensions, TouchableWithoutFeedback } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import IconIo from 'react-native-vector-icons/Ionicons';
+import IconAW5 from 'react-native-vector-icons/FontAwesome5';
+import axios from 'axios'
 import auth from '@react-native-firebase/auth';
 import HTMLRend from 'react-native-render-html';
 import firestore from '@react-native-firebase/firestore'
@@ -13,10 +15,11 @@ function PostInFeed({ onPress, data, isAdmin }) {
     const [postLock, setPostLock] = useState(true)
     const [newPost, setNewPost] = useState(true)
     const [postExtraData, setPostExtraData] = useState()
+    const [imageUrl, setImageUrl] = useState()
 
-    useEffect(() => {
-        const subscriber = firestore().collection('article').doc(data.id)
-            .onSnapshot(snapshot => {
+    function loadExtraData() {
+        firestore().collection('article').doc(data.id)
+            .get().then(snapshot => {
                 if (!snapshot.data()) {
                     return
                 }
@@ -25,7 +28,25 @@ function PostInFeed({ onPress, data, isAdmin }) {
                 setPostLock(extra_tmp.lock)
                 setPostExtraData(extra_tmp)
             })
-        return subscriber
+            .catch(err => console.log(err))
+    }
+
+    useEffect(() => {
+        if (data.image_link) {
+            const baseURL = data.image_link
+            axios.create({ baseURL }).get().then(res => {
+                if (res.data.guid.rendered[4] != '') {
+                    setImageUrl(res.data.guid.rendered.substring(0, 4) + 's' + res.data.guid.rendered.substring(4, res.data.guid.rendered.length))
+                } else {
+                    setImageUrl(res.data.guid.rendered)
+                }
+            }).catch((error) => {
+                console.log(error)
+            })
+        }
+        loadExtraData()
+
+
     }, [])
 
     function lock_post() {
@@ -37,10 +58,14 @@ function PostInFeed({ onPress, data, isAdmin }) {
             }).catch(err => { alert('Initialise failed:\n' + err.code) })
         } else if (postLock) {
             firestore().collection('article').doc(postData.id).update({ lock: false })
-                .then(() => setPostLock(false)).catch(err => alert('Unlock failed:\n' + err.code))
+                .then(() => {
+                    loadExtraData();
+                }).catch(err => alert('Unlock failed:\n' + err.code))
         } else {
-            firestore().collection('article').doc(postData.id).update({ lock: true }).
-                then(() => setPostLock(true)).catch(err => alert('Lock failed:\n' + err.code))
+            firestore().collection('article').doc(postData.id).update({ lock: true })
+                .then(() => {
+                    loadExtraData();
+                }).catch(err => alert('Lock failed:\n' + err.code))
         }
     }
 
@@ -53,6 +78,8 @@ function PostInFeed({ onPress, data, isAdmin }) {
                 // remove the like from the 'likes' array at firestore 
                 firestore().collection('article').doc(data.id).update({
                     likes: firestore.FieldValue.arrayRemove(auth().currentUser.email)
+                }).then(() => {
+                    loadExtraData();
                 }).catch(error => {
                     console.log('unlike failed', error)
                 })
@@ -60,69 +87,92 @@ function PostInFeed({ onPress, data, isAdmin }) {
                 // add the like into the 'likes' array at firestore 
                 firestore().collection('article').doc(data.id).update({
                     likes: firestore.FieldValue.arrayUnion(auth().currentUser.email)
+                }).then(() => {
+                    loadExtraData();
+                }).catch(error => {
+                    console.log('like failed', error)
                 })
-                    .catch(error => {
-                        console.log('like failed', error)
-                        setLoading(false)
-                    })
             }
         }
     }
 
     return (
         <TouchableWithoutFeedback onPress={() => onPress(postExtraData)}>
+
             <View style={styles.main}>
-                <View style={styles.row}>
-                    <View>
-                        <Text>{postData.date}</Text>
+                {
+                    imageUrl ?
+                        <Image style={styles.backgroundImage} source={{ uri: imageUrl }} />
+                        // null
+                        :
+                        null
+                }
+                <View style={{ padding: 15 }}>
+                    <View style={styles.row}>
+                        <View style={{ padding: 5, borderRadius: 10, backgroundColor: '#fffa', margin: 5 }}>
+                            <Text>{postData.date}</Text>
+                        </View>
+                        {
+                            isAdmin ?
+                                <TouchableOpacity style={{ padding: 5, borderRadius: 5, backgroundColor: '#fffa', margin: 5 }} onPress={() => lock_post()}>
+                                    {newPost ?
+                                        <IconIo name={'add-circle'} color={'#0d5794'} size={20} />
+                                        :
+                                        <IconAW5 name={postLock ? 'lock' : 'unlock'} color={postLock ? '#700' : '#070'} size={20} />
+                                    }
+                                </TouchableOpacity>
+                                :
+                                null
+                        }
+                    </View>
+                    <View style={{ padding: 5, borderRadius: 10, backgroundColor: '#fffa', margin: 5 }}>
+                        <HTMLRend
+                            source={{ html: postData.headline }}
+                            baseFontStyle={{
+                                fontSize: 22,
+                                alignItems: 'flex-end',
+                                fontWeight: 'bold',
+                                textAlign: 'right',
+                                color: '#333',
+                            }}
+                        ></HTMLRend>
+                    </View>
+                    <View style={{ padding: 5, borderRadius: 10, backgroundColor: '#fffa', margin: 5 }}>
+                        <HTMLRend
+                            source={{ html: postData.short }}
+                            contentWidth={Dimensions.get('window').width}
+                            baseFontStyle={{
+                                textAlign: 'right', color: '#333'
+                            }}
+                        ></HTMLRend>
                     </View>
                     {
-                        isAdmin ?
-                            <TouchableOpacity onPress={() => lock_post()}>
-                                {newPost ?
-                                    <IconIo name={'add-circle'} color={'#0d5794'} size={20} />
-                                    :
-                                    <IconIo name={postLock ? 'ios-lock-closed-outline' : 'ios-lock-open-outline'} color={postLock ? '#e55a5a' : '#5ba92c'} size={20} />
-                                }
-                            </TouchableOpacity>
-                            :
-                            null
+                        postExtraData ?
+                            <View>
+                                <View style={styles.line} />
+                                <View style={{ padding: 10, borderRadius: 10, backgroundColor: '#fffa', margin: 5 }}>
+                                    <View style={styles.response}>
+                                        {
+                                            postLock ?
+                                                <View style={styles.row}>
+                                                    <Icon name={'like1'} size={20} style={styles.pad} color={auth().currentUser && postExtraData.likes.includes(auth().currentUser.email) ? '#2e98c5' : '#333'} />
+                                                    <Text style={{ color: postExtraData.likes.includes(auth().currentUser && auth().currentUser.email) ? '#2e98c5' : '#333' }}>likes: {postExtraData.likes.length}</Text>
+                                                </View>
+                                                :
+                                                <TouchableOpacity onPress={() => updateLikes()} style={styles.row}>
+                                                    <Icon name={'like1'} size={20} style={styles.pad} color={auth().currentUser && postExtraData.likes.includes(auth().currentUser.email) ? '#2e98c5' : '#333'} />
+                                                    <Text style={{ color: postExtraData.likes.includes(auth().currentUser && auth().currentUser.email) ? '#2e98c5' : '#333' }}>likes: {postExtraData.likes.length}</Text>
+                                                </TouchableOpacity>
+                                        }
+                                        <Text style={{ color: '#333' }} >
+                                            comments: {postExtraData.comments.length}
+                                        </Text>
+                                    </View>
+                                </View>
+                            </View>
+                            : null
                     }
                 </View>
-                <HTMLRend
-                    source={{ html: postData.headline }}
-                    contentWidth={Dimensions.get('window').width}
-                    baseFontStyle={{
-                        fontSize: 22,
-                        alignItems: 'flex-end',
-                        fontWeight: 'bold',
-                        textAlign: 'right',
-                        color: '#333'
-                    }}
-                ></HTMLRend>
-                <HTMLRend
-                    source={{ html: postData.short }}
-                    contentWidth={Dimensions.get('window').width}
-                    baseFontStyle={{
-                        textAlign: 'right', color: '#333'
-                    }}
-                ></HTMLRend>
-                {
-                    postExtraData ?
-                        <View>
-                            <View style={styles.line} />
-                            <View style={styles.response}>
-                                <TouchableOpacity onPress={() => updateLikes()} style={styles.row}>
-                                    <Icon name={'like1'} size={20} style={styles.pad} color={auth().currentUser && postExtraData.likes.includes(auth().currentUser.email) ? '#2e98c5' : '#333'} />
-                                    <Text style={{ color: postExtraData.likes.includes(auth().currentUser && auth().currentUser.email) ? '#2e98c5' : '#333' }}>likes: {postExtraData.likes.length}</Text>
-                                </TouchableOpacity>
-                                <Text style={{ color: '#333' }} >
-                                    comments: {postExtraData.comments.length}
-                                </Text>
-                            </View>
-                        </View>
-                        : null
-                }
             </View>
         </TouchableWithoutFeedback >
     );
@@ -134,9 +184,10 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         backgroundColor: '#fff',
         justifyContent: 'center',
-        padding: 10,
+        // padding: 10,
         margin: 5,
         flex: 1,
+        resizeMode: 'cover', // or 'stretch'
         minWidth: '97%',
         shadowColor: "#000",
         shadowOffset: {
@@ -173,5 +224,14 @@ const styles = StyleSheet.create({
         marginBottom: 17,
         backgroundColor: '#cfcfcf',
     },
+    backgroundImage: {
+        height: '100%',
+        width: '100%',
+        resizeMode: 'cover', // or 'stretch'
+        position: 'absolute',
+        alignSelf: 'center',
+        opacity: 0.7,
+        borderRadius: 5,
+    }
 });
 export default PostInFeed;

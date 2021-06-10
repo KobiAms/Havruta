@@ -16,7 +16,6 @@ import EventItem from '../Components/EventItem'
 
 /** A screen that displays all the events in the that is in the firestore collection */
 function EventsScreen({ navigation }) {
-    const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [events, setEvents] = useState(['loading', 'loading', 'loading', 'loading']);
     const [isAdmin, setIsAdmin] = useState(false);
@@ -58,8 +57,8 @@ function EventsScreen({ navigation }) {
                 if (!docs) return;
                 docs.forEach(documentSnapshot => {
                     updated_events.push({
-                        ...documentSnapshot.data(),
-                        key: documentSnapshot.id,
+                        data: documentSnapshot.data(),
+                        id: documentSnapshot.id,
                     });
                 });
                 setEvents(updated_events);
@@ -95,7 +94,7 @@ function EventsScreen({ navigation }) {
             return (<View style={{ height: 40 }} />)
         } else {
             return (
-                <EventItem data={item} isAdmin={isAdmin} navigation={navigation} />
+                <EventItem data={item.data} id={item.id} isAdmin={isAdmin} navigation={navigation} />
             )
         }
     }
@@ -107,7 +106,7 @@ function EventsScreen({ navigation }) {
                 <FlatList
                     data={[...events, 'end_list']}
                     renderItem={({ item }) => item_to_render(item)}
-                    keyExtractor={(item, idx) => idx}
+                    keyExtractor={(item, index) => index}
                     refreshControl={
                         <RefreshControl
                             enabled={true}
@@ -170,6 +169,14 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 10,
         right: 10,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 1,
+            height: 2,
+        },
+        shadowOpacity: 0.5,
+        shadowRadius: 1.5,
+        elevation: 2,
     },
     skeleton: {
         margin: 5,

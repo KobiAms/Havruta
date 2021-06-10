@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   NavigationContainer,
   getFocusedRouteNameFromRoute,
 } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { View, StyleSheet, TouchableOpacity, Image, Dimensions, TextInput } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Image, Dimensions, TextInput, Text } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import IconMI from 'react-native-vector-icons/MaterialIcons';
@@ -24,6 +24,12 @@ import AddChat from './App/View/Screens/AddChat';
 import DonationScreen from './App/View/Screens/DonationScreen';
 import EventsScreen from './App/View/Screens/EventsScreen';
 import AddEvent from './App/View/Screens/AddEvent';
+import UserProfile from './App/View/Screens/UserProfile';
+import { Platform } from 'react-native';
+
+const HebrewDate = `<div>
+<script type="text/javascript" charset="utf-8"
+        src="https://www.hebcal.com/etc/hdate-he.js"></script></div>`;
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -46,8 +52,31 @@ MainScreenNavigator = () => {
   return (
     <Tab.Navigator
       tabBarOptions={{
-        activeTintColor: '#0d5794',
-        inactiveTintColor: 'gray',
+        activeTintColor: '#fff',
+        inactiveTintColor: '#0d5794',
+        activeBackgroundColor: '#0d5794',
+        keyboardHidesTabBar: Platform.OS == 'ios' ? true : false,
+        style: {
+          // backgroundColor: '#0d5794',
+          position: 'absolute',
+          bottom: Platform.OS == 'ios' ? 8 : 10,
+          left: Platform.OS == 'ios' ? 8 : 10,
+          right: Platform.OS == 'ios' ? 8 : 10,
+          borderRadius: Platform.OS == 'ios' ? 40 : 10,
+          borderTopLeftRadius: 5,
+          borderTopRightRadius: 5,
+          borderWidth: 2,
+          borderColor: '#1111',
+          elevation: 5,
+          backgroundColor: '#f2f2f3',
+          shadowColor: "#000",
+          shadowOffset: {
+            width: 0,
+            height: 10,
+          },
+          shadowOpacity: 0.25,
+          shadowRadius: 3.5,
+        }
       }}>
       <Tab.Screen
         name="חדשות"
@@ -62,7 +91,7 @@ MainScreenNavigator = () => {
       <Tab.Screen
         name="צ׳אט הכתבים"
         component={GenericChat}
-        initialParams={{ id: 'צ׳אט הכתבים' }}
+        initialParams={{ id: 'reporters', show_input: false }}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="comment-alt" size={25} color={color} />), })} />
       <Tab.Screen
         name="יהדות"
@@ -79,6 +108,17 @@ MainScreenNavigator = () => {
 
 
 App = () => {
+  const [hebrewDate, setHebrewDate] = useState();
+  async function getHebrewDate() {
+    const dateURL = `https://www.hebcal.com/etc/hdate-he.js`;
+    const response = await fetch(dateURL);
+    const htmlStr = await response.text();
+    const date = htmlStr.substring(16, htmlStr.length - 4)
+    setHebrewDate(date)
+  }
+  useEffect(() => {
+    getHebrewDate()
+  }, [])
   return (
     <SafeAreaProvider style={{ height: '100%', width: '100%' }}>
       <NavigationContainer>
@@ -93,66 +133,19 @@ App = () => {
             component={MainScreenNavigator}
             // set the main header to show logo, search and user 
             options={({ navigation }) => {
-              // state for search box open or close and state fo rthe search text
-              const [close, setClose] = useState(true);
-              const [toSearch, setToSearch] = useState('');
+
               return ({
                 title: 'חברותא',
-                headerLeft: () => {
-                  if (close) {
-                    return (
-                      <Image style={styles.image_title} source={require('./App/Assets/logo.png')} />
-                    )
-                  } else {
-                    return (
-                      <TouchableOpacity style={{ padding: 10, marginLeft: 10, }} onPress={() => { setToSearch(''); setClose(true) }}>
-                        <IconMI style={styles.search_icon} color={'#fff'} size={20} name={'cancel'} />
-                      </TouchableOpacity>
-                    )
-                  }
-                },
-                headerTitle: () => {
-                  return (
-                    <View style={{ justifyContent: 'flex-end', flexDirection: 'row' }}>
-                      {
-                        close ?
-                          <TouchableOpacity style={{ padding: 10 }} onPress={() => close ? setClose(false) : console.log(toSearch)}>
-                            <Icon style={styles.search_icon} color={'#fff'} size={20} name={'search'} />
-                          </TouchableOpacity>
-                          :
-                          <TextInput
-                            value={toSearch}
-                            onChangeText={setToSearch}
-                            placeholder={'חפש עכשיו...'}
-                            placeholderTextColor={'#fffa'}
-                            returnKeyType={'search'}
-                            style={styles.stack_search}
-                            autoFocus={true}
-                            onSubmitEditing={() => toSearch.length == 0 ? setClose(true) : navigation.navigate('GenericFeed', { toSearch: toSearch })}
-                          />
-                      }
-                    </View>
-                  )
-                }
+                headerLeft: () => <Image style={styles.image_title} source={require('./App/Assets/logo.png')} />,
+                headerTitle: () => <Text style={styles.hebrew_date}>{hebrewDate}</Text>
                 ,
                 // this butten show the Profile button
-                headerRight: () => {
-                  if (close) {
-                    return (
-                      <TouchableOpacity
-                        style={styles.register}
-                        onPress={() => navigation.navigate('Registration')}>
-                        <Icon color={auth().currentUser ? '#fff' : '#f0fbff'} name={'user-alt'} size={20} />
-                      </TouchableOpacity>
-                    )
-                  } else {
-                    return (
-                      <TouchableOpacity style={{ padding: 10, marginRight: 10 }} onPress={() => toSearch.length == 0 ? setClose(true) : navigation.navigate('GenericFeed', { toSearch: toSearch })}>
-                        <Icon style={styles.search_icon} color={'#fff'} size={20} name={'search'} />
-                      </TouchableOpacity>
-                    )
-                  }
-                },
+                headerRight: () =>
+                  <TouchableOpacity
+                    style={styles.register}
+                    onPress={() => navigation.navigate('Registration')}>
+                    <Icon color={auth().currentUser ? '#fff' : '#f0fbff'} name={'user-alt'} size={25} />
+                  </TouchableOpacity>
               })
             }} />
           <Stack.Screen
@@ -203,7 +196,10 @@ App = () => {
             name="AddEvent"
             component={AddEvent}
           />
-
+          <Stack.Screen
+            name="UserProfile"
+            component={UserProfile}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
@@ -266,6 +262,11 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.80,
     shadowRadius: 4,
+  },
+  hebrew_date: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold'
   }
 
 });

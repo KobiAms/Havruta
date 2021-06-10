@@ -22,6 +22,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { launchImageLibrary } from 'react-native-image-picker';
 import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 import NewUserWizard from './NewUserWizard';
+import LoadingComponent from './LoadingComponent';
 
 /**the main component of any user. when a user is loged in, this component is rendered */
 export default function UserForm({ setUser, navigation }) {
@@ -175,7 +176,7 @@ export default function UserForm({ setUser, navigation }) {
               </View>
             </TouchableOpacity>
             <TouchableOpacity style={styles.aview} onPress={() => uploadNewAvatar()}>
-              <Image source={userAvatar} style={{ width: '100%', height: '100%' }} onLoadEnd={() => setLoadingAvatar(false)} />
+              <Image source={userAvatar && userAvatar.length > 0 ? userAvatar : require('../../Assets/logo.png')} style={{ width: '100%', height: '100%' }} onLoadEnd={() => setLoadingAvatar(false)} />
               {
                 loadingAvatar ?
                   <ActivityIndicator style={{ position: 'absolute' }} color={'#007fff'} size={'large'} />
@@ -249,6 +250,12 @@ export default function UserForm({ setUser, navigation }) {
             </TouchableOpacity>
           ) : null}
         </View>
+        {
+          loading ?
+            <LoadingComponent />
+            :
+            null
+        }
       </View >
   );
 }

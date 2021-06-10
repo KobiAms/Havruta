@@ -3,8 +3,10 @@
 in ManageUser.js
     add block field in user collection in firestore. - using bulidin fb block server side - fb function - X
     implement delele user button. - using bulidin fb delete server side fb function - X
-    reporter no-op fix
-    rtl
+    reporter no-op fix - ?
+
+in UserProfile
+    header title to be the user name fix - ?
 
 in Other Screen 
     more GenericFeed category
@@ -15,44 +17,36 @@ in Other Screen
 in MainScreen
     show the top 5 from any subject required
 
-in EventScreen
-    filter out the events that thier date is over
-    Alert before delete event
-
 in AddEvent
-    add photo to events
-    fix inputs min width
-    fix keybaord covers button
+    add photo to events - V
 
 in RegistraionScreen
-    forget password
+    forget password 
 
 in GenericChat
     style chat bubble
-    fix keyboard avoiding view ios
     send images in chat
+    if navigting in from tab bar, input will not be available. instad at list 60 height spacer.
 
-in UserForm
-    indicator of submit, keyboard avoid fix
+in GenericFeed
+    posts images - V
 
-in in GenericFeed
-    indicator load more posts
-
-in PostInFeed
-    like lock fix 
 ---------- ========== done ========== ----------:
 in GenericFeed
     add search to load new feed from the search results - V
     scrolling down load more articles - V
+    indicator load more posts - V
 
 in UserForm:
     implement the edit fucntion - V
     fix issue of keyboard hiding the about text input - V
+    indicator of submit, keyboard avoid fix - V
 
 in ManageUser:
     implement changing role of admin and user. - V
     get the user avatar - V
     fix issue when entering to a reporter profile, the reporter button is off - V
+    rtl - V
 
 in ArticleScreen
     insert new comment into firestore - V
@@ -81,3 +75,19 @@ in ChatScreen
     add photo to a chat. - V
     add last message on the chat. - fix last sender name and style - V
     fix delete going inside a chat, and crash the app - V
+
+in GenericChat
+    fix keyboard avoiding view ios - V
+
+in EventScreen
+    Alert before delete event - V
+
+in AddEvent
+    fix inputs min width - V
+    fix keybaord covers button - V
+
+in PostInFeed
+    like lock fix - V
+
+in UserProfile
+    user photo does not display properley -V

@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
   container: {
     height: Dimensions.get('window').height,
     width: Dimensions.get('window').width,
-    backgroundColor: 'rgb(160,160,210)',
+    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'space-evenly',
     zIndex: 1,
@@ -38,14 +38,14 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width / 2,
     borderRadius: Dimensions.get('window').width / 4,
     borderWidth: 4,
-    borderColor: 'rgb(200,200,220)',
+    borderColor: '#0d5794',
     overflow: 'hidden',
     backgroundColor: 'rgb(200,200,220)',
   },
   text: {
     marginTop: 30,
     fontSize: 30,
-    color: 'rgb(200,200,220)',
+    color: '#0d5794',
     fontWeight: 'bold',
   },
 });

@@ -7,6 +7,7 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import axios from 'axios'
 import SkeletonContent from 'react-native-skeleton-content-nonexpo';
+import { ActivityIndicator } from 'react-native';
 
 // function to parse date object to required format: dd.mm.yyyy
 dateToReadbleFormat = (date) => date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear();
@@ -44,12 +45,17 @@ export default function GenericFeed({ navigation, route }) {
     }
 
     async function getArticles(params, toAppend) {
+        if (range < 0)
+            return
+        setLoading(true)
         let articles;
         try {
             articles = await api.get('/wp/v2/posts?' + params + "&page=" + (range + 1));
             setRange(prev => prev + 1)
         } catch (error) {
             console.log(error)
+            setLoading(false)
+            setRange(-1)
             return
         }
         let arts_wp = [];
@@ -61,11 +67,13 @@ export default function GenericFeed({ navigation, route }) {
                 date: dateToReadbleFormat(new Date(articles.data[i].date)),
                 autor: articles.data[i].author,
                 headline: articles.data[i].title.rendered,
+                image_link: articles.data[i]._links['wp:featuredmedia'] ? articles.data[i]._links['wp:featuredmedia'][0].href : undefined
             }
             arts_wp.push(obj)
         }
         if (toAppend) {
             setFullArticles([...fullArticles, ...arts_wp])
+            setLoading(false)
         } else {
             setFullArticles(arts_wp)
         }
@@ -76,11 +84,12 @@ export default function GenericFeed({ navigation, route }) {
     // listen to auth state and get the user data if is log-in
     function onAuthStateChanged(user_state) {
         setIsAdmin(false)
+        setUser(undefined)
         if (user_state) {
             firestore().collection('users').doc(user_state.email).get()
                 .then(doc => {
                     if (!doc.data()) {
-                        setUser(undefined)
+                        return
                     } else {
                         const user_tmp = doc.data()
                         setUser(user_tmp);
@@ -89,10 +98,7 @@ export default function GenericFeed({ navigation, route }) {
                 })
                 .catch(err => {
                     console.log(err)
-                    setUser(undefined)
                 })
-        } else {
-            setUser(user_state);
         }
     }
     useEffect(() => {
@@ -144,6 +150,17 @@ export default function GenericFeed({ navigation, route }) {
         wait(2000).then(() => setRefreshing(false));
     }, []);
 
+
+    function renderFooter() {
+        //it will show indicator at the bottom of the list when data is loading otherwise it returns null
+        if (!loading) return null;
+        return (
+            <ActivityIndicator size={'large'}
+                style={{ color: '#0d5794' }}
+            />
+        );
+    };
+
     return (
         <View style={styles.main}>
             <SafeAreaView style={{ flex: 0, backgroundColor: '' }} />
@@ -158,7 +175,8 @@ export default function GenericFeed({ navigation, route }) {
                             onRefresh={onRefresh}
                         />
                     }
-                    onEndReachedThreshold={0.5}
+                    ListFooterComponent={() => renderFooter()}
+                    onEndReachedThreshold={0}
                     onEndReached={() => getArticles(parameter, true)}
                     renderItem={({ item }) => item_to_render(item)}
                     keyExtractor={(item, idx) => idx}
@@ -172,15 +190,6 @@ const styles = StyleSheet.create({
     main: {
         flex: 1,
         backgroundColor: '#f0fbff',
-    },
-    headline: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: 'rgb(0,127,255)',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flex: 1,
-        textAlign: 'center',
     },
     skeleton: {
         margin: 5,

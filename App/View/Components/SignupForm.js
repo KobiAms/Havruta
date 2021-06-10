@@ -108,7 +108,7 @@ function SignupForm({ setUser }) {
                 secureTextEntry={true}
             />
             <TouchableOpacity style={styles.signup_button} onPress={() => signup()}>
-                {loading ? <ActivityIndicator size={'small'} color={'#0d5794'} /> : <Text>Sign-Up Now!</Text>}
+                {loading ? <ActivityIndicator size={'small'} color={'#0d5794'} /> : <Text>צור לי משתמש 😎</Text>}
             </TouchableOpacity>
         </View>
     )
