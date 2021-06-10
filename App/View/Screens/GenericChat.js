@@ -252,6 +252,8 @@ export function GenericChat({ navigation, route }) {
             />
         )
     }
+
+
     return (
         <Pressable style={{ flex: 1 }} onPress={() => Keyboard.dismiss()}>
             <GiftedChat
@@ -264,7 +266,7 @@ export function GenericChat({ navigation, route }) {
                 inverted={true}
                 showUserAvatar={true}
                 renderAvatar={null}
-                renderMessageImage={undefined}
+             //   renderMessageImage={(props)=>renderMessageImage(props)}
                 renderInputToolbar={(!auth().currentUser || (permission != 'user' && userRole === 'user') || (permission === 'admin' && userRole != 'admin')) ? () => null : null}
                 renderUsernameOnMessage={true}
                 renderAvatarOnTop={true}
