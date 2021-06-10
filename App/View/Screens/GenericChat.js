@@ -25,6 +25,8 @@ export function GenericChat({ navigation, route }) {
     const [messages, setMessages] = useState([]);
     const [name, setName] = useState()
     const [user, setUser] = useState(auth().currentUser)
+    const [loading,setLoading]=useState(false)
+    const [imageUri,setImageUri]=useState("")
 
     function onAuthStateChanged(user_state) { // listener to every change of the user id and updates the details about that new user that logged
         setUser()
@@ -141,12 +143,14 @@ export function GenericChat({ navigation, route }) {
             _id: message[0]._id,
             text: message[0].text,
             createdAt: String(new Date()),
+            // image:imageUri,
             user: {
                 _id: user_id,
                 name: name
 
             }
         }
+        // setImageUri("")
 
         firestore()
             .collection('chats')
@@ -175,12 +179,23 @@ export function GenericChat({ navigation, route }) {
         )
     }
 
+    function makeid(length) {  //function to generate random chat id incase that the id is already in use.
+        var result = [];
+        var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        var charactersLength = characters.length;
+        for (var i = 0; i < length; i++) {
+            result.push(characters.charAt(Math.floor(Math.random() *
+                charactersLength)));
+        }
+        return result.join('');
+    }
+
 
 
     handlePickImage=()=>{
         launchImageLibrary({}, async response => {
             if (response.didCancel) {
-              setLoading(false);
+              return
             } else if (response.error) {
               Alert.alert(
                 'Error',
@@ -188,20 +203,23 @@ export function GenericChat({ navigation, route }) {
                 [{ text: 'OK' }],
                 { cancelable: false },
               );
-              setLoading(false);
+              
             } else {
               const reference = storage().ref(
-                '/chats/' + chat_id + '/' + 'user_image.png',
+                '/chats/' + chat_id + '/' +auth().currentUser.email+'_'+makeid(20),
               );
-              await reference.putFile(response.uri);
-              reference.getDownloadURL().then(url => {
-                // setUserAvatar({ uri: url });
-                firestore().collection('users').doc(auth().currentUser.email)
-                  .update({ photo: url })
-                  .catch(() => console.log('error updtae imageurl'))
-                auth().currentUser.updateProfile({ photoURL: url })
-                  .catch(() => console.log('error updtae imageurl'))
+              setLoading(true)
+               await reference.putFile(response.uri);
+               reference.getDownloadURL().then(url => {
+                setImageUri(url)
+                
+                // firestore().collection('users').doc(auth().currentUser.email)
+                //   .update({ photo: url })
+                //   .catch(() => console.log('error updtae imageurl'))
+                // auth().currentUser.updateProfile({ photoURL: url })
+                //   .catch(() => console.log('error updtae imageurl'))
                 setLoading(false);
+                
               });
             }
           });
