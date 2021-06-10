@@ -1,6 +1,8 @@
 import React, { useState, useCallback, useEffect, useLayoutEffect } from 'react'
-import { GiftedChat,Bubble,MessageText,Actions,
-    ActionsProps } from 'react-native-gifted-chat'
+import {
+    GiftedChat, Bubble, MessageText, Actions,
+    ActionsProps
+} from 'react-native-gifted-chat'
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
@@ -25,8 +27,8 @@ export function GenericChat({ navigation, route }) {
     const [messages, setMessages] = useState([]);
     const [name, setName] = useState()
     const [user, setUser] = useState(auth().currentUser)
-    const [loading,setLoading]=useState(false)
-    const [imageUri,setImageUri]=useState("")
+    const [loading, setLoading] = useState(false)
+    const [imageUri, setImageUri] = useState("")
 
     function onAuthStateChanged(user_state) { // listener to every change of the user id and updates the details about that new user that logged
         setUser()
@@ -160,22 +162,22 @@ export function GenericChat({ navigation, route }) {
             })
     });
 
-    renderBubble=(props)=>{ // in that function we choose colors for the chat bubbles
-        return(
+    renderBubble = (props) => { // in that function we choose colors for the chat bubbles
+        return (
             <Bubble
                 {...props}
-                
+
                 wrapperStyle={{
                     right: {
                         backgroundColor: "#A4A4A4",
-                       
+
                     },
                     left: {
                         backgroundColor: "#B7ECFD",
-                        
+
                     }
                 }}
-                />
+            />
         )
     }
 
@@ -192,60 +194,69 @@ export function GenericChat({ navigation, route }) {
 
 
 
-    handlePickImage=()=>{
+    handlePickImage = () => {
         launchImageLibrary({}, async response => {
             if (response.didCancel) {
-              return
+                return
             } else if (response.error) {
-              Alert.alert(
-                'Error',
-                response.errorCode + ': ' + response.errorMessage,
-                [{ text: 'OK' }],
-                { cancelable: false },
-              );
-              
+                Alert.alert(
+                    'Error',
+                    response.errorCode + ': ' + response.errorMessage,
+                    [{ text: 'OK' }],
+                    { cancelable: false },
+                );
+
             } else {
-              const reference = storage().ref(
-                '/chats/' + chat_id + '/' +auth().currentUser.email+'_'+makeid(20),
-              );
-              setLoading(true)
-               await reference.putFile(response.uri);
-               reference.getDownloadURL().then(url => {
-                setImageUri(url)
-                
-                // firestore().collection('users').doc(auth().currentUser.email)
-                //   .update({ photo: url })
-                //   .catch(() => console.log('error updtae imageurl'))
-                // auth().currentUser.updateProfile({ photoURL: url })
-                //   .catch(() => console.log('error updtae imageurl'))
-                setLoading(false);
-                
-              });
+                const reference = storage().ref(
+                    '/chats/' + chat_id + '/' + auth().currentUser.email + '_' + makeid(20),
+                );
+                setLoading(true)
+                await reference.putFile(response.uri);
+                reference.getDownloadURL().then(url => {
+                    // in that function we build the stracture of the message we want to send to the server
+                    //after we built the message object we send it with query to firebase
+                    let tempMsg = {
+                        _id: makeid(20),
+                        text: '',
+                        createdAt: String(new Date()),
+                        image: url,
+                        user: {
+                            _id: user_id,
+                            name: name
+                        }
+                    }
+                    firestore()
+                        .collection('chats')
+                        .doc(chat_id)
+                        .update({
+                            messages: firestore.FieldValue.arrayUnion(tempMsg)
+                        }).then(() => {
+                            setLoading(false);
+                        })
+                });
             }
-          });
+        });
     }
 
     function renderActions(props) { // this function occures when the camera icon is being pressed
         return (                    // we open the menu with the options
-          <Actions
-            {...props}
-            options={{
-              ['Send Image']: handlePickImage,
-            }}
-            icon={() => (
-              <Icon  size={28} name={'camera'} color={"#00254d"} />
-            )}
-            onSend={args => console.log(args)}
-          />
+            <Actions
+                {...props}
+                options={{
+                    ['Send Image']: handlePickImage,
+                }}
+                icon={() => (
+                    <Icon size={28} name={'camera'} color={"#00254d"} />
+                )}
+                onSend={args => console.log(args)}
+            />
         )
-      }
+    }
     return (
         <Pressable style={{ flex: 1 }} onPress={() => Keyboard.dismiss()}>
             <GiftedChat
                 messages={messages}
                 renderBubble={renderBubble}
-                
-                // renderMessageText ={renderMessageText }
                 onSend={message => onSend(message)}
                 user={{
                     _id: user_id,
@@ -253,15 +264,14 @@ export function GenericChat({ navigation, route }) {
                 inverted={true}
                 showUserAvatar={true}
                 renderAvatar={null}
+                renderMessageImage={undefined}
                 renderInputToolbar={(!auth().currentUser || (permission != 'user' && userRole === 'user') || (permission === 'admin' && userRole != 'admin')) ? () => null : null}
                 renderUsernameOnMessage={true}
-                showAvatarForEveryMessage={true}
                 renderAvatarOnTop={true}
                 onLongPress={(context, message) => onLongPress(context, message)}
                 isTyping={true}
                 scrollToBottom={true}
                 renderActions={renderActions}
-               
             />
         </Pressable>
     )
