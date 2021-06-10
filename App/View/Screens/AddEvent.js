@@ -56,7 +56,7 @@ function AddEvent({ navigation, route }) {
         let new_event = {
             attending: [],
             description: eventDesc,
-            date: firestore.Timestamp.fromDate(new Date()),
+            date: firestore.Timestamp.fromDate(eventTime),
             name: eventName,
             key: event_id
         }

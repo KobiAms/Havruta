@@ -11,8 +11,8 @@ import auth from '@react-native-firebase/auth';
 import IconMI from 'react-native-vector-icons/MaterialIcons';
 import firestore from '@react-native-firebase/firestore';
 import { ActivityIndicator } from 'react-native';
-
-dateToReadbleFormat = (date) => date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear();
+// create a readble date dd.mm.yyyy hh:mm from Date obj
+dateToReadbleFormat = (date) => date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear() + ' ' + (date.getHours() < 10 ? ('0' + date.getHours()) : date.getHours()) + ':' + (date.getMinutes() < 10 ? ('0' + date.getMinutes()) : date.getMinutes());
 
 /**an item in the list. shows the details about the event. also makes it possible to attend/unattend */
 export default function EventItem({ data, isAdmin, navigation }) {
@@ -111,7 +111,7 @@ export default function EventItem({ data, isAdmin, navigation }) {
                     isAdmin && !deleteLoading ? (
 
                         <TouchableOpacity onPress={() => deleteEvent(data.key)} style={{ position: 'absolute', padding: 10, left: 0 }}>
-                            <IconMI color={deleted ? '#060' : '#500'} size={30} name={deleted ? 'replay-circle-filled' : 'cancel'} />
+                            <IconMI color={deleted ? '#5ba92c' : '#e55a5a'} size={30} name={deleted ? 'replay-circle-filled' : 'cancel'} />
                         </TouchableOpacity>
                     )
                         :
