@@ -148,7 +148,7 @@ function ArticleScreen({ navigation, route }) {
                         return <View style={{ height: 40/*Dimensions.get('screen').height * 0.34 */ }}></View>
                     return (
                         <Pressable onLongPress={() => deleteComment(item)}>
-                            <CommentComponent data={item} />
+                            <CommentComponent data={item} navigation={navigation} />
                         </Pressable>)
                 }}
                 keyExtractor={(item, idx) => idx}

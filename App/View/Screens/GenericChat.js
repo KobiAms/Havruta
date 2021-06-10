@@ -13,7 +13,7 @@ export function GenericChat({ navigation, route }) {
     if (!(route.params && route.params.id)) {
         return new Error('Error: chat id must be received by the route')
     }
-    const chat_id = route.params.id == 'צ׳אט הכתבים' ? 'reporters' : route.params.id;
+    const chat_id = route.params.id;
 
     const [userRole, setUserRole] = useState();
     const [permission, setPermission] = useState();
@@ -161,7 +161,7 @@ export function GenericChat({ navigation, route }) {
                     _id: user_id,
                 }}
                 inverted={true}
-                renderInputToolbar={(!auth().currentUser || (permission != 'user' && userRole === 'user') || (permission === 'admin' && userRole != 'admin')) ? () => <View style={{ height: 0 }} /> : null}
+                renderInputToolbar={(route.params.show_input === false || !auth().currentUser || (permission != 'user' && userRole === 'user') || (permission === 'admin' && userRole != 'admin')) ? () => <View style={{ height: 0 }} /> : null}
                 renderUsernameOnMessage={true}
                 showAvatarForEveryMessage={true}
                 renderAvatarOnTop={true}

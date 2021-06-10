@@ -40,24 +40,25 @@ function ChatItem({ id, item }) {
         <View style={styles.main} >
             <Image style={styles.image} source={item.data.imageUrl ? { uri: item.data.imageUrl } : require('../../Assets/logo.png')} />
             <View style={{ width: '70%' }}>
-                <Text style={{ fontWeight: 'bold', fontSize: 17 }}>{chat_name}</Text>
-                <View style={{ flexDirection: 'row', paddingBottom: 5, paddingTop: 5, marginTop: 5 }}>
-                    <Text style={{ color: '#333', textAlignVertical: 'bottom' }}>{lastSenderName}: </Text>
-                    <Text style={{ color: '#666', textAlignVertical: 'bottom' }}>{lastMessage}</Text>
+                <Text style={{ fontWeight: 'bold', fontSize: 17, textAlign: 'right' }}>{chat_name}</Text>
+                <View style={{ flexDirection: 'row-reverse', paddingBottom: 5, paddingTop: 5, marginTop: 5 }}>
+                    <Text style={{ color: '#333', textAlignVertical: 'bottom', textAlign: 'right' }} >{lastSenderName}</Text>
+                    <Text style={{ color: '#333', textAlignVertical: 'bottom', textAlign: 'right' }}> :</Text>
+                    <Text style={{ color: '#666', textAlignVertical: 'bottom', textAlign: 'right' }}>{lastMessage}</Text>
                 </View>
             </View>
             <Icon2
-                name={'right'}
+                name={'left'}
                 size={20}
                 color={'gray'}
             />
-        </View>
+        </View >
     )
 }
 
 const styles = StyleSheet.create({
     main: {
-        flexDirection: 'row',
+        flexDirection: 'row-reverse',
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: 10,

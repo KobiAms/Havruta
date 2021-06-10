@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {
     Text,
     StyleSheet,
@@ -11,10 +11,11 @@ import {
 import auth from '@react-native-firebase/auth';
 import IconMI from 'react-native-vector-icons/MaterialIcons';
 import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 import { ActivityIndicator } from 'react-native';
 
-
-dateToReadbleFormat = (date) => date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear();
+// create a readble date dd.mm.yyyy hh:mm from Date obj
+dateToReadbleFormat = (date) => date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear() + ' ' + (date.getHours() < 10 ? ('0' + date.getHours()) : date.getHours()) + ':' + (date.getMinutes() < 10 ? ('0' + date.getMinutes()) : date.getMinutes());
 
 /**an item in the list. shows the details about the event. also makes it possible to attend/unattend */
 export default function EventItem({ data, isAdmin, navigation, id, navigator }) {
@@ -24,7 +25,7 @@ export default function EventItem({ data, isAdmin, navigation, id, navigator }) 
     const [deleted, setDeleted] = useState(false);
     const [deleteLoading, setDeleteLoading] = useState(false)
     /** this function is add you or remove from a certian event in firebase */
-    function attend(key) {
+    function attend() {
         if (auth().currentUser) {
             if (!isAttend) {
                 firestore().collection('Events').doc(id).update({
@@ -60,7 +61,7 @@ export default function EventItem({ data, isAdmin, navigation, id, navigator }) 
         }
     }
 
-    function deleteEvent(key) {
+    function deleteEvent() {
         if (deleteLoading)
             return
         setDeleteLoading(true)
@@ -76,6 +77,7 @@ export default function EventItem({ data, isAdmin, navigation, id, navigator }) 
                     {
                         text: "מחק",
                         onPress: () => {
+
                             firestore().collection('Events').doc(id).delete()
                                 .then(() => {
                                     setDeleted(true)
@@ -85,28 +87,22 @@ export default function EventItem({ data, isAdmin, navigation, id, navigator }) 
                                     setDeleteLoading(false)
                                     alert(err);
                                 })
+                            if (data.image && data.image.length > 0) {
+                                const reference = storage().ref('/events/' + id + '.png');
+                                reference.delete().catch(err => console.log(err))
+                            }
                         },
                         style: 'destructive'
                     }
                 ]
             )
-        } else {
-            firestore().collection('Events').doc(id).set(data)
-                .then(() => {
-                    setDeleted(false)
-                    setDeleteLoading(false)
-                })
-                .catch(err => {
-                    setDeleteLoading(false)
-                    alert(err);
-                })
         }
     }
 
     /**the render of the "EventItem" */
     return (
 
-        <View style={[styles.item, { backgroundColor: deleted ? '#fffa' : '#fff' }]}>
+        <View style={[styles.item, { opacity: deleted ? 0.5 : 1 }]}>
             {
                 data.image && data.image.length > 0 ?
                     <Image source={{ uri: data.image }} style={styles.backgroundImage} />
@@ -125,7 +121,7 @@ export default function EventItem({ data, isAdmin, navigation, id, navigator }) 
                             null
                     }
                     {
-                        isAdmin && !deleteLoading ? (
+                        isAdmin && !deleted ? (
 
                             <TouchableOpacity onPress={() => deleteEvent(id)} style={{ position: 'absolute', padding: 10, left: 0 }}>
                                 <IconMI color={deleted ? '#060' : '#500'} size={30} name={deleted ? 'replay-circle-filled' : 'cancel'} />
@@ -168,6 +164,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 1,
         shadowRadius: 3.27,
         elevation: 5,
+        backgroundColor: '#fff'
 
     },
     attend: {

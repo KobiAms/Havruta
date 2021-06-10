@@ -5,6 +5,8 @@ in ManageUser.js
     implement delele user button. - using bulidin fb delete server side fb function - X
     reporter no-op fix - ?
 
+in UserProfile
+    header title to be the user name fix - ?
 
 in Other Screen 
     more GenericFeed category
@@ -16,17 +18,18 @@ in MainScreen
     show the top 5 from any subject required
 
 in AddEvent
-    add photo to events
+    add photo to events - V
 
 in RegistraionScreen
-    forget password
+    forget password 
 
 in GenericChat
     style chat bubble
     send images in chat
+    if navigting in from tab bar, input will not be available. instad at list 60 height spacer.
 
-in in GenericFeed
-    posts images 
+in GenericFeed
+    posts images - V
 
 ---------- ========== done ========== ----------:
 in GenericFeed
@@ -85,3 +88,6 @@ in AddEvent
 
 in PostInFeed
     like lock fix - V
+
+in UserProfile
+    user photo does not display properley -V

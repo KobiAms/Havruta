@@ -16,7 +16,6 @@ import EventItem from '../Components/EventItem'
 
 /** A screen that displays all the events in the that is in the firestore collection */
 function EventsScreen({ navigation }) {
-    const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [events, setEvents] = useState(['loading', 'loading', 'loading', 'loading']);
     const [isAdmin, setIsAdmin] = useState(false);
@@ -170,6 +169,14 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 10,
         right: 10,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 1,
+            height: 2,
+        },
+        shadowOpacity: 0.5,
+        shadowRadius: 1.5,
+        elevation: 2,
     },
     skeleton: {
         margin: 5,

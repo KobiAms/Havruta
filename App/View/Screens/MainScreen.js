@@ -7,10 +7,13 @@ import {
   Dimensions,
   Text,
   FlatList,
+  TextInput,
   SafeAreaView,
   TouchableOpacity,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import IconIo from 'react-native-vector-icons/Ionicons';
+import IconMI from 'react-native-vector-icons/MaterialIcons';
 import IconFA from 'react-native-vector-icons/FontAwesome';
 import PostInMain from '../Components/PostInMain';
 
@@ -22,6 +25,8 @@ const HebrewDate = `<div>
         src="https://www.hebcal.com/etc/hdate-he.js"></script></div>`;
 
 function MainScreen({ navigation, route }) {
+  const [close, setClose] = useState(true);
+  const [toSearch, setToSearch] = useState('');
   const [category_1, setCategory_1] = useState([...strings, ...strings])
   const [category_2, setCategory_2] = useState([...strings, ...strings])
   const [category_3, setCategory_3] = useState([...strings, ...strings])
@@ -42,15 +47,42 @@ function MainScreen({ navigation, route }) {
   return (
     <View style={styles.main}>
       <View style={styles.header}>
-        <Text>{hebrewDate}</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('ChatScreen')} style={styles.toScreen}>
-          <IconIo name={'chatbubbles'} size={20} color={'#0d5794'} />
-          <Text style={{ marginLeft: 10 }}>צ'אטים</Text>
+        <TouchableOpacity style={styles.toScreen} onPress={() => toSearch.length == 0 ? setClose(false) : navigation.navigate('GenericFeed', { toSearch: toSearch })}>
+          <Icon color={'#0d5794'} size={20} name={'search'} />
+          {
+            close ?
+              <Text style={{ marginLeft: 10, color: '#0d5794' }}>חיפוש</Text>
+              : null
+          }
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('EventsScreen')} style={styles.toScreen}>
-          <IconFA name={'calendar'} size={20} color={'#0d5794'} />
-          <Text style={{ marginLeft: 10 }}>אירועים</Text>
-        </TouchableOpacity>
+        {close ?
+          <TouchableOpacity onPress={() => navigation.navigate('ChatScreen')} style={styles.toScreen}>
+            <IconIo name={'chatbubbles'} size={20} color={'#0d5794'} />
+            <Text style={{ marginLeft: 10, color: '#0d5794' }}>צ'אטים</Text>
+          </TouchableOpacity>
+          :
+          <TextInput
+            value={toSearch}
+            onChangeText={setToSearch}
+            placeholder={'חפש חברותא...'}
+            placeholderTextColor={'#aaa'}
+            returnKeyType={'search'}
+            style={styles.stack_search}
+            autoFocus={true}
+            onSubmitEditing={() => toSearch.length == 0 ? setClose(true) : navigation.navigate('GenericFeed', { toSearch: toSearch })}
+          />
+        }
+        {
+          close ?
+            <TouchableOpacity onPress={() => navigation.navigate('EventsScreen')} style={styles.toScreen}>
+              <IconFA name={'calendar'} size={20} color={'#0d5794'} />
+              <Text style={{ marginLeft: 10, color: '#0d5794' }}>אירועים</Text>
+            </TouchableOpacity>
+            :
+            <TouchableOpacity style={{ padding: 10, marginLeft: 10, }} onPress={() => { setToSearch(''); setClose(true) }}>
+              <IconMI color={'#0d5794'} size={20} name={'cancel'} />
+            </TouchableOpacity>
+        }
       </View>
       <FlatList
         data={['head_list', ...category_1]}
@@ -79,6 +111,7 @@ const styles = StyleSheet.create({
   toScreen: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
+    alignItems: 'center',
     borderRadius: 20,
     borderColor: '#999',
     padding: 10,
@@ -89,13 +122,30 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: '#fffd',
     position: 'absolute',
-    top: 0,
+    top: 5,
     zIndex: 1,
     flexDirection: 'row-reverse',
     alignItems: 'center',
     justifyContent: 'space-evenly',
-    width: '100%'
-  }
+    width: '95%',
+    alignSelf: 'center',
+    elevation: 5,
+    borderRadius: 5,
+    backgroundColor: '#f2f2f3',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.5,
+  },
+  stack_search: {
+    width: Dimensions.get('screen').width * 0.6,
+    height: '100%',
+    color: '#0d5794',
+    textAlign: 'right'
+  },
 });
 
 export default MainScreen;

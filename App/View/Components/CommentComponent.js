@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { View, StyleSheet, Text } from 'react-native'
+import { View, StyleSheet, Text, TouchableWithoutFeedback } from 'react-native'
 import { Avatar } from 'react-native-elements';
 import firestore from '@react-native-firebase/firestore';
-import { Pressable } from 'react-native';
 
-export default function CommentComponent({ data }) {
+export default function CommentComponent({ data, navigation }) {
     // name of the name of the comment writer
     const [name, setName] = useState('Loading...')
     const [imageUrl, setImageUrl] = useState(require('../../Assets/logo.png'))
+    const [publishID, setPublishID] = useState(data.user_id);
 
     function timePassParser(time) {
         let now = new Date();
@@ -30,7 +30,7 @@ export default function CommentComponent({ data }) {
 
     useEffect(() => {
         // get the comment writer data from firebase  
-        firestore().collection('users').doc(data.user_id).get()
+        firestore().collection('users').doc(publishID).get()
             .then(doc => {
                 let autorDetailes = doc.data();
                 setName(autorDetailes.name)
@@ -52,12 +52,14 @@ export default function CommentComponent({ data }) {
                     title={name[0]}
                     source={imageUrl}
                     containerStyle={{ backgroundColor: '#fff', marginLeft: 3, marginTop: 2 }}
-                    onPress={() => { console.log(name) }}
+                    onPress={() => { navigation.navigate('UserProfile', { data: publishID }) }}
                 />
             </View>
             <View style={styles.comment}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <Text style={styles.autor}>{name}</Text>
+                    <TouchableWithoutFeedback onPress={() => { navigation.navigate('UserProfile', { data: publishID }) }}>
+                        <Text style={styles.autor}>{name}</Text>
+                    </TouchableWithoutFeedback>
                     <Text>{timePassParser(data.timestamp.seconds)}</Text>
                 </View>
                 <View>
