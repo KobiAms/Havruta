@@ -1,10 +1,13 @@
 import React, { useState, useCallback, useEffect, useLayoutEffect } from 'react'
-import { GiftedChat,Bubble,MessageText } from 'react-native-gifted-chat'
+import { GiftedChat,Bubble,MessageText,Actions,
+    ActionsProps } from 'react-native-gifted-chat'
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
 import { KeyboardAvoidingView } from 'react-native';
 import { Platform, Keyboard, Pressable } from 'react-native';
+import Icon from 'react-native-vector-icons/EvilIcons';
+
 
 
 
@@ -185,7 +188,25 @@ export function GenericChat({ navigation, route }) {
                 />
         )
     }
-    
+
+    handlePickImage=()=>{
+        
+    }
+
+    function renderActions(props) {
+        return (
+          <Actions
+            {...props}
+            options={{
+              ['Send Image']: handlePickImage,
+            }}
+            icon={() => (
+              <Icon  size={28} name={'camera'} color={'red'} />
+            )}
+            onSend={args => console.log(args)}
+          />
+        )
+      }
     return (
         <Pressable style={{ flex: 1 }} onPress={() => Keyboard.dismiss()}>
             <GiftedChat
@@ -198,6 +219,7 @@ export function GenericChat({ navigation, route }) {
                     _id: user_id,
                 }}
                 inverted={true}
+                showUserAvatar={true}
                 renderAvatar={null}
                 renderInputToolbar={(!auth().currentUser || (permission != 'user' && userRole === 'user') || (permission === 'admin' && userRole != 'admin')) ? () => null : null}
                 renderUsernameOnMessage={true}
@@ -206,6 +228,8 @@ export function GenericChat({ navigation, route }) {
                 onLongPress={(context, message) => onLongPress(context, message)}
                 isTyping={true}
                 scrollToBottom={true}
+                renderActions={renderActions}
+               
             />
         </Pressable>
     )
