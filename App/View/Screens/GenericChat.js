@@ -190,7 +190,7 @@ export function GenericChat({ navigation, route }) {
     }
 
     handlePickImage=()=>{
-        
+        return
     }
 
     function renderActions(props) {
