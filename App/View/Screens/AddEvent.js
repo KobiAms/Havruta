@@ -1,16 +1,22 @@
 import React, { useState, useLayoutEffect } from 'react';
 import { View, Text, Dimensions, StyleSheet, TouchableWithoutFeedback, Keyboard, TextInput, Alert } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { useHeaderHeight } from '@react-navigation/stack';
-import { Platform } from 'react-native';
+import { launchImageLibrary } from 'react-native-image-picker';
 import { KeyboardAvoidingView } from 'react-native';
+import Icon from 'react-native-vector-icons/EvilIcons'
+import { Image } from 'react-native';
+import { ActivityIndicator } from 'react-native';
 
 function AddEvent({ navigation, route }) {
     const [eventName, setEventName] = useState('');
     const [eventDesc, setEventDesc] = useState('');
     const [eventTime, setEventTime] = useState(new Date());
+    const [eventImage, setEventImage] = useState()
+    const [loading, setLoading] = useState(false)
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const headerHeight = useHeaderHeight()
 
@@ -20,6 +26,8 @@ function AddEvent({ navigation, route }) {
         setEventTime(date)
         setDatePickerVisibility(false);
     };
+
+
 
     // set header title
     useLayoutEffect(() => {
@@ -47,24 +55,61 @@ function AddEvent({ navigation, route }) {
         );
     }
 
-    function createEvent() {        //creating new event into firestore
+
+
+    // this function upload the avatar image into the storage
+    function selectImage() {
+        // lunching the camera roll / gallery
+        // lunching the camera roll / gallery
+        launchImageLibrary({}, async response => {
+            if (response.didCancel) {
+                return;
+            } else if (response.error) {
+                Alert.alert(
+                    'Error',
+                    response.errorCode + ': ' + response.errorMessage,
+                    [{ text: 'OK' }],
+                    { cancelable: false },
+                );
+            } else {
+                setEventImage(response.uri)
+            }
+        });
+
+
+    }
+
+    async function createEvent() {        //creating new event into firestore
+        if (loading)
+            return;
         if (eventName.length < 1 || eventDesc.length < 1) {
             fillAllFields()
             return
         }
+        setLoading(true)
         let event_id = makeid(20);
         let new_event = {
-            attending: [],
+            attendings: [],
             description: eventDesc,
             date: firestore.Timestamp.fromDate(new Date()),
             name: eventName,
-            key: event_id
+            key: event_id,
+            image: ''
         }
-        firestore().collection('Events').doc('events').update({
-            events: firestore.FieldValue.arrayUnion(new_event)
-        })
+        if (eventImage) {
+            const reference = storage().ref('/events/' + event_id + '.png');
+            await reference.putFile(eventImage);
+            reference.getDownloadURL().then(url => {
+                new_event.image = url
+                firestore().collection('Events').doc(event_id).set(new_event)
+                    .then(() => { navigation.goBack() }).catch((error) => { setLoading(false); alert(error) })
+            })
+                .catch((error) => { setLoading(false); alert(error) })
+        } else {
+            firestore().collection('Events').doc(event_id).set(new_event)
+                .then(() => { navigation.goBack() }).catch((error) => { setLoading(false); alert(error) })
+        }
 
-            .then(() => { navigation.goBack() }).catch((error) => { alert(error) })
     }
 
     return (
@@ -95,13 +140,24 @@ function AddEvent({ navigation, route }) {
                         onChangeText={setEventDesc}
                         placeholder={'הכנס את התיאור כאן...'} />
                 </View>
-                <View style={{ alignItems: 'center' }}>
-                    <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 5 }}>
-                        מתי יתקיים האירוע?
-                    </Text>
-                    <TouchableOpacity onPress={() => setDatePickerVisibility(true)} style={styles.editable}>
-                        <Text style={{ fontSize: 18 }}>{dateToReadbleFormat(eventTime)}</Text>
-                    </TouchableOpacity>
+                <View style={{ width: '90%', alignItems: 'flex-start', flexDirection: 'row', justifyContent: 'space-evenly' }}>
+                    <View style={{ width: '100%', alignItems: 'center', justifyContent: 'space-evenly' }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 5 }}>מתי יתקיים האירוע?</Text>
+                        <TouchableOpacity onPress={() => setDatePickerVisibility(true)} style={styles.editable}>
+                            <Text style={{ fontSize: 18 }}>{dateToReadbleFormat(eventTime)}</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={{ width: '80%', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 5 }}>תמונת האירוע:</Text>
+                        <TouchableOpacity style={[styles.editable, { minWidth: 0 }]} onPress={() => selectImage()}>
+                            {eventImage ?
+                                <Image style={{ height: 40, width: 50 }} source={{ uri: eventImage }} />
+                                :
+                                <Icon name={'image'} size={40} color={'#0d5794'} />
+
+                            }
+                        </TouchableOpacity>
+                    </View>
                 </View>
                 <DateTimePickerModal
                     isVisible={isDatePickerVisible}
@@ -113,7 +169,11 @@ function AddEvent({ navigation, route }) {
                 <TouchableOpacity
                     style={styles.submit}
                     onPress={() => createEvent()}>
-                    <Text style={{ fontSize: 22, color: '#fff', fontWeight: 'bold' }}>קבע את האירוע</Text>
+                    {loading ?
+                        <ActivityIndicator color={'#fff'} size={'small'} />
+                        :
+                        <Text style={{ fontSize: 22, color: '#fff', fontWeight: 'bold' }}>קבע את האירוע</Text>
+                    }
                 </TouchableOpacity>
             </KeyboardAvoidingView>
         </TouchableWithoutFeedback>

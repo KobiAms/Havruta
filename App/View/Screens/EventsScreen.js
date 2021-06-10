@@ -58,8 +58,8 @@ function EventsScreen({ navigation }) {
                 if (!docs) return;
                 docs.forEach(documentSnapshot => {
                     updated_events.push({
-                        ...documentSnapshot.data(),
-                        key: documentSnapshot.id,
+                        data: documentSnapshot.data(),
+                        id: documentSnapshot.id,
                     });
                 });
                 setEvents(updated_events);
@@ -71,14 +71,7 @@ function EventsScreen({ navigation }) {
    each object contains all the information about an event in the collection
    this goes onSnapshot, which mean every update that happen on the server side will be push automaticly to the local device */
     useEffect(() => {
-        const subscriber = firestore().collection('Events').doc('events')
-            .onSnapshot(doc => {
-                if (!(doc && doc.data()))
-                    return
-                const tmp_events = doc.data().events;
-                setEvents(tmp_events)
-            })
-        return subscriber
+        loadEvents()
     }, []);
 
     // this function return the correct item to render, choose between: skeleton,item,end
@@ -102,7 +95,7 @@ function EventsScreen({ navigation }) {
             return (<View style={{ height: 40 }} />)
         } else {
             return (
-                <EventItem data={item} isAdmin={isAdmin} navigation={navigation} />
+                <EventItem data={item.data} id={item.id} isAdmin={isAdmin} navigation={navigation} />
             )
         }
     }

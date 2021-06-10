@@ -1,8 +1,9 @@
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, Dimensions, TouchableWithoutFeedback } from 'react-native';
+import { Text, Image, View, StyleSheet, TouchableOpacity, Dimensions, TouchableWithoutFeedback } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import IconIo from 'react-native-vector-icons/Ionicons';
+import axios from 'axios'
 import auth from '@react-native-firebase/auth';
 import HTMLRend from 'react-native-render-html';
 import firestore from '@react-native-firebase/firestore'
@@ -13,8 +14,21 @@ function PostInFeed({ onPress, data, isAdmin }) {
     const [postLock, setPostLock] = useState(true)
     const [newPost, setNewPost] = useState(true)
     const [postExtraData, setPostExtraData] = useState()
+    const [imageUrl, setImageUrl] = useState()
 
     useEffect(() => {
+        if (data.image_link) {
+            const baseURL = data.image_link
+            axios.create({ baseURL }).get().then(res => {
+                if (res.data.guid.rendered[4] != '') {
+                    setImageUrl(res.data.guid.rendered.substring(0, 4) + 's' + res.data.guid.rendered.substring(4, res.data.guid.rendered.length))
+                } else {
+                    setImageUrl(res.data.guid.rendered)
+                }
+            }).catch((error) => {
+                console.log(error)
+            })
+        }
         const subscriber = firestore().collection('article').doc(data.id)
             .onSnapshot(snapshot => {
                 if (!snapshot.data()) {
@@ -72,6 +86,12 @@ function PostInFeed({ onPress, data, isAdmin }) {
     return (
         <TouchableWithoutFeedback onPress={() => onPress(postExtraData)}>
             <View style={styles.main}>
+                {
+                    imageUrl ?
+                        <Image style={styles.backgroundImage} source={{ uri: imageUrl }} />
+                        :
+                        null
+                }
                 <View style={styles.row}>
                     <View>
                         <Text>{postData.date}</Text>
@@ -181,5 +201,13 @@ const styles = StyleSheet.create({
         marginBottom: 17,
         backgroundColor: '#cfcfcf',
     },
+    backgroundImage: {
+        height: '100%',
+        width: '100%',
+        resizeMode: 'cover', // or 'stretch'
+        position: 'absolute',
+        alignSelf: 'center',
+        opacity: 0.5
+    }
 });
 export default PostInFeed;

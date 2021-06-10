@@ -45,6 +45,8 @@ export default function GenericFeed({ navigation, route }) {
     }
 
     async function getArticles(params, toAppend) {
+        if (range < 0)
+            return
         setLoading(true)
         let articles;
         try {
@@ -53,6 +55,7 @@ export default function GenericFeed({ navigation, route }) {
         } catch (error) {
             console.log(error)
             setLoading(false)
+            setRange(-1)
             return
         }
         let arts_wp = [];
@@ -64,6 +67,7 @@ export default function GenericFeed({ navigation, route }) {
                 date: dateToReadbleFormat(new Date(articles.data[i].date)),
                 autor: articles.data[i].author,
                 headline: articles.data[i].title.rendered,
+                image_link: articles.data[i]._links['wp:featuredmedia'] ? articles.data[i]._links['wp:featuredmedia'][0].href : undefined
             }
             arts_wp.push(obj)
         }
@@ -80,11 +84,12 @@ export default function GenericFeed({ navigation, route }) {
     // listen to auth state and get the user data if is log-in
     function onAuthStateChanged(user_state) {
         setIsAdmin(false)
+        setUser(undefined)
         if (user_state) {
             firestore().collection('users').doc(user_state.email).get()
                 .then(doc => {
                     if (!doc.data()) {
-                        setUser(undefined)
+                        return
                     } else {
                         const user_tmp = doc.data()
                         setUser(user_tmp);
@@ -93,10 +98,7 @@ export default function GenericFeed({ navigation, route }) {
                 })
                 .catch(err => {
                     console.log(err)
-                    setUser(undefined)
                 })
-        } else {
-            setUser(user_state);
         }
     }
     useEffect(() => {
@@ -151,7 +153,7 @@ export default function GenericFeed({ navigation, route }) {
 
     function renderFooter() {
         //it will show indicator at the bottom of the list when data is loading otherwise it returns null
-        if (loading) return null;
+        if (!loading) return null;
         return (
             <ActivityIndicator size={'large'}
                 style={{ color: '#0d5794' }}

@@ -28,8 +28,6 @@ in GenericChat
 in in GenericFeed
     posts images 
 
-
-
 ---------- ========== done ========== ----------:
 in GenericFeed
     add search to load new feed from the search results - V
