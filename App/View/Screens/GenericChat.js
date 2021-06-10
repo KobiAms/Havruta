@@ -7,7 +7,7 @@ import auth from '@react-native-firebase/auth';
 import { KeyboardAvoidingView } from 'react-native';
 import { Platform, Keyboard, Pressable } from 'react-native';
 import Icon from 'react-native-vector-icons/EvilIcons';
-
+import { launchImageLibrary } from 'react-native-image-picker';
 
 
 
@@ -118,7 +118,7 @@ export function GenericChat({ navigation, route }) {
                 }
             });
         }
-        else {
+        else { // in case the msg is not one of the current user he cannot delete them
             const options = ['Copy', 'Cancel'];
             const cancelButtonIndex = options.length - 1;
             context.actionSheet().showActionSheetWithOptions({
@@ -156,7 +156,7 @@ export function GenericChat({ navigation, route }) {
             })
     });
 
-    renderBubble=(props)=>{
+    renderBubble=(props)=>{ // in that function we choose colors for the chat bubbles
         return(
             <Bubble
                 {...props}
@@ -171,37 +171,51 @@ export function GenericChat({ navigation, route }) {
                         
                     }
                 }}
-                textStyle={{
-                    left: {
-                  color: 'black',
-                }
-                
-                  }}
-                timeTextStyle={{
-                    right: {
-                      color: "red"
-                    },
-                    left: {
-                      color: "red"
-                    }
-                }}
                 />
         )
     }
 
+
+
     handlePickImage=()=>{
-        return
+        launchImageLibrary({}, async response => {
+            if (response.didCancel) {
+              setLoading(false);
+            } else if (response.error) {
+              Alert.alert(
+                'Error',
+                response.errorCode + ': ' + response.errorMessage,
+                [{ text: 'OK' }],
+                { cancelable: false },
+              );
+              setLoading(false);
+            } else {
+              const reference = storage().ref(
+                '/chats/' + chat_id + '/' + 'user_image.png',
+              );
+              await reference.putFile(response.uri);
+              reference.getDownloadURL().then(url => {
+                // setUserAvatar({ uri: url });
+                firestore().collection('users').doc(auth().currentUser.email)
+                  .update({ photo: url })
+                  .catch(() => console.log('error updtae imageurl'))
+                auth().currentUser.updateProfile({ photoURL: url })
+                  .catch(() => console.log('error updtae imageurl'))
+                setLoading(false);
+              });
+            }
+          });
     }
 
-    function renderActions(props) {
-        return (
+    function renderActions(props) { // this function occures when the camera icon is being pressed
+        return (                    // we open the menu with the options
           <Actions
             {...props}
             options={{
               ['Send Image']: handlePickImage,
             }}
             icon={() => (
-              <Icon  size={28} name={'camera'} color={'red'} />
+              <Icon  size={28} name={'camera'} color={"#00254d"} />
             )}
             onSend={args => console.log(args)}
           />
