@@ -24,6 +24,7 @@ import AddChat from './App/View/Screens/AddChat';
 import DonationScreen from './App/View/Screens/DonationScreen';
 import EventsScreen from './App/View/Screens/EventsScreen';
 import AddEvent from './App/View/Screens/AddEvent';
+import UserProfile from './App/View/Screens/UserProfile';
 import { Platform } from 'react-native';
 
 const Stack = createStackNavigator();
@@ -205,7 +206,10 @@ App = () => {
             name="AddEvent"
             component={AddEvent}
           />
-
+          <Stack.Screen
+            name="UserProfile"
+            component={UserProfile}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
