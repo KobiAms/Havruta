@@ -7,6 +7,7 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import axios from 'axios'
 import SkeletonContent from 'react-native-skeleton-content-nonexpo';
+import { ActivityIndicator } from 'react-native';
 
 // function to parse date object to required format: dd.mm.yyyy
 dateToReadbleFormat = (date) => date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear();
@@ -44,12 +45,14 @@ export default function GenericFeed({ navigation, route }) {
     }
 
     async function getArticles(params, toAppend) {
+        setLoading(true)
         let articles;
         try {
             articles = await api.get('/wp/v2/posts?' + params + "&page=" + (range + 1));
             setRange(prev => prev + 1)
         } catch (error) {
             console.log(error)
+            setLoading(false)
             return
         }
         let arts_wp = [];
@@ -66,6 +69,7 @@ export default function GenericFeed({ navigation, route }) {
         }
         if (toAppend) {
             setFullArticles([...fullArticles, ...arts_wp])
+            setLoading(false)
         } else {
             setFullArticles(arts_wp)
         }
@@ -144,6 +148,17 @@ export default function GenericFeed({ navigation, route }) {
         wait(2000).then(() => setRefreshing(false));
     }, []);
 
+
+    function renderFooter() {
+        //it will show indicator at the bottom of the list when data is loading otherwise it returns null
+        if (loading) return null;
+        return (
+            <ActivityIndicator size={'large'}
+                style={{ color: '#0d5794' }}
+            />
+        );
+    };
+
     return (
         <View style={styles.main}>
             <SafeAreaView style={{ flex: 0, backgroundColor: '' }} />
@@ -158,7 +173,8 @@ export default function GenericFeed({ navigation, route }) {
                             onRefresh={onRefresh}
                         />
                     }
-                    onEndReachedThreshold={0.5}
+                    ListFooterComponent={() => renderFooter()}
+                    onEndReachedThreshold={0}
                     onEndReached={() => getArticles(parameter, true)}
                     renderItem={({ item }) => item_to_render(item)}
                     keyExtractor={(item, idx) => idx}
@@ -172,15 +188,6 @@ const styles = StyleSheet.create({
     main: {
         flex: 1,
         backgroundColor: '#f0fbff',
-    },
-    headline: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: 'rgb(0,127,255)',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flex: 1,
-        textAlign: 'center',
     },
     skeleton: {
         margin: 5,

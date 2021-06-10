@@ -14,6 +14,7 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import firestore from '@react-native-firebase/firestore';
 import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 import auth from '@react-native-firebase/auth';
+import { ActivityIndicator } from 'react-native';
 
 /**A wizard to complete all of the missing data about a new user */
 export default function NewUserWizard() {
@@ -21,6 +22,7 @@ export default function NewUserWizard() {
     const [editDate, setEditDate] = useState();
     const [userDOB, setuserDOB] = useState('6.9.1969');
     const [editAbout, setEditAbout] = useState('');
+    const [loading, setLoading] = useState(false)
     const [userName, setuserName] = useState('');
 
     // create a readble date dd.mm.yyyy from Date obj
@@ -35,6 +37,9 @@ export default function NewUserWizard() {
 
     /**write the new data to the database */
     function setSubmit() {
+        if (loading)
+            return
+        setLoading(true)
         if (auth().currentUser.displayName === userName) {
             firestore().collection('users').doc(auth().currentUser.email)
                 .update({
@@ -42,7 +47,8 @@ export default function NewUserWizard() {
                     dob: firestore.Timestamp.fromDate(editDate),
                     isNew: false
                 })
-                .then(() => { console.log("old user") }).catch(err => console.log(err.code))
+                .then(() => { setLoading(false) })
+                .catch(err => console.log(err.code))
         }
     }
 
@@ -79,7 +85,7 @@ export default function NewUserWizard() {
                         onCancel={() => setDatePickerVisibility(false)}
                     />
                     <View style={{ margin: 10, alignItems: 'center' }}>
-                        <Text style={{ fontSize: 24, fontWeight: 'bold', margin: 10 }}>Welcome {userName}!</Text>
+                        <Text style={{ fontSize: 24, fontWeight: 'bold', margin: 10 }}>ברוכים הבאים {userName}!</Text>
                         <Text style={{ fontSize: 18, alignSelf: 'center' }}>It is great having you in our comunity. please fill in your information so we can get to know you better.</Text>
                         <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>Please chose your date of birth:</Text>
                         <TouchableOpacity onPress={() => setDatePickerVisibility(true)} style={styles.editable}>
@@ -97,7 +103,12 @@ export default function NewUserWizard() {
                     <TouchableOpacity
                         style={styles.submit}
                         onPress={() => setSubmit()}>
-                        <Text style={{ fontSize: 22, color: '#fff', fontWeight: 'bold' }}>Submit</Text>
+                        {
+                            loading ?
+                                <ActivityIndicator color={'#fff'} />
+                                :
+                                <Text style={{ fontSize: 22, color: '#fff', fontWeight: 'bold' }}>Submit</Text>
+                        }
                     </TouchableOpacity>
                 </View >
             </TouchableWithoutFeedback>
@@ -110,7 +121,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         flex: 1,
         alignItems: 'center',
-        backgroundColor: 'rgb(200,200,220)',
         padding: 15
     },
     editable: {

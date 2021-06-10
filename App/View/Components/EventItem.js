@@ -18,7 +18,7 @@ dateToReadbleFormat = (date) => date.getDate() + '.' + (date.getMonth() + 1) + '
 export default function EventItem({ data, isAdmin, navigation }) {
     const [isAttend, setisAttend] = useState(auth().currentUser && data.attendings ? data.attendings.includes(auth().currentUser.email) : false)
     const [participent, setParticipent] = useState(data.attendings ? data.attendings.length : 0);
-    const [eventData, setEventData] = useState(data)
+    const eventData = data
     const [deleted, setDeleted] = useState(false);
     const [deleteLoading, setDeleteLoading] = useState(false)
     /** this function is add you or remove from a certian event in firebase */
@@ -63,25 +63,33 @@ export default function EventItem({ data, isAdmin, navigation }) {
             return
         setDeleteLoading(true)
         if (!deleted) {
-            firestore().collection('Events').doc(key).delete()
-                .then(() => {
-                    setDeleted(true)
-                    setDeleteLoading(false)
-                })
-                .catch(err => {
-                    setDeleteLoading(false)
-                    alert(err);
-                })
-        } else {
-            firestore().collection('Events').doc(key).set(eventData)
-                .then(() => {
-                    setDeleted(false)
-                    setDeleteLoading(false)
-                })
-                .catch(err => {
-                    setDeleteLoading(false)
-                    alert(err);
-                })
+            Alert.alert(
+                'מחיקת אירוע לצמיתות!',
+                'האם אתה בטוח?',
+                [
+                    {
+                        text: "ביטול",
+                        style: "cancel"
+                    },
+                    {
+                        text: "מחק",
+                        onPress: () => {
+                            firestore().collection('Events').doc('events').update({
+                                events: firestore.FieldValue.arrayRemove(data)
+                            })
+                                .then(() => {
+                                    setDeleted(true)
+                                    setDeleteLoading(false)
+                                })
+                                .catch(err => {
+                                    setDeleteLoading(false)
+                                    alert(err);
+                                })
+                        },
+                        style: 'destructive'
+                    }
+                ]
+            )
         }
     }
 
@@ -109,7 +117,7 @@ export default function EventItem({ data, isAdmin, navigation }) {
                         :
                         null
                 }
-                <Text style={{ position: 'absolute', right: 10, fontSize: 17, color: '#444', padding: 8 }}>{dateToReadbleFormat(data.details.toDate())}</Text>
+                <Text style={{ position: 'absolute', right: 10, fontSize: 17, color: '#444', padding: 8 }}>{dateToReadbleFormat(data.date.toDate())}</Text>
             </View>
             <Text style={{ fontSize: 22, fontWeight: 'bold', padding: 8 }}>{data.name}</Text>
             <Text style={{ fontSize: 17, padding: 8, width: '90%', textAlign: 'right' }}>{data.description}</Text>

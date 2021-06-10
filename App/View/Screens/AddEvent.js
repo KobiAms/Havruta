@@ -56,11 +56,14 @@ function AddEvent({ navigation, route }) {
         let new_event = {
             attending: [],
             description: eventDesc,
-            details: firestore.Timestamp.fromDate(new Date()),
+            date: firestore.Timestamp.fromDate(new Date()),
             name: eventName,
+            key: event_id
         }
-        firestore().collection('Events').doc(event_id)
-            .set(new_event)
+        firestore().collection('Events').doc('events').update({
+            events: firestore.FieldValue.arrayUnion(new_event)
+        })
+
             .then(() => { navigation.goBack() }).catch((error) => { alert(error) })
     }
 

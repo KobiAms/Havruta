@@ -112,10 +112,18 @@ function PostInFeed({ onPress, data, isAdmin }) {
                         <View>
                             <View style={styles.line} />
                             <View style={styles.response}>
-                                <TouchableOpacity onPress={() => updateLikes()} style={styles.row}>
-                                    <Icon name={'like1'} size={20} style={styles.pad} color={auth().currentUser && postExtraData.likes.includes(auth().currentUser.email) ? '#2e98c5' : '#333'} />
-                                    <Text style={{ color: postExtraData.likes.includes(auth().currentUser && auth().currentUser.email) ? '#2e98c5' : '#333' }}>likes: {postExtraData.likes.length}</Text>
-                                </TouchableOpacity>
+                                {
+                                    postLock ?
+                                        <View style={styles.row}>
+                                            <Icon name={'like1'} size={20} style={styles.pad} color={auth().currentUser && postExtraData.likes.includes(auth().currentUser.email) ? '#2e98c5' : '#333'} />
+                                            <Text style={{ color: postExtraData.likes.includes(auth().currentUser && auth().currentUser.email) ? '#2e98c5' : '#333' }}>likes: {postExtraData.likes.length}</Text>
+                                        </View>
+                                        :
+                                        <TouchableOpacity onPress={() => updateLikes()} style={styles.row}>
+                                            <Icon name={'like1'} size={20} style={styles.pad} color={auth().currentUser && postExtraData.likes.includes(auth().currentUser.email) ? '#2e98c5' : '#333'} />
+                                            <Text style={{ color: postExtraData.likes.includes(auth().currentUser && auth().currentUser.email) ? '#2e98c5' : '#333' }}>likes: {postExtraData.likes.length}</Text>
+                                        </TouchableOpacity>
+                                }
                                 <Text style={{ color: '#333' }} >
                                     comments: {postExtraData.comments.length}
                                 </Text>
