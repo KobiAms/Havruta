@@ -1,25 +1,50 @@
 ---------- ========== toDo ========== ----------:
-in GenericFeed
-    add search to load new feed from the search results
-    scrolling down load more articles
 
 in ManageUser.js
     add block field in user collection in firestore. - using bulidin fb block server side - fb function - X
     implement delele user button. - using bulidin fb delete server side fb function - X
+    reporter no-op fix
+    rtl
 
 in Other Screen 
-    more subject articles section
+    more GenericFeed category
+    add category
+    about page
+    overall style
     
 in MainScreen
     show the top 5 from any subject required
 
 in EventScreen
     filter out the events that thier date is over
+    Alert before delete event
+
+in AddEvent
+    add photo to events
+    fix inputs min width
+    fix keybaord covers button
+
 in RegistraionScreen
     forget password
 
+in GenericChat
+    style chat bubble
+    fix keyboard avoiding view ios
+    send images in chat
 
+in UserForm
+    indicator of submit, keyboard avoid fix
+
+in in GenericFeed
+    indicator load more posts
+
+in PostInFeed
+    like lock fix 
 ---------- ========== done ========== ----------:
+in GenericFeed
+    add search to load new feed from the search results - V
+    scrolling down load more articles - V
+
 in UserForm:
     implement the edit fucntion - V
     fix issue of keyboard hiding the about text input - V
