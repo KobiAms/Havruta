@@ -170,9 +170,19 @@ export function GenericChat({ navigation, route }) {
                 }}
                 textStyle={{
                     left: {
-                  color: '',
+                  color: 'black',
                 }
-                  }}/>
+                
+                  }}
+                timeTextStyle={{
+                    right: {
+                      color: "red"
+                    },
+                    left: {
+                      color: "red"
+                    }
+                }}
+                />
         )
     }
     
@@ -181,6 +191,7 @@ export function GenericChat({ navigation, route }) {
             <GiftedChat
                 messages={messages}
                 renderBubble={renderBubble}
+                
                 // renderMessageText ={renderMessageText }
                 onSend={message => onSend(message)}
                 user={{
