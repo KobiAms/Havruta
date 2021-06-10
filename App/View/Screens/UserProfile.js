@@ -38,7 +38,7 @@ export default function UserProfile({ data, navigation, route }) {
                 if (!doc.data()) return;
                 // updates the relevant states to shoe the received data
                 setUserAbout(doc.data().about);
-                if (doc.data().photo != '') setUserAvatar(doc.data().photo)
+                if (doc.data().photo != '') setUserAvatar({ uri: doc.data().photo })
                 /*//times go by sec GMT, so in order to get the right date, need to add 2 hours and mult by 1000 in nanosec*/
                 setuserDOB(dateToReadbleFormat(doc.data().dob.toDate()));
                 setuserName(doc.data().name);

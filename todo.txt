@@ -6,7 +6,6 @@ in ManageUser.js
     reporter no-op fix - ?
 
 in UserProfile
-    user photo does not display properley
     header title to be the user name fix
 
 in Other Screen 
@@ -93,3 +92,6 @@ in AddEvent
 
 in PostInFeed
     like lock fix - V
+
+in UserProfile
+    user photo does not display properley -V
