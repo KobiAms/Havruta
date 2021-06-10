@@ -24,6 +24,7 @@ import AddChat from './App/View/Screens/AddChat';
 import DonationScreen from './App/View/Screens/DonationScreen';
 import EventsScreen from './App/View/Screens/EventsScreen';
 import AddEvent from './App/View/Screens/AddEvent';
+import { Platform } from 'react-native';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -48,6 +49,7 @@ MainScreenNavigator = () => {
       tabBarOptions={{
         activeTintColor: '#0d5794',
         inactiveTintColor: 'gray',
+        keyboardHidesTabBar: Platform.OS == 'ios' ? true : false
       }}>
       <Tab.Screen
         name="חדשות"

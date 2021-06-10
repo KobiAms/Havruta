@@ -1,12 +1,11 @@
 import React, { useState, useCallback, useEffect, useLayoutEffect } from 'react'
-import { GiftedChat } from 'react-native-gifted-chat'
+import { GiftedChat, Composer } from 'react-native-gifted-chat'
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
-import { KeyboardAvoidingView } from 'react-native';
-import { Platform, Keyboard, Pressable } from 'react-native';
-
-
+import { View, Keyboard, Pressable } from 'react-native';
+import { Platform } from 'react-native';
+import { BottomTabBar } from '@react-navigation/bottom-tabs';
 
 
 export function GenericChat({ navigation, route }) {
@@ -17,7 +16,6 @@ export function GenericChat({ navigation, route }) {
     const chat_id = route.params.id == 'צ׳אט הכתבים' ? 'reporters' : route.params.id;
 
     const [userRole, setUserRole] = useState();
-
     const [permission, setPermission] = useState();
     const [messages, setMessages] = useState([]);
     const [name, setName] = useState()
@@ -163,7 +161,7 @@ export function GenericChat({ navigation, route }) {
                     _id: user_id,
                 }}
                 inverted={true}
-                renderInputToolbar={(!auth().currentUser || (permission != 'user' && userRole === 'user') || (permission === 'admin' && userRole != 'admin')) ? () => null : null}
+                renderInputToolbar={(!auth().currentUser || (permission != 'user' && userRole === 'user') || (permission === 'admin' && userRole != 'admin')) ? () => <View style={{ height: 0 }} /> : null}
                 renderUsernameOnMessage={true}
                 showAvatarForEveryMessage={true}
                 renderAvatarOnTop={true}
