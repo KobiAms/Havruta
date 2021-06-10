@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useLayoutEffect } from 'react'
-import { GiftedChat } from 'react-native-gifted-chat'
+import { GiftedChat,Bubble,MessageText } from 'react-native-gifted-chat'
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
@@ -153,16 +153,41 @@ export function GenericChat({ navigation, route }) {
             })
     });
 
-
+    renderBubble=(props)=>{
+        return(
+            <Bubble
+                {...props}
+                
+                wrapperStyle={{
+                    right: {
+                        backgroundColor: "#A4A4A4",
+                       
+                    },
+                    left: {
+                        backgroundColor: "#B7ECFD",
+                        
+                    }
+                }}
+                textStyle={{
+                    left: {
+                  color: '',
+                }
+                  }}/>
+        )
+    }
+    
     return (
         <Pressable style={{ flex: 1 }} onPress={() => Keyboard.dismiss()}>
             <GiftedChat
                 messages={messages}
+                renderBubble={renderBubble}
+                // renderMessageText ={renderMessageText }
                 onSend={message => onSend(message)}
                 user={{
                     _id: user_id,
                 }}
                 inverted={true}
+                renderAvatar={null}
                 renderInputToolbar={(!auth().currentUser || (permission != 'user' && userRole === 'user') || (permission === 'admin' && userRole != 'admin')) ? () => null : null}
                 renderUsernameOnMessage={true}
                 showAvatarForEveryMessage={true}
