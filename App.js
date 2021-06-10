@@ -48,9 +48,28 @@ MainScreenNavigator = () => {
   return (
     <Tab.Navigator
       tabBarOptions={{
-        activeTintColor: '#0d5794',
-        inactiveTintColor: 'gray',
-        keyboardHidesTabBar: Platform.OS == 'ios' ? true : false
+        activeTintColor: '#fff',
+        inactiveTintColor: '#0d5794',
+        activeBackgroundColor: '#0d5794',
+        borderRadius: 15,
+        keyboardHidesTabBar: Platform.OS == 'ios' ? true : false,
+        style: {
+          position: 'absolute',
+          bottom: 10,
+          left: 10,
+          right: 10,
+          borderRadius: 5,
+          elevation: 5,
+          backgroundColor: '#f2f2f3',
+          shadowColor: "#000",
+          shadowOffset: {
+            width: 0,
+            height: 10,
+          },
+          shadowOpacity: 0.25,
+          shadowRadius: 3.5,
+
+        }
       }}>
       <Tab.Screen
         name="חדשות"
