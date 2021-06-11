@@ -17,7 +17,7 @@ function AddChat({ navigation, route }) {
 
     function choose_photo() {
         // lunching the camera roll / gallery
-        launchImageLibrary({}, async response => {
+        launchImageLibrary({ maxWidth: 600, maxHeight: 400 }, async response => {
             if (response.didCancel) {
                 return
             } else if (response.error) {
@@ -58,12 +58,12 @@ function AddChat({ navigation, route }) {
                 // save the new chat data into the chats collection
                 firestore().collection('chats').doc(id).set({
                     messages: [{
-                        _id:1,
-                        text:'ברוכים הבאים לצ\'אט של חברותא! נא לשמור על שפה נאותה ותרבות דיון',
+                        _id: 1,
+                        text: 'ברוכים הבאים לצ\'אט של חברותא! נא לשמור על שפה נאותה ותרבות דיון',
                         createdAt: String(new Date()),
-                        user:{
-                            _id:auth().currentUser.email,
-                            name:'מנהל'
+                        user: {
+                            _id: auth().currentUser.email,
+                            name: 'מנהל'
                         }
                     }],
                     imageUrl: url,
@@ -78,12 +78,12 @@ function AddChat({ navigation, route }) {
             // if image is not selected, upload only the chat Initialize to firestore
             firestore().collection('chats').doc(id).set({
                 messages: [{
-                    _id:1,
-                    text:'ברוכים הבאים לצ\'אט של חברותא! נא לשמור על שפה נאותה ותרבות דיון',
+                    _id: 1,
+                    text: 'ברוכים הבאים לצ\'אט של חברותא! נא לשמור על שפה נאותה ותרבות דיון',
                     createdAt: String(new Date()),
-                    user:{
-                        _id:auth().currentUser.email,
-                        name:'מנהל'
+                    user: {
+                        _id: auth().currentUser.email,
+                        name: 'מנהל'
                     }
                 }],
                 name: name,

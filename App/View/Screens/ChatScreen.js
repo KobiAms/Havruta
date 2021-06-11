@@ -7,10 +7,11 @@ import IconIo from 'react-native-vector-icons/Ionicons';
 import SkeletonContent from 'react-native-skeleton-content-nonexpo';
 
 function ChatScreen({ navigation, route }) {
-    const [chats, setChats] = useState([, , , , , , , , , ,])
+    const [chats, setChats] = useState([])
     const [isAdmin, setIsAdmin] = useState(false);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [user, setUser] = useState(auth().currentUser);
+    const [refreshing, setRefreshing] = useState(false)
 
     // listen to auth state and get the user data if is log-in
     function onAuthStateChanged(user_state) {
@@ -41,6 +42,8 @@ function ChatScreen({ navigation, route }) {
     }, []);
 
     function loadChats() {
+        setChats(['loading', 'loading', 'loading', 'loading', 'loading', 'loading', 'loading', 'loading', 'loading', 'loading', 'loading'])
+        setLoading(true);
         firestore()
             .collection('chats')
             .get().then(docs => {
@@ -51,6 +54,7 @@ function ChatScreen({ navigation, route }) {
                 })
                 setChats(chats_docs);
                 setLoading(false);
+                setRefreshing(false)
             })
             .catch(err => console.log(err))
     }
@@ -59,7 +63,6 @@ function ChatScreen({ navigation, route }) {
     each object is a name and id of all the chats in the collection
     this goes onSnapshot, which mean every updata that happen on the server side will be push automaticly to the local device */
     useEffect(() => {
-
         loadChats()
     }, [])
 
@@ -68,7 +71,8 @@ function ChatScreen({ navigation, route }) {
     function deleteChat(item) {
         if (isAdmin) {
             Alert.alert(
-                "Delete Chat " + item.name, "Are you sure?",
+                "מחיקת צ׳אט לצמיתות",
+                "מחיקת הצ׳אט" + item.name, ",האם אתה בטוח?",
                 [{
                     text: "DELETE",
                     onPress: () => {
@@ -92,26 +96,29 @@ function ChatScreen({ navigation, route }) {
 
 
     function chat_item_to_inflate(item, index) {
-        if (loading) {
+        if (item == 'loading') {
             return (
                 <SkeletonContent
                     containerStyle={styles.skeleton}
                     layout={[
                         {
                             width: 200,
-                            height: Dimensions.get('screen').height * 0.01,
+                            height: Dimensions.get('screen').height * 0.02,
                             marginBottom: 5,
+                            marginRight: 10,
                         },
                         {
                             width: '90%',
                             height: Dimensions.get('screen').height * 0.03,
                             marginBottom: 5,
+                            marginRight: 10,
                         },
                         {
                             width: 100,
                             height: Dimensions.get('screen').height * 0.03,
                             borderRadius: 0,
-                            margin: 10,
+                            marginBottom: 5,
+                            marginRight: 10,
                         }
                     ]}
                     isLoading={loading}>
@@ -139,39 +146,15 @@ function ChatScreen({ navigation, route }) {
     return (
 
         <View style={styles.main}>
-            {loading ? (
-                <FlatList
-                    data={chats}
-                    renderItem={() => (
-                        <SkeletonContent
-                            containerStyle={styles.skeleton}
-                            layout={[
-                                { width: 50, height: 50, borderRadius: 1000, marginLeft: Dimensions.get('screen').width - 80, marginBottom: -50, },
-                                {
-                                    width: '40%', height: Dimensions.get('screen').height * 0.02, marginBottom: 8,
-                                    marginLeft: Dimensions.get('screen').width * (37.5 / 100),
-                                },
-                                {
-                                    width: '60%', height: Dimensions.get('screen').height * 0.035, marginBottom: 8, marginTop: 5,
-                                    marginLeft: Dimensions.get('screen').width * (18 / 100),
-                                },
-                            ]}
-                            isLoading={loading}
-                            highlightColor={'#f3f3f4'}
-                            boneColor={'#dfdfdf'}
-                        >
-                        </SkeletonContent>
-                    )}
-                    keyExtractor={(item, idx) => idx}
-                />
-            ) : (
-                <FlatList
-                    scrollIndicatorInsets={{ right: 1 }}
-                    style={styles.list}
-                    data={[...chats, 'end_list']}
-                    renderItem={({ item, index }) => chat_item_to_inflate(item, index)}
-                    keyExtractor={(item, idx) => idx}
-                />)}
+            <FlatList
+                scrollIndicatorInsets={{ right: 1 }}
+                style={styles.list}
+                data={[...chats, 'end_list']}
+                renderItem={({ item, index }) => chat_item_to_inflate(item, index)}
+                keyExtractor={(item, idx) => idx}
+                onRefresh={() => { setRefreshing(true); loadChats(); }}
+                refreshing={refreshing}
+            />
             <View style={{ position: 'absolute', bottom: 10, right: 10 }}>
                 {isAdmin ?
                     <TouchableOpacity
@@ -195,16 +178,28 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     adder: {
-        justifyContent: 'flex-end',
-        alignItems: 'flex-end',
+        borderRadius: 38,
+        alignItems: 'center',
+        justifyContent: 'center',
         zIndex: 1,
         margin: 20,
+        position: 'absolute',
+        bottom: 10,
+        right: 10,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 1,
+            height: 2,
+        },
+        shadowOpacity: 0.5,
+        shadowRadius: 1.5,
+        elevation: 2,
     },
     skeleton: {
         backgroundColor: '#fff',
         minWidth: '97%',
-        padding: 5,
-        justifyContent: 'flex-start',
+        padding: 10,
+        alignItems: 'flex-end',
         shadowColor: "#000",
         shadowOffset: {
             width: 0,

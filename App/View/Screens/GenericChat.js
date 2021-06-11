@@ -25,7 +25,6 @@ export function GenericChat({ navigation, route }) {
     const [name, setName] = useState()
     const [user, setUser] = useState(auth().currentUser)
     const [loading, setLoading] = useState(false)
-    const [imageUri, setImageUri] = useState("")
 
     function onAuthStateChanged(user_state) { // listener to every change of the user id and updates the details about that new user that logged
         setUser()
@@ -192,7 +191,7 @@ export function GenericChat({ navigation, route }) {
 
 
     handlePickImage = () => {
-        launchImageLibrary({}, async response => {
+        launchImageLibrary({ maxWidth: 600, maxHeight: 400 }, async response => {
             if (response.didCancel) {
                 return
             } else if (response.error) {

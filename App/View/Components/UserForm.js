@@ -32,7 +32,6 @@ export default function UserForm({ setUser, navigation }) {
   const [userDOB, setuserDOB] = useState();
   const [userAbout, setUserAbout] = useState();
   const [userAvatar, setUserAvatar] = useState();
-  const [loadingAvatar, setLoadingAvatar] = useState(true);
   const [loading, setLoading] = useState(false)
   const [editable, setEditable] = useState(false);
   const [editName, setEditName] = useState();
@@ -54,7 +53,7 @@ export default function UserForm({ setUser, navigation }) {
   // this function upload the avatar image into the storage
   function uploadNewAvatar() {
     // lunching the camera roll / gallery
-    launchImageLibrary({}, async response => {
+    launchImageLibrary({ maxWidth: 600, maxHeight: 400 }, async response => {
       setLoading(true);
       if (response.didCancel) {
         setLoading(false);
@@ -75,8 +74,6 @@ export default function UserForm({ setUser, navigation }) {
           setUserAvatar({ uri: url });
           firestore().collection('users').doc(auth().currentUser.email)
             .update({ photo: url })
-            .catch(() => console.log('error updtae imageurl'))
-          auth().currentUser.updateProfile({ photoURL: url })
             .catch(() => console.log('error updtae imageurl'))
           setLoading(false);
         });
@@ -127,7 +124,7 @@ export default function UserForm({ setUser, navigation }) {
   useEffect(() => {
     setLoading(true);
     // set the avatar to the one related to the user
-    setUserAvatar({ uri: auth().currentUser.photoURL });
+    // setUserAvatar({ uri: auth().currentUser.photoURL });
     // gets the user data from the db 
     const subscriber = firestore()
       .collection('users')
@@ -142,6 +139,7 @@ export default function UserForm({ setUser, navigation }) {
         /*//times go by sec GMT, so in order to get the right date, need to add 2 hours and mult by 1000 in nanosec*/
         setuserDOB(dateToReadbleFormat(doc.data().dob.toDate()));
         setEditDate(doc.data().dob.toDate())
+        setUserAvatar(doc.data().photo ? { uri: doc.data().photo } : undefined);
         setuserName(doc.data().name);
         setIsNew(doc.data().isNew);
         setLoading(false);
@@ -176,12 +174,7 @@ export default function UserForm({ setUser, navigation }) {
               </View>
             </TouchableOpacity>
             <TouchableOpacity style={styles.aview} onPress={() => uploadNewAvatar()}>
-              <Image source={userAvatar && userAvatar.length > 0 ? userAvatar : require('../../Assets/logo.png')} style={{ width: '100%', height: '100%' }} onLoadEnd={() => setLoadingAvatar(false)} />
-              {
-                loadingAvatar ?
-                  <ActivityIndicator style={{ position: 'absolute' }} color={'#007fff'} size={'large'} />
-                  : null
-              }
+              <Image source={userAvatar ? userAvatar : require('../../Assets/logo.png')} style={{ width: '100%', height: '100%' }} />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => editable ? setEditable(false) : null}>
               <View style={{ alignItems: 'center', flexDirection: 'row', backgroundColor: '#ffffff80', padding: 5, borderRadius: 20, borderColor: '#990000', opacity: editable ? 1 : 0 }}>
@@ -312,6 +305,14 @@ const styles = StyleSheet.create({
     zIndex: 1,
     position: 'absolute',
     bottom: 0,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 1,
+      height: 1,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 3.27,
+    elevation: 1,
   },
   option: {
     flex: 1,

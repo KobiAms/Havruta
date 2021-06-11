@@ -17,9 +17,6 @@ in Other Screen
 in MainScreen
     show the top 5 from any subject required
 
-in AddEvent
-    add photo to events - V
-
 in RegistraionScreen
     forget password 
 
@@ -28,14 +25,18 @@ in GenericChat
     send images in chat
     if navigting in from tab bar, input will not be available. instad at list 60 height spacer.
 
-in GenericFeed
-    posts images - V
+in ArticleScreen
+    floating reaction attached to keyboard listiner
+    more info: https://stackoverflow.com/questions/54547794/how-to-set-the-textinput-box-above-the-keyboard-while-entering-the-input-field-i
+    read hook version
+
 
 ---------- ========== done ========== ----------:
 in GenericFeed
     add search to load new feed from the search results - V
     scrolling down load more articles - V
     indicator load more posts - V
+    posts images - V
 
 in UserForm:
     implement the edit fucntion - V
@@ -85,6 +86,7 @@ in EventScreen
 in AddEvent
     fix inputs min width - V
     fix keybaord covers button - V
+    add photo to events - V
 
 in PostInFeed
     like lock fix - V

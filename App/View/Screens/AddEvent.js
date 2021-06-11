@@ -61,7 +61,7 @@ function AddEvent({ navigation, route }) {
     function selectImage() {
         // lunching the camera roll / gallery
         // lunching the camera roll / gallery
-        launchImageLibrary({}, async response => {
+        launchImageLibrary({ maxWidth: 600, maxHeight: 400 }, async response => {
             if (response.didCancel) {
                 return;
             } else if (response.error) {

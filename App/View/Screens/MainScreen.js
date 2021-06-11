@@ -1,6 +1,5 @@
 /* eslint-disable semi */
 import React, { useState, useEffect } from 'react';
-import { ScrollView } from 'react-native';
 import {
   View,
   StyleSheet,
@@ -8,12 +7,10 @@ import {
   Text,
   FlatList,
   TextInput,
-  SafeAreaView,
   TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import IconIo from 'react-native-vector-icons/Ionicons';
-import IconMI from 'react-native-vector-icons/MaterialIcons';
 import IconFA from 'react-native-vector-icons/FontAwesome';
 import PostInMain from '../Components/PostInMain';
 
@@ -80,7 +77,7 @@ function MainScreen({ navigation, route }) {
             </TouchableOpacity>
             :
             <TouchableOpacity style={{ padding: 10, marginLeft: 10, }} onPress={() => { setToSearch(''); setClose(true) }}>
-              <IconMI color={'#0d5794'} size={20} name={'cancel'} />
+              <IconIo color={'#0d5794'} size={20} name={'ios-chatbox'} />
             </TouchableOpacity>
         }
       </View>

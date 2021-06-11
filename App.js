@@ -5,10 +5,11 @@ import {
 } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { View, StyleSheet, TouchableOpacity, Image, Dimensions, TextInput, Text } from 'react-native';
+import { StyleSheet, TouchableOpacity, Image, Dimensions, Platform, Text } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import IconMI from 'react-native-vector-icons/MaterialIcons';
+import IconFW from 'react-native-vector-icons/FontAwesome';
+import IconIC from 'react-native-vector-icons/Ionicons';
 import OtherScreen from './App/View/Screens/OtherScreen';
 import GenericChat from './App/View/Screens/GenericChat';
 import MainScreen from './App/View/Screens/MainScreen';
@@ -25,7 +26,6 @@ import DonationScreen from './App/View/Screens/DonationScreen';
 import EventsScreen from './App/View/Screens/EventsScreen';
 import AddEvent from './App/View/Screens/AddEvent';
 import UserProfile from './App/View/Screens/UserProfile';
-import { Platform } from 'react-native';
 
 const HebrewDate = `<div>
 <script type="text/javascript" charset="utf-8"
@@ -57,7 +57,6 @@ MainScreenNavigator = () => {
         activeBackgroundColor: '#0d5794',
         keyboardHidesTabBar: Platform.OS == 'ios' ? true : false,
         style: {
-          // backgroundColor: '#0d5794',
           position: 'absolute',
           bottom: Platform.OS == 'ios' ? 8 : 10,
           left: Platform.OS == 'ios' ? 8 : 10,
@@ -79,20 +78,20 @@ MainScreenNavigator = () => {
         }
       }}>
       <Tab.Screen
-        name="חדשות"
+        name="דף הבית"
         component={MainScreen}
         initialParams={{ category_id: '122' }}
-        options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="file-contract" size={25} color={color} />), })} />
+        options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<IconFW name="home" size={25} color={color} />), })} />
       <Tab.Screen
-        name="קהילה"
+        name="מגזין"
         component={GenericFeed}
         initialParams={{ category_id: '122' }}
-        options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="transgender" size={25} color={color} />), })} />
+        options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="book-open" size={25} color={color} />), })} />
       <Tab.Screen
         name="צ׳אט הכתבים"
         component={GenericChat}
         initialParams={{ id: 'reporters', show_input: false }}
-        options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="comment-alt" size={25} color={color} />), })} />
+        options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<IconIC name="ios-chatbubbles-sharp" size={25} color={color} />), })} />
       <Tab.Screen
         name="יהדות"
         component={GenericFeed}

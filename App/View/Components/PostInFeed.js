@@ -107,7 +107,7 @@ function PostInFeed({ onPress, data, isAdmin }) {
                         :
                         null
                 }
-                <View style={{ padding: 15 }}>
+                <View style={{ padding: 10 }}>
                     <View style={styles.row}>
                         <View style={{ padding: 5, borderRadius: 10, backgroundColor: '#fffa', margin: 5 }}>
                             <Text>{postData.date}</Text>
@@ -150,7 +150,7 @@ function PostInFeed({ onPress, data, isAdmin }) {
                         postExtraData ?
                             <View>
                                 <View style={styles.line} />
-                                <View style={{ padding: 10, borderRadius: 10, backgroundColor: '#fffa', margin: 5 }}>
+                                <View style={{ padding: 5, borderRadius: 10, backgroundColor: '#fffa', margin: 5 }}>
                                     <View style={styles.response}>
                                         {
                                             postLock ?
@@ -184,10 +184,9 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         backgroundColor: '#fff',
         justifyContent: 'center',
-        // padding: 10,
         margin: 5,
         flex: 1,
-        resizeMode: 'cover', // or 'stretch'
+        resizeMode: 'cover',
         minWidth: '97%',
         shadowColor: "#000",
         shadowOffset: {
