@@ -8,6 +8,7 @@ import { Image } from 'react-native';
 import { ActivityIndicator } from 'react-native';
 import auth from '@react-native-firebase/auth';
 
+
 function AddChat({ navigation, route }) {
     const existChat = route.params.data
     const [chatName, setChatName] = useState();
@@ -87,6 +88,7 @@ function AddChat({ navigation, route }) {
             })
                 .then(() => navigation.goBack()).catch(err => console.log(err))
         }
+        
 
     }
 

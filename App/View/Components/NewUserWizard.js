@@ -86,14 +86,14 @@ export default function NewUserWizard() {
                     />
                     <View style={{ margin: 10, alignItems: 'center' }}>
                         <Text style={{ fontSize: 24, fontWeight: 'bold', margin: 10 }}>ברוכים הבאים {userName}!</Text>
-                        <Text style={{ fontSize: 18, alignSelf: 'center' }}>It is great having you in our comunity. please fill in your information so we can get to know you better.</Text>
-                        <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>Please chose your date of birth:</Text>
+                        <Text style={{ fontSize: 18, alignSelf: 'center' }}>אנו שמחים שהצטרפת אלינו , תוכל להשאיר את פרטייך למטה</Text>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>אנא הכנס תאריך לידה</Text>
                         <TouchableOpacity onPress={() => setDatePickerVisibility(true)} style={styles.editable}>
                             <Text style={{ fontSize: 18 }}>{userDOB}</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={{ margin: 10, alignSelf: 'center' }}>
-                        <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>Please tell us about yourself. note that other users can see it.</Text>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>ספר לנו על עצמך , דע כי משתמשים אחרים יכול לקרוא תוכן זה</Text>
                         <AutoGrowingTextInput
                             style={styles.editable}
                             value={editAbout}

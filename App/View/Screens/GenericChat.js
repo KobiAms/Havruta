@@ -39,8 +39,6 @@ export function GenericChat({ navigation, route }) {
                         setUser(user_tmp); // here we pull all the data about our user
                         setName(doc.data().name) // getting the name of the current user
                         setUserRole(doc.data().role)
-                        console.log("text:" + userRole)
-
                     }
                 })
                 .catch(err => {
