@@ -114,38 +114,38 @@ function PostInFeed({ onPress, data, isAdmin }) {
                         </View>
                         {
                             isAdmin ?
-                                <TouchableOpacity style={{ padding: 5, borderRadius: 5, backgroundColor: '#fffa', margin: 5 }} onPress={() => lock_post()}>
+                                <TouchableOpacity style={{ padding: 5, borderRadius: 5, backgroundColor: '#fff8', margin: 5 }} onPress={() => lock_post()}>
                                     {newPost ?
                                         <IconIo name={'add-circle'} color={'#0d5794'} size={20} />
                                         :
-                                        <IconAW5 name={postLock ? 'lock' : 'unlock'} color={postLock ? '#700' : '#070'} size={20} />
+                                        <IconAW5 name={postLock ? 'lock' : 'unlock'} color={postLock ? '#e55a5a' : '#5ba92c'} size={20} />
                                     }
                                 </TouchableOpacity>
                                 :
                                 null
                         }
                     </View>
-                    <View style={{ padding: 5, borderRadius: 10, backgroundColor: '#fffa', margin: 5 }}>
-                        <HTMLRend
-                            source={{ html: postData.headline }}
-                            baseFontStyle={{
-                                fontSize: 22,
-                                alignItems: 'flex-end',
-                                fontWeight: 'bold',
-                                textAlign: 'right',
-                                color: '#333',
-                            }}
-                        ></HTMLRend>
-                    </View>
-                    <View style={{ padding: 5, borderRadius: 10, backgroundColor: '#fffa', margin: 5 }}>
-                        <HTMLRend
-                            source={{ html: postData.short }}
-                            contentWidth={Dimensions.get('window').width}
-                            baseFontStyle={{
-                                textAlign: 'right', color: '#333'
-                            }}
-                        ></HTMLRend>
-                    </View>
+
+                    <HTMLRend
+                        source={{ html: postData.headline }}
+                        baseFontStyle={{
+                            fontSize: 22,
+                            alignItems: 'flex-end',
+                            fontWeight: 'bold',
+                            textAlign: 'right',
+                            color: '#333',
+                        }}
+                        containerStyle={{ padding: 5, borderRadius: 10, backgroundColor: '#fff8', margin: 5 }}
+                    ></HTMLRend>
+                    <HTMLRend
+                        source={{ html: postData.short }}
+                        contentWidth={Dimensions.get('window').width}
+                        baseFontStyle={{
+                            textAlign: 'right', color: '#333'
+                        }}
+                        containerStyle={{ padding: 5, borderRadius: 10, backgroundColor: '#fff8', margin: 5 }}
+                    ></HTMLRend>
+
                     {
                         postExtraData ?
                             <View>
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
         resizeMode: 'cover', // or 'stretch'
         position: 'absolute',
         alignSelf: 'center',
-        opacity: 0.7,
+        opacity: 0.36,
         borderRadius: 5,
     }
 });
