@@ -10,7 +10,7 @@ import HTMLRend from 'react-native-render-html';
 import firestore from '@react-native-firebase/firestore'
 
 /**A component that display a short content on an article */
-function PostInMain({ onPress, data, isAdmin }) {
+function MainPostInMain({ onPress, data, isAdmin }) {
     const postData = data
     const [postLock, setPostLock] = useState(true)
     const [newPost, setNewPost] = useState(true)
@@ -233,4 +233,4 @@ const styles = StyleSheet.create({
         borderRadius: 5,
     }
 });
-export default PostInMain;
+export default MainPostInMain;

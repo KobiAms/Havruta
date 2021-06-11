@@ -83,9 +83,9 @@ MainScreenNavigator = () => {
         initialParams={{ categories_id: '122' }}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<IconFW name="home" size={25} color={color} />), })} />
       <Tab.Screen
-        name="מגזין"
+        name="מעט לעת"
         component={GenericFeed}
-        initialParams={{ category_id: '122' }}
+        initialParams={{ category_id: '402' }}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="book-open" size={25} color={color} />), })} />
       <Tab.Screen
         name="צ׳אט הכתבים"
@@ -93,9 +93,9 @@ MainScreenNavigator = () => {
         initialParams={{ id: 'reporters', show_input: false, chat_name: "צ׳אט הכתבים" }}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<IconIC name="ios-chatbubbles-sharp" size={25} color={color} />), })} />
       <Tab.Screen
-        name="יהדות"
+        name="דוברות"
         component={GenericFeed}
-        initialParams={{ category_id: '117' }}
+        initialParams={{ category_id: '404' }}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="torah" size={25} color={color} />), })} />
       <Tab.Screen
         name=" "
