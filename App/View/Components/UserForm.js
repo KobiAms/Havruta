@@ -222,8 +222,7 @@ export default function UserForm({ setUser, navigation }) {
           </View>
         </ScrollView >
         {/*the following view contain the logout / manage users buttons*/}
-        <View style={styles.chose}>
-
+        <View style={loading ? {} : styles.chose}>
           <TouchableOpacity
             style={[styles.option, styles.logout]}
             onPress={() =>
@@ -302,7 +301,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexDirection: 'row',
     margin: Dimensions.get('screen').width / 50,
-    zIndex: 1,
+    zIndex: 0,
     position: 'absolute',
     bottom: 0,
     shadowColor: "#000",

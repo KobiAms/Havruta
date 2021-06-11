@@ -16,8 +16,8 @@ export default function LoadingComponent() {
         source={require('../../Assets/POWERPNT_frXVLHdxnI.png')}
       />
       <View>
-        <ActivityIndicator size={'large'} color={'rgb(200,200,220)'} />
-        <Text style={styles.text}>Please Wait...</Text>
+        <ActivityIndicator size={'large'} color={'#0d5794'} />
+        <Text style={styles.text}>המתן מספר רגעים...</Text>
       </View>
     </View>
   );
@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-evenly',
     zIndex: 1,
     position: 'absolute',
+    flex: 1
   },
   image: {
     height: Dimensions.get('window').width / 2,
