@@ -80,7 +80,7 @@ function ChatScreen({ navigation, route }) {
                 [{
                     text: "מחק",
                     onPress: () => {
-                        if(item.data.images){
+                        if(item.data.images){ // deleting each photo by url
                             item.data.images.forEach(element => storage().ref(element).delete()
                             .catch(console.log));
                         }
