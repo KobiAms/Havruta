@@ -1,7 +1,6 @@
 import React, { useState, useCallback, useEffect, useLayoutEffect } from 'react'
 import {
-    GiftedChat, Bubble, MessageText, Actions,
-    ActionsProps
+    GiftedChat, Bubble, Actions
 } from 'react-native-gifted-chat'
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
@@ -59,10 +58,10 @@ export function GenericChat({ navigation, route }) {
         return subscriber
     }, []);
 
-    // set header title
+    //chaged
     useLayoutEffect(() => {
         navigation.setOptions({
-            title: chat_id
+            title: route.params.chat_name,
         });
     }, [navigation])
 
@@ -113,7 +112,15 @@ export function GenericChat({ navigation, route }) {
                         Clipboard.setString(message.text);
                         break;
                     case 1:
-                        firestore().collection('chats').doc(chat_id).update({ messages: firestore.FieldValue.arrayRemove(message) })
+                        firestore().collection('chats').doc(chat_id).update({
+                            messages: firestore.FieldValue.arrayRemove(message),
+                        })
+                        if (message.image_ref) {
+                            firestore().collection('chats').doc(chat_id).update({
+                                images: firestore.FieldValue.arrayRemove(message.image_ref)
+                            }).catch(console.log)
+                            storage().ref(message.image_ref).delete().catch(console.log)
+                        }
                         break;
                 }
             });
@@ -148,8 +155,6 @@ export function GenericChat({ navigation, route }) {
 
             }
         }
-        // setImageUri("")
-
         firestore()
             .collection('chats')
             .doc(chat_id)
@@ -188,8 +193,6 @@ export function GenericChat({ navigation, route }) {
         return result.join('');
     }
 
-
-
     handlePickImage = () => {
         launchImageLibrary({ maxWidth: 600, maxHeight: 400 }, async response => {
             if (response.didCancel) {
@@ -203,9 +206,8 @@ export function GenericChat({ navigation, route }) {
                 );
 
             } else {
-                const reference = storage().ref(
-                    '/chats/' + chat_id + '/' + auth().currentUser.email + '_' + makeid(20),
-                );
+                const image_ref = '/chats/' + chat_id + '/' + auth().currentUser.email + '_' + makeid(20);
+                const reference = storage().ref(image_ref);
                 setLoading(true)
                 await reference.putFile(response.uri);
                 reference.getDownloadURL().then(url => {
@@ -216,6 +218,7 @@ export function GenericChat({ navigation, route }) {
                         text: '',
                         createdAt: String(new Date()),
                         image: url,
+                        image_ref: image_ref,
                         user: {
                             _id: user_id,
                             name: name
@@ -225,7 +228,8 @@ export function GenericChat({ navigation, route }) {
                         .collection('chats')
                         .doc(chat_id)
                         .update({
-                            messages: firestore.FieldValue.arrayUnion(tempMsg)
+                            messages: firestore.FieldValue.arrayUnion(tempMsg),
+                            images: firestore.FieldValue.arrayUnion(image_ref)
                         }).then(() => {
                             setLoading(false);
                         })

@@ -20,10 +20,16 @@ in MainScreen
 in RegistraionScreen
     forget password 
 
+in addChat
+    unique id
+in ChatScreen
+    delete all messages from chat when delele chat
+
 in GenericChat
     style chat bubble
     send images in chat
     if navigting in from tab bar, input will not be available. instad at list 60 height spacer.
+    activity indicator when send (image/text)
 
 in ArticleScreen
     floating reaction attached to keyboard listiner

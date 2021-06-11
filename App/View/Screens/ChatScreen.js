@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { View, Pressable, FlatList, TouchableOpacity, StyleSheet, Alert, Dimensions } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
 import Chat from '../Components/ChatItem';
 import IconIo from 'react-native-vector-icons/Ionicons';
@@ -71,22 +72,21 @@ function ChatScreen({ navigation, route }) {
     function deleteChat(item) {
         if (isAdmin) {
             Alert.alert(
-                "מחיקת צ׳אט לצמיתות",
-                "מחיקת הצ׳אט" + item.name, ",האם אתה בטוח?",
+                " מחיקת צ׳אט לצמיתות",
+                "מחיקת הצ׳אט" + " \"" + item.data.name + "\" " + ",האם אתה בטוח  ?",
                 [{
-                    text: "DELETE",
+                    text: "מחק",
                     onPress: () => {
-                        firestore()
-                            .collection('chats')
-                            .doc(item.id)
-                            .delete()
+                        storage().ref('/chats/' + item.id + '').delete()
+                            .catch(console.log)
+                        firestore().collection('chats').doc(item.id).delete()
                             .then(() => console.log('delete ' + item.id + ' succssefuly'))
                             .catch(err => console.log('error in deleting chat: ' + err.code))
                         Alert.alert("Chats Deleted")
                     }, style: 'destructive'
                 },
                 {
-                    text: "Cancel",
+                    text: "ביטול",
                     style: "cancel",
                 },],
                 { cancelable: true, }
@@ -129,7 +129,7 @@ function ChatScreen({ navigation, route }) {
         } else {
             return (
                 <Pressable
-                    onPress={() => navigation.navigate('GenericChat', { id: item.id })}
+                    onPress={() => navigation.navigate('GenericChat', { id: item.id, chat_name: item.data.name })}
                     onLongPress={() => deleteChat(item)}>
                     <Chat item={item} />
                 </Pressable>
