@@ -20,15 +20,11 @@ in MainScreen
 in RegistraionScreen
     forget password 
 
-in addChat
-    unique id
 in ChatScreen
     delete all messages from chat when delele chat
 
 in GenericChat
-    style chat bubble
-    send images in chat
-    if navigting in from tab bar, input will not be available. instad at list 60 height spacer.
+
     activity indicator when send (image/text)
 
 in ArticleScreen
@@ -72,6 +68,7 @@ in Other Screen
 in AddChat
     validate the chat name - V
     send alert if all the fields are not fiiled -V
+    unique id -V
 
 in subjectArticle
     fix load from wordpress and display on screen. - V
@@ -85,6 +82,9 @@ in ChatScreen
 
 in GenericChat
     fix keyboard avoiding view ios - V
+    style chat bubble -V
+    send images in chat -V
+    if navigting in from tab bar, input will not be available. instad at list 60 height spacer. -V
 
 in EventScreen
     Alert before delete event - V

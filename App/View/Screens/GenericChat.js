@@ -8,7 +8,7 @@ import auth from '@react-native-firebase/auth';
 import { Platform, Keyboard, Pressable, View } from 'react-native';
 import Icon from 'react-native-vector-icons/EvilIcons';
 import { launchImageLibrary } from 'react-native-image-picker';
-
+import { Dimensions } from 'react-native';
 
 
 export function GenericChat({ navigation, route }) {
@@ -39,8 +39,6 @@ export function GenericChat({ navigation, route }) {
                         setUser(user_tmp); // here we pull all the data about our user
                         setName(doc.data().name) // getting the name of the current user
                         setUserRole(doc.data().role)
-                        console.log("text:" + userRole)
-
                     }
                 })
                 .catch(err => {
@@ -163,18 +161,27 @@ export function GenericChat({ navigation, route }) {
             })
     });
 
-    renderBubble = (props) => { // in that function we choose colors for the chat bubbles
+    function renderBubble(props) { // in that function we choose colors for the chat bubbles
         return (
             <Bubble
                 {...props}
-
+                textStyle={{
+                    right: {
+                        color: '#000'
+                    }
+                }}
+                usernameStyle={{ color: '#999' }}
                 wrapperStyle={{
                     right: {
-                        backgroundColor: "#A4A4A4",
-
+                        marginTop: -10,
+                        backgroundColor: "#B9C2F9",
+                        marginBottom: 15,
                     },
                     left: {
+                        marginTop: -10,
                         backgroundColor: "#B7ECFD",
+                        marginBottom: 15,
+                        color: 'black'
 
                     }
                 }}
@@ -193,7 +200,7 @@ export function GenericChat({ navigation, route }) {
         return result.join('');
     }
 
-    handlePickImage = () => {
+    function handlePickImage() {
         launchImageLibrary({ maxWidth: 600, maxHeight: 400 }, async response => {
             if (response.didCancel) {
                 return
@@ -267,7 +274,7 @@ export function GenericChat({ navigation, route }) {
                 inverted={true}
                 showUserAvatar={true}
                 renderAvatar={null}
-                renderInputToolbar={(route.params.show_input === false || !auth().currentUser || (permission != 'user' && userRole === 'user') || (permission === 'admin' && userRole != 'admin')) ? () => <View style={{ height: 0 }} /> : null}
+                renderInputToolbar={(route.params.show_input === false || !auth().currentUser || (permission != 'user' && userRole === 'user') || (permission === 'admin' && userRole != 'admin')) ? () => <View style={{ height: Dimensions.get('screen').height / 3 }} /> : null}
                 renderUsernameOnMessage={true}
                 renderAvatarOnTop={true}
                 onLongPress={(context, message) => onLongPress(context, message)}
@@ -280,4 +287,3 @@ export function GenericChat({ navigation, route }) {
 }
 
 export default GenericChat
-

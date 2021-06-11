@@ -62,8 +62,8 @@ MainScreenNavigator = () => {
           left: Platform.OS == 'ios' ? 8 : 10,
           right: Platform.OS == 'ios' ? 8 : 10,
           borderRadius: Platform.OS == 'ios' ? 40 : 10,
-          borderTopLeftRadius: 5,
-          borderTopRightRadius: 5,
+          borderTopLeftRadius: 10,
+          borderTopRightRadius: 10,
           borderWidth: 2,
           borderColor: '#1111',
           elevation: 5,
@@ -158,7 +158,7 @@ App = () => {
           <Stack.Screen
             name="Manage User"
             component={ManageUser}
-            options={{ title: 'Manage User', }} />
+            options={{ title: 'ניהול', }} />
           <Stack.Screen
             name="Wizard"
             component={Wizard}
