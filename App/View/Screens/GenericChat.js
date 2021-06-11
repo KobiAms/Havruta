@@ -114,9 +114,11 @@ export function GenericChat({ navigation, route }) {
                     case 1:
                         firestore().collection('chats').doc(chat_id).update({
                             messages: firestore.FieldValue.arrayRemove(message),
-                            images: firestore.FieldValue.arrayRemove(image_ref)
                         })
                         if (message.image_ref) {
+                            firestore().collection('chats').doc(chat_id).update({
+                                images: firestore.FieldValue.arrayRemove(message.image_ref)
+                            }).catch(console.log)
                             storage().ref(message.image_ref).delete().catch(console.log)
                         }
                         break;
