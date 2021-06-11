@@ -80,7 +80,7 @@ MainScreenNavigator = () => {
       <Tab.Screen
         name="דף הבית"
         component={MainScreen}
-        initialParams={{ category_id: '122' }}
+        initialParams={{ categories_id: '122' }}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<IconFW name="home" size={25} color={color} />), })} />
       <Tab.Screen
         name="מגזין"
@@ -90,7 +90,7 @@ MainScreenNavigator = () => {
       <Tab.Screen
         name="צ׳אט הכתבים"
         component={GenericChat}
-        initialParams={{ id: 'reporters', show_input: false }}
+        initialParams={{ id: 'reporters', show_input: false, chat_name: "צ׳אט הכתבים" }}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<IconIC name="ios-chatbubbles-sharp" size={25} color={color} />), })} />
       <Tab.Screen
         name="יהדות"

@@ -13,6 +13,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import IconIo from 'react-native-vector-icons/Ionicons';
 import IconFA from 'react-native-vector-icons/FontAwesome';
 import PostInMain from '../Components/PostInMain';
+import GenericFeed from './GenericFeed';
 
 
 
@@ -81,13 +82,7 @@ function MainScreen({ navigation, route }) {
             </TouchableOpacity>
         }
       </View>
-      <FlatList
-        data={['head_list', ...category_1]}
-        renderItem={({ item }) => item == 'head_list' ? <View style={{ height: 60 }} /> :
-          <PostInMain data={item} onPress={() => console.log('wow you can really dance')} />
-        }
-        keyExtractor={(item, idx) => idx}
-      />
+      <GenericFeed route={{ params: { multipleCategories: '' } }} />
     </View>
   );
 };

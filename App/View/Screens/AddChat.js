@@ -17,7 +17,7 @@ function AddChat({ navigation, route }) {
 
     function choose_photo() {
         // lunching the camera roll / gallery
-        launchImageLibrary({ maxWidth: 600, maxHeight: 400 }, async response => {
+        launchImageLibrary({ maxWidth: 300, maxHeight: 200 }, async response => {
             if (response.didCancel) {
                 return
             } else if (response.error) {
@@ -41,12 +41,8 @@ function AddChat({ navigation, route }) {
         }
         setLoading(true)
         // generates new chaat id from the name
-        let id = name;
-        for (let i = 0; i < existChat.length; i++) {  // make sure first that the id is unique
-            if (id == existChat[i].id) {
-                id = makeid(10);                    //if it does not generate new random one
-            }
-        }
+        let id = makeid(20);                    //if it does not generate new random one
+
         // if image is selected image url is define
         if (imageUrl) {
             // create storage ref
