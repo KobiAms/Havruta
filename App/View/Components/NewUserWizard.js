@@ -10,6 +10,7 @@ import {
     Platform,
     KeyboardAvoidingView
 } from 'react-native';
+import { useHeaderHeight } from '@react-navigation/stack';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import firestore from '@react-native-firebase/firestore';
 import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
@@ -24,6 +25,7 @@ export default function NewUserWizard() {
     const [editAbout, setEditAbout] = useState('');
     const [loading, setLoading] = useState(false)
     const [userName, setuserName] = useState('');
+    const headerHeight = useHeaderHeight() - 100;
 
     // create a readble date dd.mm.yyyy from Date obj
     dateToReadbleFormat = (date) => date.getDate() + '.' + (date.getMonth() + 1) + '.' + date.getFullYear();
@@ -40,15 +42,21 @@ export default function NewUserWizard() {
         if (loading)
             return
         setLoading(true)
-        if (auth().currentUser.displayName === userName) {
+        if (editDate && userName && editAbout) {
+
+            console.log("display name " + auth().currentUser.displayName);
+            console.log("firebase name " + userName)
             firestore().collection('users').doc(auth().currentUser.email)
                 .update({
                     about: editAbout,
                     dob: firestore.Timestamp.fromDate(editDate),
                     isNew: false
                 })
-                .then(() => { setLoading(false) })
+                .then(() => { auth().currentUser.updateProfile({ displayName: userName }); setLoading(false) })
                 .catch(err => console.log(err.code))
+        }
+        else {
+            console.log('something went wrong')
         }
     }
 
@@ -74,7 +82,9 @@ export default function NewUserWizard() {
     return (
         <KeyboardAvoidingView
             style={{ flex: 1 }}
-            behavior={Platform.OS == 'ios' ? 'padding' : null}>
+            behavior={'padding'}
+            keyboardVerticalOffset={headerHeight}>
+
             <TouchableWithoutFeedback style={{ flex: 1 }} onPress={Keyboard.dismiss}>
                 <View style={styles.main}>
                     <DateTimePickerModal
@@ -86,19 +96,21 @@ export default function NewUserWizard() {
                     />
                     <View style={{ margin: 10, alignItems: 'center' }}>
                         <Text style={{ fontSize: 24, fontWeight: 'bold', margin: 10 }}>ברוכים הבאים {userName}!</Text>
-                        <Text style={{ fontSize: 18, alignSelf: 'center' }}>It is great having you in our comunity. please fill in your information so we can get to know you better.</Text>
-                        <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>Please chose your date of birth:</Text>
+                        <Text style={{ fontSize: 18, alignSelf: 'center' }}>איזה כיף שהצטרפת אלינו! בבקשה מלא את הפרטים הבאים כדי שנוכל להכיר אותך טוב יותר</Text>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>אנא בחר את תאריך הלידה שלך:</Text>
                         <TouchableOpacity onPress={() => setDatePickerVisibility(true)} style={styles.editable}>
                             <Text style={{ fontSize: 18 }}>{userDOB}</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={{ margin: 10, alignSelf: 'center' }}>
-                        <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>Please tell us about yourself. note that other users can see it.</Text>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>ספר לנו קצת על עצמך.</Text>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>שים לב, משתמשים אחרים יכולו לקרוא את זה</Text>
+
                         <AutoGrowingTextInput
                             style={styles.editable}
                             value={editAbout}
                             onChangeText={setEditAbout}
-                            placeholder={'Add your about here...'} />
+                            placeholder={'ספר לנו על עצמך...'} />
                     </View>
                     <TouchableOpacity
                         style={styles.submit}
@@ -107,7 +119,7 @@ export default function NewUserWizard() {
                             loading ?
                                 <ActivityIndicator color={'#fff'} />
                                 :
-                                <Text style={{ fontSize: 22, color: '#fff', fontWeight: 'bold' }}>Submit</Text>
+                                <Text style={{ fontSize: 22, color: '#fff', fontWeight: 'bold' }}>סיים</Text>
                         }
                     </TouchableOpacity>
                 </View >
@@ -126,6 +138,7 @@ const styles = StyleSheet.create({
     editable: {
         borderWidth: 1,
         borderRadius: 10,
+        borderColor: '#aaa',
         backgroundColor: '#FFFFFF',
         shadowColor: '#000',
         shadowOffset: {
@@ -134,11 +147,11 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.32,
         shadowRadius: 5.46,
-        elevation: 6,
-        padding: 8,
+        elevation: 3,
+        padding: 7
     },
     submit: {
-        backgroundColor: 'rgb(40,120,190)',
+        backgroundColor: '#0d5794',
         width: Dimensions.get('screen').width * (85 / 100),
         alignItems: 'center',
         borderRadius: 50,
