@@ -22,6 +22,8 @@ in RegistraionScreen
 
 in addChat
     unique id
+in ChatScreen
+    delete all messages from chat when delele chat
 
 in GenericChat
     style chat bubble
