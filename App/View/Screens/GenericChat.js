@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useLayoutEffect } from 'react'
 import {
-    GiftedChat, Bubble, Actions
+    GiftedChat, Bubble, Actions,Send, Composer
 } from 'react-native-gifted-chat'
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
@@ -99,7 +99,7 @@ export function GenericChat({ navigation, route }) {
             return
         }
         if (message.user._id === auth().currentUser.email || userRole === 'admin') {
-            const options = ['Copy', 'Delete Message', 'Cancel'];
+            const options = ['העתק', 'מחק הודעה', 'חזור'];
             const cancelButtonIndex = options.length - 1;
             context.actionSheet().showActionSheetWithOptions({
                 options,
@@ -124,7 +124,7 @@ export function GenericChat({ navigation, route }) {
             });
         }
         else { // in case the msg is not one of the current user he cannot delete them
-            const options = ['Copy', 'Cancel'];
+            const options = ['העתק', 'חזור'];
             const cancelButtonIndex = options.length - 1;
             context.actionSheet().showActionSheetWithOptions({
                 options,
@@ -146,7 +146,6 @@ export function GenericChat({ navigation, route }) {
             _id: message[0]._id,
             text: message[0].text,
             createdAt: String(new Date()),
-            // image:imageUri,
             user: {
                 _id: user_id,
                 name: name
@@ -250,8 +249,8 @@ export function GenericChat({ navigation, route }) {
             <Actions
                 {...props}
                 options={{
-                    ['Send Image']: handlePickImage,
-                    ['Cancel']: () => { },
+                    ['בחר תמונה מהגלריה']: handlePickImage,
+                    ['חזור']: () => { },
                 }}
                 icon={() => (
                     <Icon size={28} name={'camera'} color={"#00254d"} />
@@ -261,6 +260,11 @@ export function GenericChat({ navigation, route }) {
         )
     }
 
+    
+    
+    function renderComposer(props){ return ( <Composer {...props} placeholder={'הכנס הודעה...'} /> ); }
+    
+    function renderSend(props){ return ( <Send {...props} label={'שלח'} /> ); } 
 
     return (
         <Pressable style={{ flex: 1 }} onPress={() => Keyboard.dismiss()}>
@@ -271,6 +275,8 @@ export function GenericChat({ navigation, route }) {
                 user={{
                     _id: user_id,
                 }}
+                renderSend={renderSend}
+                renderComposer={renderComposer}
                 inverted={true}
                 showUserAvatar={true}
                 renderAvatar={null}
