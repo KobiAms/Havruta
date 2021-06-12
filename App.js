@@ -99,7 +99,7 @@ MainScreenNavigator = () => {
         initialParams={{ category_id: '404' }}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="torah" size={25} color={color} />), })} />
       <Tab.Screen
-        name=" "
+        name="נוספים"
         component={OtherScreen}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="bars" size={25} color={color} />), })} />
     </Tab.Navigator>
@@ -144,7 +144,7 @@ App = () => {
                   <TouchableOpacity
                     style={styles.register}
                     onPress={() => navigation.navigate('Registration')}>
-                    <Icon color={auth().currentUser ? '#fff' : '#f0fbff'} name={'user-alt'} size={25} />
+                    <Icon color={auth().currentUser ? '#fff' : '#2e98c5'} name={'user-alt'} size={25} />
                   </TouchableOpacity>
               })
             }} />
