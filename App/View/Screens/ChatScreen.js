@@ -11,7 +11,6 @@ function ChatScreen({ navigation, route }) {
     const [chats, setChats] = useState([])
     const [isAdmin, setIsAdmin] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [user, setUser] = useState(auth().currentUser);
     const [refreshing, setRefreshing] = useState(false)
 
     // listen to auth state and get the user data if is log-in
@@ -21,20 +20,15 @@ function ChatScreen({ navigation, route }) {
             firestore().collection('users').doc(user_state.email).get()
                 .then(doc => {
                     if (!doc.data()) {
-                        setUser(undefined)
+                        return
                     } else {
                         const user_tmp = doc.data()
-                        setUser(user_tmp);
                         setIsAdmin(user_tmp.role == 'admin')
-
                     }
                 })
                 .catch(err => {
                     console.log(err)
-                    setUser(undefined)
                 })
-        } else {
-            setUser(user_state);
         }
     }
     useEffect(() => {
@@ -70,24 +64,25 @@ function ChatScreen({ navigation, route }) {
     /**this function is activate only by admin.
      * on long press on some chat, an alert will pop and allow the admin to premenetly remove a chat.*/
     function deleteChat(item) {
-        console.log(item)
-        console.log( item.data.images)
         if (isAdmin) {
+            if (item.id == 'reporters' || item.id == 'dPUs5VOFJMy3exztwDvc') {
+                Alert.alert('שגיאה', 'לא ניתן למחוק צ׳אט זה')
+                return;
+            }
             Alert.alert(
                 " מחיקת צ׳אט לצמיתות",
                 "מחיקת הצ׳אט" + " \"" + item.data.name + "\" " + ",האם אתה בטוח  ?",
-               
+
                 [{
                     text: "מחק",
                     onPress: () => {
-                        if(item.data.images){ // deleting each photo by url
+                        if (item.data.images) { // deleting each photo by url
                             item.data.images.forEach(element => storage().ref(element).delete()
-                            .catch(console.log));
+                                .catch(console.log));
                         }
                         firestore().collection('chats').doc(item.id).delete()
-                            .then(() => console.log('delete ' + item.id + ' succssefuly'))
-                            .catch(err => console.log('error in deleting chat: ' + err.code))
-                        Alert.alert("Chats Deleted")
+                            .then(() => { alert('הצ׳אט נמחק בהצלחה'); loadChats() })
+                            .catch(() => alert('הצ׳אט לא נמחק בהצלחה'))
                     }, style: 'destructive'
                 },
                 {

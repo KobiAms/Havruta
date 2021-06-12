@@ -82,6 +82,7 @@ function MainScreen({ navigation, route }) {
               headline: articles.data[i].title.rendered,
               image_link: articles.data[i]._links['wp:featuredmedia'] ? articles.data[i]._links['wp:featuredmedia'][0].href : undefined,
               category_id: categories_test[index].id,
+              category_title: categories_test[index].name
             }
             arts_wp.push(obj)
           }
@@ -180,7 +181,7 @@ function MainScreen({ navigation, route }) {
             {!category_to_show ?
               null
               :
-              <Pressable onPress={() => { navigation.navigate('GenericFeed', { category_id: item.category_id }) }}>
+              <Pressable onPress={() => { navigation.navigate('GenericFeed', { category_id: item.category_id, title: item.category_title }) }}>
                 <View style={styles.category_title_warper} >
                   <Text style={styles.category_title_text}>
                     {item.category}</Text>

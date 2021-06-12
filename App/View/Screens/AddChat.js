@@ -1,20 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { View, Text, TouchableOpacity, Dimensions, StyleSheet, TouchableWithoutFeedback, Keyboard, TextInput, Alert } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import SwitchSelector from "react-native-switch-selector";
 import { launchImageLibrary } from 'react-native-image-picker';
-import { Image } from 'react-native';
-import { ActivityIndicator } from 'react-native';
+import { useHeaderHeight } from '@react-navigation/stack';
+import { ActivityIndicator, KeyboardAvoidingView, Image } from 'react-native';
 import auth from '@react-native-firebase/auth';
 
 
 function AddChat({ navigation, route }) {
-    const existChat = route.params.data
     const [chatName, setChatName] = useState();
     const [imageUrl, setImageUrl] = useState();
     const [premission, setPremission] = useState();
     const [loading, setLoading] = useState(false);
+    const headerHeight = useHeaderHeight()
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            title: 'הוספת צ׳אט',
+        });
+    }, [navigation])
 
     function choose_photo() {
         // lunching the camera roll / gallery
@@ -88,7 +94,7 @@ function AddChat({ navigation, route }) {
             })
                 .then(() => navigation.goBack()).catch(err => console.log(err))
         }
-        
+
 
     }
 
@@ -114,50 +120,55 @@ function AddChat({ navigation, route }) {
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View style={styles.main}>
-                <TouchableOpacity onPress={() => choose_photo()} style={styles.image_container}>
-                    <Image style={styles.chat_image} source={imageUrl ? { uri: imageUrl } : require('../../Assets/logo.png')} />
-                </TouchableOpacity>
-                <View style={{ margin: 10, alignItems: 'center' }}>
-                    <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>
-                        אנא בחר את שם הצ'אט החדש
-                    </Text>
-                    <TextInput
-                        style={styles.editable}
-                        value={chatName}
-                        onChangeText={setChatName}
-                        placeholder={`  הזן שם צ'אט...    `} />
-                </View>
-                <View style={{ margin: 10, alignItems: 'center' }}>
-                    <Text>מי יכול לשלוח הודעות בצ'אט הזה?</Text>
-                    <SwitchSelector
-                        options={[
-                            { label: 'כל המשתמשים', value: 'user' },
-                            { label: 'כתבים', value: 'reporter' },
-                            { label: 'מנהלים בלבד', value: 'admin' }
-                        ]}
-                        textColor={'#000'}
-                        onPress={value => setPremission(value)}
-                        hasPadding
-                        buttonColor={'#0d5794'}
-                        style={{ margin: 10, width: Dimensions.get('screen').width * (85 / 100), }}
-                    />
-                </View>
-                {
-                    loading ?
-                        <ActivityIndicator color={'#0d5794'} size={'small'} />
-                        :
-                        <TouchableOpacity
-                            style={styles.submit}
-                            onPress={() => {
-                                chatName && premission ? add_chat_to_FB(chatName, premission) : fillAllFields()
-                            }
-                            }>
-                            <Text style={{ fontSize: 22, color: '#fff', fontWeight: 'bold' }}>צור את הצ'אט</Text>
-                        </TouchableOpacity>
-                }
+            <KeyboardAvoidingView
+                keyboardVerticalOffset={headerHeight}
+                style={styles.main}
+                behavior={Platform.OS == 'ios' ? "padding" : false} >
+                <View style={styles.main}>
+                    <TouchableOpacity onPress={() => choose_photo()} style={styles.image_container}>
+                        <Image style={styles.chat_image} source={imageUrl ? { uri: imageUrl } : require('../../Assets/logo.png')} />
+                    </TouchableOpacity>
+                    <View style={{ margin: 10, alignItems: 'center' }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>
+                            אנא בחר את שם הצ'אט החדש
+                        </Text>
+                        <TextInput
+                            style={styles.editable}
+                            value={chatName}
+                            onChangeText={setChatName}
+                            placeholder={`  הזן שם צ'אט...    `} />
+                    </View>
+                    <View style={{ margin: 10, alignItems: 'center' }}>
+                        <Text>מי יכול לשלוח הודעות בצ'אט הזה?</Text>
+                        <SwitchSelector
+                            options={[
+                                { label: 'כל המשתמשים', value: 'user' },
+                                { label: 'כתבים', value: 'reporter' },
+                                { label: 'מנהלים בלבד', value: 'admin' }
+                            ]}
+                            textColor={'#000'}
+                            onPress={value => setPremission(value)}
+                            hasPadding
+                            buttonColor={'#0d5794'}
+                            style={{ margin: 10, width: Dimensions.get('screen').width * (85 / 100), }}
+                        />
+                    </View>
+                    {
+                        loading ?
+                            <ActivityIndicator color={'#0d5794'} size={'small'} />
+                            :
+                            <TouchableOpacity
+                                style={styles.submit}
+                                onPress={() => {
+                                    chatName && premission ? add_chat_to_FB(chatName, premission) : fillAllFields()
+                                }
+                                }>
+                                <Text style={{ fontSize: 22, color: '#fff', fontWeight: 'bold' }}>צור את הצ'אט</Text>
+                            </TouchableOpacity>
+                    }
 
-            </View >
+                </View >
+            </KeyboardAvoidingView>
         </TouchableWithoutFeedback>
     )
 }
@@ -197,7 +208,8 @@ const styles = StyleSheet.create({
     chat_image: {
         height: 100,
         width: 100,
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
+
     },
     image_container: {
         height: 100,
@@ -205,14 +217,6 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         overflow: 'hidden',
         borderWidth: 1,
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 4,
-            height: 4,
-        },
-        shadowOpacity: 0.32,
-        shadowRadius: 5.46,
-        elevation: 6,
     }
 })
 

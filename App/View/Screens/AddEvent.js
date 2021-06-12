@@ -10,6 +10,7 @@ import { KeyboardAvoidingView } from 'react-native';
 import Icon from 'react-native-vector-icons/EvilIcons'
 import { Image } from 'react-native';
 import { ActivityIndicator } from 'react-native';
+import { Platform } from 'react-native';
 
 function AddEvent({ navigation, route }) {
     const [eventName, setEventName] = useState('');
@@ -117,7 +118,7 @@ function AddEvent({ navigation, route }) {
             <KeyboardAvoidingView
                 keyboardVerticalOffset={headerHeight}
                 style={styles.main}
-                behavior={"padding"} >
+                behavior={Platform.OS == 'ios' ? "padding" : false} >
                 <View style={{ alignItems: 'center' }}>
                     <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 5 }}>
                         אנא בחר את שם האירוע החדש

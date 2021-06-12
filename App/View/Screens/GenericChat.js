@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useLayoutEffect } from 'react'
 import {
-    GiftedChat, Bubble, Actions,Send, Composer
+    GiftedChat, Bubble, Actions, Send, Composer
 } from 'react-native-gifted-chat'
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
@@ -142,6 +142,10 @@ export function GenericChat({ navigation, route }) {
     const onSend = useCallback((message = []) => { // that function happes when somone sends a msg on the chat
         // in that function we build the stracture of the message we want to send to the server
         //after we built the message object we send it with query to firebase
+        if (loading) {
+            return
+        }
+        setLoading(true)
         let tempMsg = {
             _id: message[0]._id,
             text: message[0].text,
@@ -158,6 +162,8 @@ export function GenericChat({ navigation, route }) {
             .update({
                 messages: firestore.FieldValue.arrayUnion(tempMsg)
             })
+            .then(() => setLoading(false))
+            .catch(() => setLoading(false))
     });
 
     function renderBubble(props) { // in that function we choose colors for the chat bubbles
@@ -253,20 +259,20 @@ export function GenericChat({ navigation, route }) {
                     ['חזור']: () => { },
                 }}
                 icon={() => (
-                    loading?
-                    <ActivityIndicator size={'small'} color={"#00254d"}/>:
-                    <Icon size={28} name={'camera'} color={"#00254d"} />
+                    loading ?
+                        <ActivityIndicator size={'small'} color={"#00254d"} /> :
+                        <Icon size={28} name={'camera'} color={"#00254d"} />
                 )}
                 onSend={args => console.log(args)}
             />
         )
     }
 
-    
-    
-    function renderComposer(props){ return ( <Composer {...props} placeholder={'הכנס הודעה...'} /> ); }
-    
-    function renderSend(props){ return ( <Send {...props} label={'שלח'} /> ); } 
+
+
+    function renderComposer(props) { return (<Composer {...props} placeholder={'הכנס הודעה...'} />); }
+
+    function renderSend(props) { return (<Send {...props} label={'שלח'} />); }
 
     return (
         <Pressable style={{ flex: 1 }} onPress={() => Keyboard.dismiss()}>

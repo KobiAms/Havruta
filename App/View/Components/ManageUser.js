@@ -70,7 +70,6 @@ export default ManageUser = ({ navigation, route }) => {
     };
 
     const toggleBlock = () => {
-        setLoading(!loading)
         setIsBlocked(!isBlocked)
     }
 

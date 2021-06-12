@@ -64,7 +64,6 @@ export default function EventItem({ data, isAdmin, navigation, id, navigator }) 
     function deleteEvent() {
         if (deleteLoading)
             return
-        setDeleteLoading(true)
         if (!deleted) {
             Alert.alert(
                 'מחיקת אירוע לצמיתות!',
@@ -77,7 +76,7 @@ export default function EventItem({ data, isAdmin, navigation, id, navigator }) 
                     {
                         text: "מחק",
                         onPress: () => {
-
+                            setDeleteLoading(true)
                             firestore().collection('Events').doc(id).delete()
                                 .then(() => {
                                     setDeleted(true)
@@ -124,7 +123,7 @@ export default function EventItem({ data, isAdmin, navigation, id, navigator }) 
                         isAdmin && !deleted ? (
 
                             <TouchableOpacity onPress={() => deleteEvent(id)} style={{ position: 'absolute', padding: 10, left: 0 }}>
-                                <IconMI color={deleted ? '#5ba92c' : '#e55a5a'} size={30} name={deleted ? 'replay-circle-filled' : 'cancel'} />
+                                <IconMI color={deleted ? '#080' : '#900'} size={30} name={deleted ? 'replay-circle-filled' : 'cancel'} />
                             </TouchableOpacity>
                         )
                             :
@@ -132,15 +131,15 @@ export default function EventItem({ data, isAdmin, navigation, id, navigator }) 
                     }
                     <Text style={{ position: 'absolute', right: 10, fontSize: 17, color: '#444', padding: 8 }}>{ }</Text>
                 </View>
-                <Text style={{ fontSize: 22, fontWeight: 'bold', padding: 8, backgroundColor: '#fff8', borderRadius: 5, overflow: 'hidden' }}>{data.name}</Text>
-                <Text style={{ fontSize: 17, padding: 8, width: '90%', textAlign: 'right', borderRadius: 5, overflow: 'hidden', fontWeight: 'bold' }}>{data.description}</Text>
+                <Text style={{ color: '#0d5794', fontSize: 22, fontWeight: 'bold', textAlign: 'right', padding: 8, backgroundColor: '#fff8', borderRadius: 5, overflow: 'hidden' }}>{data.name}</Text>
+                <Text style={{ color: '#0d5794', fontSize: 17, padding: 8, maxWidth: '90%', textAlign: 'right', borderRadius: 5, overflow: 'hidden', fontWeight: '400', backgroundColor: '#fffb', }}>{data.description}</Text>
                 <TouchableOpacity style={[styles.attend, { margin: 20 }]}
                     onPress={() => attend(data.key)}>
                     <View >
-                        <Text style={{ color: isAttend ? '#e55a5a' : '#5ba92c', fontWeight: 'bold' }}>אני {isAttend ? 'לא' : ''} מגיע</Text>
+                        <Text style={{ color: isAttend ? '#900' : '#080', fontWeight: 'bold' }}>אני {isAttend ? 'לא' : ''} מגיע</Text>
                     </View>
                     <View style={{ position: 'absolute', left: 10, padding: 5 }}>
-                        <Text style={{ color: isAttend ? '#e55a5a' : '#5ba92c', fontSize: 17, fontWeight: 'bold' }}>{participent}</Text>
+                        <Text style={{ color: isAttend ? '#900' : '#080', fontSize: 17, fontWeight: 'bold' }}>{participent}</Text>
                     </View>
                 </TouchableOpacity>
             </View>

@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useLayoutEffect } from 'react';
 import { Dimensions, RefreshControl, StyleSheet, View, SafeAreaView } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import PostInFeed from '../Components/PostInFeed';
@@ -29,14 +29,26 @@ export default function GenericFeed({ navigation, route }) {
     let api = axios.create({ baseURL });
 
     let parameter;
-    let feedTitle;
+
+    useLayoutEffect(() => {
+        let title = ''
+        if (route.params.toSearch) {
+            title = route.params.toSearch
+        } else if (route.params.title) {
+            title = route.params.title
+        } else {
+            title = ''
+        }
+        navigation.setOptions({
+            title: title,
+        });
+    })
 
     // check if parameter to show received
     if (route.params) {
         // check if in search mode
         if (route.params.toSearch) {
             parameter = 'search=' + route.params.toSearch
-            feedTitle = route.params.toSearch
         } else {
             parameter = 'categories=' + route.params.category_id
         }

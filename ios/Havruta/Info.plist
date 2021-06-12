@@ -23,7 +23,9 @@
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Please give Havruta permission to pick image from Camera roll </string>
+	<string>תן לחברותא הרשאה לבחור תמונה מגלריית התמונות</string>
+	<key>NSCameraUsageDescription</key>
+	<string>תן לחברותא הרשאה למצלמה</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
