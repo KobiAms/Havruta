@@ -70,15 +70,20 @@ function ChatScreen({ navigation, route }) {
     /**this function is activate only by admin.
      * on long press on some chat, an alert will pop and allow the admin to premenetly remove a chat.*/
     function deleteChat(item) {
+        console.log(item)
+        console.log( item.data.images)
         if (isAdmin) {
             Alert.alert(
                 " מחיקת צ׳אט לצמיתות",
                 "מחיקת הצ׳אט" + " \"" + item.data.name + "\" " + ",האם אתה בטוח  ?",
+               
                 [{
                     text: "מחק",
                     onPress: () => {
-                        storage().ref('/chats/' + item.id + '').delete()
-                            .catch(console.log)
+                        if(item.data.images){ // deleting each photo by url
+                            item.data.images.forEach(element => storage().ref(element).delete()
+                            .catch(console.log));
+                        }
                         firestore().collection('chats').doc(item.id).delete()
                             .then(() => console.log('delete ' + item.id + ' succssefuly'))
                             .catch(err => console.log('error in deleting chat: ' + err.code))
