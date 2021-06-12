@@ -5,7 +5,7 @@ import {
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
-import { Platform, Keyboard, Pressable, View } from 'react-native';
+import { ActivityIndicator, Keyboard, Pressable, View } from 'react-native';
 import Icon from 'react-native-vector-icons/EvilIcons';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { Dimensions } from 'react-native';
@@ -253,6 +253,8 @@ export function GenericChat({ navigation, route }) {
                     ['חזור']: () => { },
                 }}
                 icon={() => (
+                    loading?
+                    <ActivityIndicator size={'small'} color={"#00254d"}/>:
                     <Icon size={28} name={'camera'} color={"#00254d"} />
                 )}
                 onSend={args => console.log(args)}
