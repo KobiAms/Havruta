@@ -13,6 +13,7 @@ in Other Screen
    
 in RegistraionScreen
     forget password 
+    validate password crash the app if password doesnot match in signup
 
 in ChatScreen
     delete all messages from chat when delele chat
@@ -20,7 +21,20 @@ in ChatScreen
 in GenericChat
     activity indicator when send (image/text)
 
+in AddEvent
+    keyboardAvoidningView 
+
+in AddChat 
+    edit title to hebrew
+
+in PostInMain
+    no-op warning
+
+in GenericFeed
+    set header tite from GenericFeed to custom title
+
 in ArticleScreen
+    fix header title some parse
     floating reaction attached to keyboard listiner
     more info: https://stackoverflow.com/questions/54547794/how-to-set-the-textinput-box-above-the-keyboard-while-entering-the-input-field-i
     read hook version

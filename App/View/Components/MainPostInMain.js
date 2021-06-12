@@ -134,7 +134,7 @@ function MainPostInMain({ onPress, data, isAdmin }) {
                         containerStyle={{ padding: 5, borderRadius: 10, backgroundColor: '#fff8', margin: 0 }}
                     ></HTMLRend>
                     <HTMLRend
-                        source={{ html: postData.short }}
+                        source={{ html: postData.short.length > 190 ? postData.short.substring(0, 190).concat('...') : postData.short }}
                         contentWidth={Dimensions.get('window').width}
                         baseFontStyle={{
                             textAlign: 'right', color: '#333'

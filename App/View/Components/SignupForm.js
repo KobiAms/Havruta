@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, ActivityIndicator } from 'react-native';
 import auth from '@react-native-firebase/auth'
@@ -47,7 +48,7 @@ function SignupForm({ setUser }) {
             Alert.alert("one of the fields are Missing", [{ text: "OK", }], { cancelable: false })
             return
         }
-        if (password != rePassword) {
+        if (password !== rePassword) {
             Alert.alert("your passwords are not the same", [{ text: "OK", }], { cancelable: false })
             return
         }

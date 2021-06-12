@@ -104,7 +104,7 @@ function PostInMain({ onPress, data, isAdmin }) {
                 }
                 <View style={{ padding: 10 }}>
                     <View style={styles.row}>
-                        <View style={{ padding: 5, borderRadius: 10, backgroundColor: '#fffa', margin: 5 }}>
+                        <View style={{ paddingHorizontal: 5, borderRadius: 10, backgroundColor: '#fffa', margin: 5 }}>
                             <Text>{postData.date}</Text>
                         </View>
                         {
@@ -122,30 +122,30 @@ function PostInMain({ onPress, data, isAdmin }) {
                     </View>
 
                     <HTMLRend
-                        source={{ html: postData.headline }}
+                        source={{ html: postData.headline.length > 50 ? postData.headline.substring(0, 50).concat('...') : postData.headline }}
                         baseFontStyle={{
-                            fontSize: 22,
+                            fontSize: 20,
                             alignItems: 'flex-end',
                             fontWeight: 'bold',
                             textAlign: 'right',
                             color: '#333',
                         }}
-                        containerStyle={{ padding: 5, borderRadius: 10, backgroundColor: '#fff8', margin: 0 }}
+                        containerStyle={{ paddingHorizontal: 5, borderRadius: 10, backgroundColor: '#fff8', margin: 0 }}
                     ></HTMLRend>
                     <HTMLRend
-                        source={{ html: postData.short }}
+                        source={{ html: postData.short.length > 50 ? postData.short.substring(0, 50).concat('...') : postData.short }}
                         contentWidth={Dimensions.get('window').width}
                         baseFontStyle={{
                             textAlign: 'right', color: '#333'
                         }}
-                        containerStyle={{ padding: 5, borderRadius: 10, backgroundColor: '#fff8', margin: 0 }}
+                        containerStyle={{ paddingHorizontal: 5, borderRadius: 10, backgroundColor: '#fff8', margin: 0 }}
                     ></HTMLRend>
 
                     {
                         postExtraData ?
                             <View>
                                 <View style={styles.line} />
-                                <View style={{ padding: 5, borderRadius: 10, backgroundColor: '#fffa', margin: 5 }}>
+                                <View style={{ padding: 0, borderRadius: 10, backgroundColor: '#fffa', margin: 5 }}>
                                     <View style={styles.response}>
                                         {
                                             postLock ?
@@ -214,8 +214,8 @@ const styles = StyleSheet.create({
     },
     line: {
         height: 1,
-        margin: 10,
-        marginBottom: 17,
+        margin: 5,
+        // marginBottom: 17,
         backgroundColor: '#cfcfcf',
     },
     backgroundImage: {

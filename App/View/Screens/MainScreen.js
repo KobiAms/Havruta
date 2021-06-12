@@ -76,7 +76,7 @@ function MainScreen({ navigation, route }) {
               id: articles.data[i].id + '',
               category: categories[index].name,
               content: articles.data[i].content.rendered,
-              short: articles.data[i].excerpt.rendered.substring(0, 190).concat('...'),
+              short: articles.data[i].excerpt.rendered,
               date: dateToReadbleFormat(new Date(articles.data[i].date)),
               autor: articles.data[i].author,
               headline: articles.data[i].title.rendered,
@@ -188,7 +188,7 @@ function MainScreen({ navigation, route }) {
                 </View>
               </Pressable>
             }
-            <PostInMain
+            <MainPostInMain
               onPress={(extraData) => navigation.navigate('ArticleScreen', { data: item, extraData: extraData, isAdmin: isAdmin })}
               data={item}
               isAdmin={auth().currentUser && user ? user.role == 'admin' : false}
