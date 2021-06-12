@@ -1,14 +1,10 @@
-import React, { useState, useEffect } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native'
-import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
-import Icon from 'react-native-vector-icons/AntDesign';
-import IconIos from 'react-native-vector-icons/Ionicons';
+import React, { useState } from 'react'
+import { View, Text, StyleSheet, Dimensions } from 'react-native'
 import HTMLRend from 'react-native-render-html';
-import auth from '@react-native-firebase/auth'
+
 
 /**the first element in every article screen. this component displays the article from wordpress */
-export default function FullArticleComponent({ data, extraData, addComment, likeUpdate }) {
-    const [commentInput, setCommentInput] = useState('')
+export default function FullArticleComponent({ data }) {
 
     return (
         <View>
@@ -36,44 +32,6 @@ export default function FullArticleComponent({ data, extraData, addComment, like
                     ></HTMLRend>
                 </View>
             </View>
-            {
-                extraData && !extraData.lock ?
-                    <View>
-                        <View style={styles.line} />
-                        <View
-                            style={[styles.response, { padding: 15, paddingTop: 5, paddingBottom: 5 }]} /** displays the amount of likes and comments */
-                        >
-                            <TouchableOpacity
-                                style={styles.row}
-                                onPress={auth().currentUser ? () => likeUpdate() : null}>
-                                <Icon name={'like1'} size={20} style={styles.pad} color={auth().currentUser && extraData.likes.includes(auth().currentUser.email) ? '#2e98c5' : '#333'} />
-                                <Text style={{ color: auth().currentUser && extraData.likes.includes(auth().currentUser.email) ? '#2e98c5' : '#333' }}>likes: {extraData.likes.length}</Text>
-                            </TouchableOpacity>
-                            <Text style={{ color: '#333' }}>comments: {extraData.comments ? extraData.comments.length : 0}</Text>
-                        </View>
-                        <View style={styles.new_comment_box} /** text input to add new comment */>
-                            <AutoGrowingTextInput
-                                placeholder={auth().currentUser ? 'Add your comment...' : 'comments avilable to register users only'}
-                                style={[styles.input, auth().currentUser ? null : { backgroundColor: '#ddd' }]}
-                                multiline
-                                onChangeText={setCommentInput}
-                                value={commentInput}
-                                returnKeyType={'send'}
-                                editable={auth().currentUser ? true : false}
-                            />
-                            <TouchableOpacity
-                                onPress={() => {
-                                    if (commentInput.length == 0)
-                                        return;
-                                    addComment(commentInput)
-                                    setCommentInput('')
-                                }}
-                                style={{ marginLeft: 10, }}
-                            >
-                                <IconIos name={'send'} size={25} color={'#2e98c5'} />
-                            </TouchableOpacity>
-                        </View>
-                    </View> : null}
         </View >
     )
 }
@@ -117,11 +75,5 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 10,
         paddingHorizontal: Dimensions.get('screen').width / 3
-    },
-    line: {
-        height: 1,
-        margin: 10,
-        marginBottom: 17,
-        backgroundColor: '#cfcfcf',
     },
 })
