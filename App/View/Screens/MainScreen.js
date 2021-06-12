@@ -1,3 +1,5 @@
+/* eslint-disable quotes */
+/* eslint-disable prettier/prettier */
 /* eslint-disable semi */
 import React, { useState, useEffect } from 'react';
 import {
@@ -8,6 +10,7 @@ import {
   FlatList,
   TextInput,
   TouchableOpacity,
+  Pressable,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import IconIo from 'react-native-vector-icons/Ionicons';
@@ -20,13 +23,6 @@ import axios from 'axios'
 import PostInMain from '../Components/PostInMain';
 import MainPostInMain from '../Components/MainPostInMain';
 import GenericFeed from './GenericFeed';
-
-
-
-const strings = ['kobi', 'zohar', 'oded', 'alice', 'bensgi'];
-const HebrewDate = `<div>
-<script type="text/javascript" charset="utf-8"
-        src="https://www.hebcal.com/etc/hdate-he.js"></script></div>`;
 
 function MainScreen({ navigation, route }) {
   const [close, setClose] = useState(true);
@@ -52,14 +48,14 @@ function MainScreen({ navigation, route }) {
     { name: 'אירועים', id: '394' },
     { name: 'מגזין א', id: '396' },
     { name: 'מגזין ב', id: '398' },
-    { name: 'מגזין ג', id: '400' }
+    { name: 'מגזין ג', id: '400' },
   ]
   const categories_test = [
     { name: "חדשות", id: '122' },
     { name: 'אירועים', id: '117' },
     { name: 'מגזין א', id: '122' },
     { name: 'מגזין ב', id: '117' },
-    { name: 'מגזין ג', id: '122' }
+    { name: 'מגזין ג', id: '122' },
   ]
 
 
@@ -80,17 +76,17 @@ function MainScreen({ navigation, route }) {
               id: articles.data[i].id + '',
               category: categories[index].name,
               content: articles.data[i].content.rendered,
-              short: articles.data[i].excerpt.rendered,
+              short: articles.data[i].excerpt.rendered.substring(0, 190).concat('...'),
               date: dateToReadbleFormat(new Date(articles.data[i].date)),
               autor: articles.data[i].author,
               headline: articles.data[i].title.rendered,
-              image_link: articles.data[i]._links['wp:featuredmedia'] ? articles.data[i]._links['wp:featuredmedia'][0].href : undefined
+              image_link: articles.data[i]._links['wp:featuredmedia'] ? articles.data[i]._links['wp:featuredmedia'][0].href : undefined,
+              category_id: categories_test[index].id,
             }
             arts_wp.push(obj)
           }
           posts_test = [...posts_test, ...arts_wp]
         })
-        console.log(posts_test.length)
         setPosts(posts_test)
       })
       .catch(console.log)
@@ -124,10 +120,8 @@ function MainScreen({ navigation, route }) {
     return subscriber
   }, [])
 
-
-
   function ChooseRenderItem({ item, index }) {
-    let category_to_show;
+    let category_to_show = curCategory;
     if (curCategory != item.category) {
       curCategory = item.category
       category_to_show = item.category
@@ -136,10 +130,10 @@ function MainScreen({ navigation, route }) {
       if (index % 5 == 0) {
         return (
           <View>
-            {index == 0 ? <View style={[styles.toScreen, { padding: 15, opacity: 0 }]} >
+            {index === 0 ? <View style={[styles.toScreen, { padding: 15, opacity: 0 }]} >
               <IconIo name={'ios-chatbox'} size={20} color={'#fff0'} />
             </View> : null}
-            {index == 0 ? null :
+            {index === 0 ? null :
               <View style={styles.category_title_warper}>
                 <Text style={styles.category_title_text}>Category - {index % 5 + 1}</Text>
               </View>}
@@ -183,13 +177,18 @@ function MainScreen({ navigation, route }) {
             {index == 0 ? <View style={[styles.toScreen, { padding: 15, opacity: 0 }]} >
               <IconIo name={'ios-chatbox'} size={20} color={'#fff0'} />
             </View> : null}
-            {index == 0 || !category_to_show ? null :
-              <View style={styles.category_title_warper}>
-                <Text style={styles.category_title_text}>
-                  {item.category}</Text>
-              </View>
+            {!category_to_show ?
+              null
+              :
+              <Pressable onPress={() => { navigation.navigate('GenericFeed', { category_id: item.category_id }) }}>
+                <View style={styles.category_title_warper} >
+                  <Text style={styles.category_title_text}>
+                    {item.category}</Text>
+                  <Text style={{ color: '#fff' }}>לכל הכתבות..</Text>
+                </View>
+              </Pressable>
             }
-            <MainPostInMain
+            <PostInMain
               onPress={(extraData) => navigation.navigate('ArticleScreen', { data: item, extraData: extraData, isAdmin: isAdmin })}
               data={item}
               isAdmin={auth().currentUser && user ? user.role == 'admin' : false}
@@ -271,7 +270,6 @@ const styles = StyleSheet.create({
   category_title_warper: {
     alignItems: 'flex-end',
     borderRadius: 5,
-    backgroundColor: '#f2f2f3',
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -283,7 +281,10 @@ const styles = StyleSheet.create({
     padding: 5,
     margin: 5,
     minWidth: '97%',
-    backgroundColor: '#0d5794'
+    backgroundColor: '#0d5794',
+    flexDirection: 'row-reverse',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   category_title_text: {
     fontSize: 20,
@@ -302,14 +303,14 @@ const styles = StyleSheet.create({
 
   },
   header: {
-    backgroundColor: '#fffd',
     position: 'absolute',
     top: 5,
+    margin: 5,
     zIndex: 1,
     flexDirection: 'row-reverse',
     alignItems: 'center',
     justifyContent: 'space-evenly',
-    width: '95%',
+    width: '97%',
     alignSelf: 'center',
     elevation: 5,
     borderRadius: 5,

@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react';
 import { Text, Image, View, StyleSheet, TouchableOpacity, Dimensions, TouchableWithoutFeedback } from 'react-native';
@@ -98,14 +99,9 @@ function MainPostInMain({ onPress, data, isAdmin }) {
 
     return (
         <TouchableWithoutFeedback onPress={() => onPress(postExtraData)}>
-
             <View style={styles.main}>
                 {
-                    imageUrl ?
-                        <Image style={styles.backgroundImage} source={{ uri: imageUrl }} />
-                        // null
-                        :
-                        null
+                    imageUrl ? <Image style={styles.backgroundImage} source={{ uri: imageUrl }} /> : null
                 }
                 <View style={{ padding: 10 }}>
                     <View style={styles.row}>
@@ -135,7 +131,7 @@ function MainPostInMain({ onPress, data, isAdmin }) {
                             textAlign: 'right',
                             color: '#333',
                         }}
-                        containerStyle={{ padding: 5, borderRadius: 10, backgroundColor: '#fff8', margin: 5 }}
+                        containerStyle={{ padding: 5, borderRadius: 10, backgroundColor: '#fff8', margin: 0 }}
                     ></HTMLRend>
                     <HTMLRend
                         source={{ html: postData.short }}
@@ -143,7 +139,7 @@ function MainPostInMain({ onPress, data, isAdmin }) {
                         baseFontStyle={{
                             textAlign: 'right', color: '#333'
                         }}
-                        containerStyle={{ padding: 5, borderRadius: 10, backgroundColor: '#fff8', margin: 5 }}
+                        containerStyle={{ padding: 5, borderRadius: 10, backgroundColor: '#fff8', margin: 0 }}
                     ></HTMLRend>
 
                     {
@@ -188,7 +184,7 @@ const styles = StyleSheet.create({
         flex: 1,
         resizeMode: 'cover',
         minWidth: '97%',
-        shadowColor: "#000",
+        shadowColor: '#000',
         shadowOffset: {
             width: 0,
             height: 5,

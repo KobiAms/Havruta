@@ -98,14 +98,9 @@ function PostInMain({ onPress, data, isAdmin }) {
 
     return (
         <TouchableWithoutFeedback onPress={() => onPress(postExtraData)}>
-
             <View style={styles.main}>
                 {
-                    imageUrl ?
-                        <Image style={styles.backgroundImage} source={{ uri: imageUrl }} />
-                        // null
-                        :
-                        null
+                    imageUrl ? <Image style={styles.backgroundImage} source={{ uri: imageUrl }} /> : null
                 }
                 <View style={{ padding: 10 }}>
                     <View style={styles.row}>
@@ -135,7 +130,7 @@ function PostInMain({ onPress, data, isAdmin }) {
                             textAlign: 'right',
                             color: '#333',
                         }}
-                        containerStyle={{ padding: 5, borderRadius: 10, backgroundColor: '#fff8', margin: 5 }}
+                        containerStyle={{ padding: 5, borderRadius: 10, backgroundColor: '#fff8', margin: 0 }}
                     ></HTMLRend>
                     <HTMLRend
                         source={{ html: postData.short }}
@@ -143,7 +138,7 @@ function PostInMain({ onPress, data, isAdmin }) {
                         baseFontStyle={{
                             textAlign: 'right', color: '#333'
                         }}
-                        containerStyle={{ padding: 5, borderRadius: 10, backgroundColor: '#fff8', margin: 5 }}
+                        containerStyle={{ padding: 5, borderRadius: 10, backgroundColor: '#fff8', margin: 0 }}
                     ></HTMLRend>
 
                     {
