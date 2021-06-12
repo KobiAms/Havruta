@@ -9,14 +9,8 @@ in UserProfile
     header title to be the user name fix - ?
 
 in Other Screen 
-    more GenericFeed category
     add category
-    about page
-    overall style
-    
-in MainScreen
-    show the top 5 from any subject required
-
+   
 in RegistraionScreen
     forget password 
 
@@ -24,7 +18,6 @@ in ChatScreen
     delete all messages from chat when delele chat
 
 in GenericChat
-
     activity indicator when send (image/text)
 
 in ArticleScreen
@@ -64,6 +57,9 @@ in RegistraionScreen
 in Other Screen 
     more chats section -v
     about section -- get the api call from "https://havruta.org.il/donate/" - V
+    about page-V
+    overall style -V
+    more GenericFeed category-V
 
 in AddChat
     validate the chat name - V
@@ -99,3 +95,6 @@ in PostInFeed
 
 in UserProfile
     user photo does not display properley -V
+
+in MainScreen
+    show the top 5 from any subject required -V

@@ -23,6 +23,7 @@ import ManageUser from './App/View/Components/ManageUser';
 import ChatScreen from './App/View/Screens/ChatScreen';
 import AddChat from './App/View/Screens/AddChat';
 import DonationScreen from './App/View/Screens/DonationScreen';
+import AboutScreen from './App/View/Screens/AboutScreen';
 import EventsScreen from './App/View/Screens/EventsScreen';
 import AddEvent from './App/View/Screens/AddEvent';
 import UserProfile from './App/View/Screens/UserProfile';
@@ -186,6 +187,10 @@ App = () => {
           <Stack.Screen
             name="DonationScreen"
             component={DonationScreen}
+          />
+          <Stack.Screen
+            name="AboutScreen"
+            component={AboutScreen}
           />
           <Stack.Screen
             name="EventsScreen"
