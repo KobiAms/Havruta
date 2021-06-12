@@ -18,7 +18,10 @@ function ChatItem({ item }) {
             setLastSenderName(last_m.user.name);
             if (last_m.text.length > 20) {
                 setlastMessage(last_m.text.substring(0, 20).concat("..."));
-            } else {
+            } else if (last_m.text.length < 1 && last_m.image) {
+                setlastMessage('תמונה')
+            }
+            else {
                 setlastMessage(last_m.text);
             }
         } else {

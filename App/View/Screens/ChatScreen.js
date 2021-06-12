@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.5,
         shadowRadius: 1.5,
-        elevation: 2,
+        elevation: 0,
     },
     skeleton: {
         backgroundColor: '#fff',

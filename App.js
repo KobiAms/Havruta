@@ -23,6 +23,7 @@ import ManageUser from './App/View/Components/ManageUser';
 import ChatScreen from './App/View/Screens/ChatScreen';
 import AddChat from './App/View/Screens/AddChat';
 import DonationScreen from './App/View/Screens/DonationScreen';
+import AboutScreen from './App/View/Screens/AboutScreen';
 import EventsScreen from './App/View/Screens/EventsScreen';
 import AddEvent from './App/View/Screens/AddEvent';
 import UserProfile from './App/View/Screens/UserProfile';
@@ -62,8 +63,8 @@ MainScreenNavigator = () => {
           left: Platform.OS == 'ios' ? 8 : 10,
           right: Platform.OS == 'ios' ? 8 : 10,
           borderRadius: Platform.OS == 'ios' ? 40 : 10,
-          borderTopLeftRadius: 5,
-          borderTopRightRadius: 5,
+          borderTopLeftRadius: 10,
+          borderTopRightRadius: 10,
           borderWidth: 2,
           borderColor: '#1111',
           elevation: 5,
@@ -83,9 +84,9 @@ MainScreenNavigator = () => {
         initialParams={{ categories_id: '122' }}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<IconFW name="home" size={25} color={color} />), })} />
       <Tab.Screen
-        name="מגזין"
+        name="מעט לעת"
         component={GenericFeed}
-        initialParams={{ category_id: '122' }}
+        initialParams={{ category_id: '402' }}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="book-open" size={25} color={color} />), })} />
       <Tab.Screen
         name="צ׳אט הכתבים"
@@ -93,12 +94,12 @@ MainScreenNavigator = () => {
         initialParams={{ id: 'reporters', show_input: false, chat_name: "צ׳אט הכתבים" }}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<IconIC name="ios-chatbubbles-sharp" size={25} color={color} />), })} />
       <Tab.Screen
-        name="יהדות"
+        name="דוברות"
         component={GenericFeed}
-        initialParams={{ category_id: '117' }}
+        initialParams={{ category_id: '404' }}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="torah" size={25} color={color} />), })} />
       <Tab.Screen
-        name=" "
+        name="נוספים"
         component={OtherScreen}
         options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="bars" size={25} color={color} />), })} />
     </Tab.Navigator>
@@ -143,7 +144,7 @@ App = () => {
                   <TouchableOpacity
                     style={styles.register}
                     onPress={() => navigation.navigate('Registration')}>
-                    <Icon color={auth().currentUser ? '#fff' : '#f0fbff'} name={'user-alt'} size={25} />
+                    <Icon color={auth().currentUser ? '#fff' : '#2e98c5'} name={'user-alt'} size={25} />
                   </TouchableOpacity>
               })
             }} />
@@ -158,7 +159,7 @@ App = () => {
           <Stack.Screen
             name="Manage User"
             component={ManageUser}
-            options={{ title: 'Manage User', }} />
+            options={{ title: 'ניהול', }} />
           <Stack.Screen
             name="Wizard"
             component={Wizard}
@@ -186,6 +187,10 @@ App = () => {
           <Stack.Screen
             name="DonationScreen"
             component={DonationScreen}
+          />
+          <Stack.Screen
+            name="AboutScreen"
+            component={AboutScreen}
           />
           <Stack.Screen
             name="EventsScreen"

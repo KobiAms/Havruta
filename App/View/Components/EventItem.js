@@ -124,7 +124,7 @@ export default function EventItem({ data, isAdmin, navigation, id, navigator }) 
                         isAdmin && !deleted ? (
 
                             <TouchableOpacity onPress={() => deleteEvent(id)} style={{ position: 'absolute', padding: 10, left: 0 }}>
-                                <IconMI color={deleted ? '#060' : '#500'} size={30} name={deleted ? 'replay-circle-filled' : 'cancel'} />
+                                <IconMI color={deleted ? '#5ba92c' : '#e55a5a'} size={30} name={deleted ? 'replay-circle-filled' : 'cancel'} />
                             </TouchableOpacity>
                         )
                             :
@@ -132,7 +132,7 @@ export default function EventItem({ data, isAdmin, navigation, id, navigator }) 
                     }
                     <Text style={{ position: 'absolute', right: 10, fontSize: 17, color: '#444', padding: 8 }}>{ }</Text>
                 </View>
-                <Text style={{ fontSize: 22, fontWeight: 'bold', padding: 8, backgroundColor: '#fffa', borderRadius: 5, overflow: 'hidden' }}>{data.name}</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', padding: 8, backgroundColor: '#fff8', borderRadius: 5, overflow: 'hidden' }}>{data.name}</Text>
                 <Text style={{ fontSize: 17, padding: 8, width: '90%', textAlign: 'right', borderRadius: 5, overflow: 'hidden', fontWeight: 'bold' }}>{data.description}</Text>
                 <TouchableOpacity style={[styles.attend, { margin: 20 }]}
                     onPress={() => attend(data.key)}>
@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
         resizeMode: 'cover', // or 'stretch'
         position: 'absolute',
         alignSelf: 'center',
-        opacity: 0.5
+        opacity: 0.35
     }
 
 });
