@@ -169,7 +169,7 @@ function ArticleScreen({ navigation, route }) {
                             </View>
                             <View style={styles.new_comment_box} /** text input to add new comment */>
                                 <AutoGrowingTextInput
-                                    placeholder={auth().currentUser ? 'Add your comment...' : 'comments avilable to register users only'}
+                                    placeholder={auth().currentUser ? 'הוסף תגובה...' : 'רק משתמשים מחוברים יכולים להגיב'}
                                     style={[styles.input, auth().currentUser ? null : { backgroundColor: '#ddd' }]}
                                     multiline
                                     onChangeText={setCommentInput}
@@ -233,8 +233,8 @@ const styles = StyleSheet.create({
         borderRadius: Platform.OS == 'ios' ? 40 : 20,
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
-        borderWidth: 2,
-        borderColor: '#0d5794bb',
+        borderWidth: 1,
+        borderColor: '#0d579488',
         elevation: 5,
         padding: 10,
         backgroundColor: '#f2f2f3',
