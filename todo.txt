@@ -12,7 +12,8 @@ in Other Screen
    
 in RegistraionScreen
     forget password 
-    validate password crash the app if password doesnot match in signup
+    change password
+    validate password crash the app if password doesnot match in signup - V
 
 in EventScreen
     reverse the list
@@ -21,16 +22,14 @@ in AddChat
     edit title to hebrew - V
 
 in PostInMain
-    no-op warning
+    no-op warning - V
 
 in GenericFeed
     set header tite from GenericFeed to custom title - V
 
 in ArticleScreen
     fix header title some parse
-    floating reaction attached to keyboard listiner
-    more info: https://stackoverflow.com/questions/54547794/how-to-set-the-textinput-box-above-the-keyboard-while-entering-the-input-field-i
-    read hook version
+    floating reaction attached to keyboard listiner - V
 
 
 ---------- ========== done ========== ----------:

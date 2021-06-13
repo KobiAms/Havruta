@@ -11,10 +11,10 @@ validateEmail = (email) => {
 
 /** the component that display on the screen when non user want to register */
 function SignupForm({ setUser }) {
-    const [fullName, setFullName] = useState('testy test')
-    const [email, setEmail] = useState('testy@test.com')
-    const [password, setPassword] = useState('12344321')
-    const [rePassword, setRePassword] = useState('12344321')
+    const [fullName, setFullName] = useState('')
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [rePassword, setRePassword] = useState('')
     const [loading, setLoading] = useState(false)
 
     function add_user_to_db(email, password, name) {
@@ -33,45 +33,45 @@ function SignupForm({ setUser }) {
                     setUser(auth().currentUser)
                 })
                 .catch((error) => {
-                    Alert.alert("Oops..! Some Error Just happen. Please Try Again Later\n" + error, [{ text: "OK", }], { cancelable: false })
+                    Alert.alert("אירעה שגיאה!", 'אנא נסה שנית', [{ text: "בסדר", }], { cancelable: false })
                     setLoading(false);
                 })
         }).catch(() => {
-            Alert.alert("Some Error Just Happened, Please try again later", [{ text: "OK", }], { cancelable: false })
+            Alert.alert("אירעה שגיאה!", 'אנא נסה שנית', [{ text: "בסדר", }], { cancelable: false })
         })
     }
 
     function signup() {
         if (loading)
             return;
-        if (!(email && password && rePassword)) {
-            Alert.alert("one of the fields are Missing", [{ text: "OK", }], { cancelable: false })
+        if (!(fullName, email && password && rePassword)) {
+            Alert.alert("לא כל השדות מלאים", [{ text: "בסדר", }], { cancelable: false })
             return
         }
         if (password !== rePassword) {
-            Alert.alert("your passwords are not the same", [{ text: "OK", }], { cancelable: false })
+            Alert.alert('אירעה שגיאה!', 'הסיסמאות אינן תואמות', [{ text: "בסדר", }], { cancelable: false })
             return
         }
         if (!validateEmail(email)) {
-            Alert.alert("invalid email", [{ text: "OK", }], { cancelable: false })
+            Alert.alert('אירעה שגיאה!', 'האימייל אינו חוקי', [{ text: "בסדר", }], { cancelable: false })
             return
         }
-        if (fullName.length < 5) {
-            Alert.alert("Full Name must be at least 5 characters", [{ text: "OK", }], { cancelable: false })
+        if (fullName.length < 2) {
+            Alert.alert('אירעה שגיאה!', 'שם המשתמש קצר מידיי', [{ text: "בסדר", }], { cancelable: false })
             return
         }
         setLoading(true);
         auth().fetchSignInMethodsForEmail(email)
             .then(signInMethod => {
                 if (signInMethod.length) {
-                    Alert.alert('', 'This email already used', [{ text: 'OK' }], { cancelable: false });
+                    Alert.alert('אירעה שגיאה', 'אימייל זה כבר תפוס', [{ text: 'בסדר' }], { cancelable: false });
                     setLoading(false);
                 } else {
                     add_user_to_db(email, password, fullName)
                 }
             })
             .catch(() => {
-                Alert.alert('', 'Some Error Just Happened, Please try again later', [{ text: 'OK' }], { cancelable: false });
+                Alert.alert('אירעה שגיאה', 'אנא נסה שנית', [{ text: 'בסדר' }], { cancelable: false });
                 setLoading(false);
             })
     }
@@ -79,37 +79,41 @@ function SignupForm({ setUser }) {
     return (
         <View style={styles.form}>
             <TextInput
+                textAlign={'center'}
                 autoCapitalize={'words'}
                 style={styles.input}
                 onChangeText={setFullName}
                 value={fullName}
-                placeholder={'Full Name'}
+                placeholder={'ישראל ישראלי'}
             />
             <TextInput
+                textAlign={'center'}
                 autoCapitalize={'none'}
                 style={styles.input}
                 onChangeText={setEmail}
                 value={email}
-                placeholder={'Enter Email'}
+                placeholder={'israel@israeli.co.il'}
             />
             <TextInput
+                textAlign={'center'}
                 autoCapitalize={'none'}
                 style={styles.input}
                 onChangeText={setPassword}
                 value={password}
-                placeholder={'Enter Password'}
+                placeholder={'הכנס סיסמא'}
                 secureTextEntry={true}
             />
             <TextInput
+                textAlign={'center'}
                 autoCapitalize={'none'}
                 style={styles.input}
                 onChangeText={setRePassword}
                 value={rePassword}
-                placeholder={'Re-Enter Password'}
+                placeholder={'הכנס סיסמא שוב'}
                 secureTextEntry={true}
             />
             <TouchableOpacity style={styles.signup_button} onPress={() => signup()}>
-                {loading ? <ActivityIndicator size={'small'} color={'#0d5794'} /> : <Text>צור לי משתמש 😎</Text>}
+                {loading ? <ActivityIndicator size={'small'} color={'#FFFFFF'} /> : <Text style={{ color: '#fff', fontSize: 18, fontWeight: '500' }}>צור לי משתמש 😎</Text>}
             </TouchableOpacity>
         </View>
     )
@@ -125,9 +129,10 @@ const styles = StyleSheet.create({
         width: '80%',
         borderWidth: 1,
         borderRadius: 20,
-        borderColor: '#aaa',
+        borderColor: '#0d5794',
         backgroundColor: '#FFFFFF',
         shadowColor: '#000',
+        height: 35,
         shadowOffset: {
             width: 0,
             height: 4,
@@ -139,11 +144,15 @@ const styles = StyleSheet.create({
         margin: 5
     },
     signup_button: {
-        width: '50%',
-        borderWidth: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 20,
+        height: 50,
+        paddingRight: 50,
+        paddingLeft: 50,
         borderRadius: 20,
-        borderColor: '#0d5794',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#0d5794',
         shadowColor: '#000',
         shadowOffset: {
             width: 0,
@@ -153,10 +162,7 @@ const styles = StyleSheet.create({
         shadowRadius: 5.46,
         elevation: 3,
         padding: 8,
-        margin: 5,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
+        margin: 5
     }
 });
 

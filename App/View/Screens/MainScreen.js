@@ -22,27 +22,19 @@ import firestore from '@react-native-firebase/firestore'
 import axios from 'axios'
 import PostInMain from '../Components/PostInMain';
 import MainPostInMain from '../Components/MainPostInMain';
-import GenericFeed from './GenericFeed';
 
 function MainScreen({ navigation, route }) {
   const [close, setClose] = useState(true);
   const [toSearch, setToSearch] = useState('');
   const [user, setUser] = useState();
   const [isAdmin, setIsAdmin] = useState(false);
-  const [hebrewDate, setHebrewDate] = useState();
   const [posts, setPosts] = useState([])
+  const [refreshing, setRefreshing] = useState(false);
+  const [offset, setOffset] = useState(0)
   const baseURL = 'https://havruta.org.il/wp-json'
   let api = axios.create({ baseURL });
-  let curCategory = 'חדשות'
 
 
-  async function getHebrewDate() {
-    const dateURL = `https://www.hebcal.com/etc/hdate-he.js`;
-    const response = await fetch(dateURL);
-    const htmlStr = await response.text();
-    const date = htmlStr.substring(16, htmlStr.length - 4)
-    setHebrewDate(date)
-  }
   const categories = [
     { name: "חדשות", id: '394' },
     { name: 'אירועים', id: '394' },
@@ -50,20 +42,13 @@ function MainScreen({ navigation, route }) {
     { name: 'מגזין ב', id: '398' },
     { name: 'מגזין ג', id: '400' },
   ]
-  const categories_test = [
-    { name: "חדשות", id: '122' },
-    { name: 'אירועים', id: '117' },
-    { name: 'מגזין א', id: '122' },
-    { name: 'מגזין ב', id: '117' },
-    { name: 'מגזין ג', id: '122' },
-  ]
-
+  let curCategory = categories[0]
 
   function getArticles() {
     setPosts(['loading', 'loading', 'loading', 'loading', 'loading', 'loading', 'loading', 'loading', 'loading'])
     api = axios.create({ baseURL });
     let promises = []
-    categories_test.forEach(item => {
+    categories.forEach(item => {
       promises.push(api.get('/wp/v2/posts?categories=' + item.id + '&per_page=5'))
     })
     Promise.all(promises)
@@ -81,16 +66,17 @@ function MainScreen({ navigation, route }) {
               autor: articles.data[i].author,
               headline: articles.data[i].title.rendered,
               image_link: articles.data[i]._links['wp:featuredmedia'] ? articles.data[i]._links['wp:featuredmedia'][0].href : undefined,
-              category_id: categories_test[index].id,
-              category_title: categories_test[index].name
+              category_id: categories[index].id,
+              category_title: categories[index].name
             }
             arts_wp.push(obj)
           }
           posts_test = [...posts_test, ...arts_wp]
         })
         setPosts(posts_test)
+        setRefreshing(false);
       })
-      .catch(console.log)
+      .catch(() => setRefreshing(false))
   }
 
   // listen to auth state and get the user data if is log-in
@@ -115,19 +101,20 @@ function MainScreen({ navigation, route }) {
   }
 
   useEffect(() => {
-    getHebrewDate()
     getArticles()
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber
   }, [])
 
   function ChooseRenderItem({ item, index }) {
-    let category_to_show = curCategory;
+    let category_to_show;
     if (curCategory != item.category) {
       curCategory = item.category
       category_to_show = item.category
     }
+    // if thie item represant loading component render skeleton item
     if (item == 'loading') {
+      // 
       if (index % 5 == 0) {
         return (
           <View>
@@ -136,7 +123,7 @@ function MainScreen({ navigation, route }) {
             </View> : null}
             {index === 0 ? null :
               <View style={styles.category_title_warper}>
-                <Text style={styles.category_title_text}>Category - {index % 5 + 1}</Text>
+                <Text style={styles.category_title_text}>לכל הכתבות...</Text>
               </View>}
             <SkeletonContent
               containerStyle={styles.skeleton}
@@ -172,38 +159,41 @@ function MainScreen({ navigation, route }) {
         </View>
       )
     } else {
-      if (index % 5 == 0) {
+      if (category_to_show) {
         return (
           <View>
             {index == 0 ? <View style={[styles.toScreen, { padding: 15, opacity: 0 }]} >
               <IconIo name={'ios-chatbox'} size={20} color={'#fff0'} />
             </View> : null}
-            {!category_to_show ?
-              null
-              :
-              <Pressable onPress={() => { navigation.navigate('GenericFeed', { category_id: item.category_id, title: item.category_title }) }}>
-                <View style={styles.category_title_warper} >
-                  <Text style={styles.category_title_text}>
-                    {item.category}</Text>
-                  <Text style={{ color: '#fff' }}>לכל הכתבות..</Text>
-                </View>
-              </Pressable>
-            }
-            <MainPostInMain
-              onPress={(extraData) => navigation.navigate('ArticleScreen', { data: item, extraData: extraData, isAdmin: isAdmin })}
-              data={item}
-              isAdmin={auth().currentUser && user ? user.role == 'admin' : false}
-            />
+
+            <Pressable onPress={() => { navigation.navigate('GenericFeed', { category_id: item.category_id, title: item.category_title }) }}>
+              <View style={styles.category_title_warper} >
+                <Text style={styles.category_title_text}>
+                  {item.category}</Text>
+                <Text style={{ color: '#fff' }}>לכל הכתבות..</Text>
+              </View>
+            </Pressable>
+            <Pressable
+              onPress={() => navigation.navigate('ArticleScreen', { data: item, isAdmin: isAdmin })}
+            >
+              <MainPostInMain
+                data={item}
+              />
+            </Pressable>
+
           </View >
         )
       }
       return (
+
         <View>
-          <PostInMain
-            onPress={(extraData) => navigation.navigate('ArticleScreen', { data: item, extraData: extraData, isAdmin: isAdmin })}
-            data={item}
-            isAdmin={auth().currentUser && user ? user.role == 'admin' : false}
-          />
+          <Pressable
+            onPress={() => navigation.navigate('ArticleScreen', { data: item, isAdmin: isAdmin })}
+          >
+            <PostInMain
+              data={item}
+            />
+          </Pressable>
           {index == (posts.length - 1) ?
             <View style={{ height: 70, padding: 3 }} />
             : null
@@ -259,6 +249,8 @@ function MainScreen({ navigation, route }) {
         renderItem={ChooseRenderItem}
         style={{ flex: 1 }}
         keyExtractor={(item, index) => index}
+        onRefresh={() => { setRefreshing(true); getArticles(); }}
+        refreshing={refreshing}
       />
     </View>
   );
@@ -270,7 +262,6 @@ const styles = StyleSheet.create({
   },
   category_title_warper: {
     alignItems: 'flex-end',
-    borderRadius: 5,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -279,8 +270,10 @@ const styles = StyleSheet.create({
     elevation: 2,
     shadowOpacity: 0.25,
     shadowRadius: 3.5,
+    marginTop: 5,
     padding: 5,
-    margin: 5,
+    marginLeft: 5,
+    marginRight: 5,
     minWidth: '97%',
     backgroundColor: '#0d5794',
     flexDirection: 'row-reverse',

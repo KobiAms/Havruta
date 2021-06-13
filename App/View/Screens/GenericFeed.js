@@ -23,11 +23,11 @@ export default function GenericFeed({ navigation, route }) {
     const [fullArticles, setFullArticles] = useState(['loading', 'loading', 'loading', 'loading', 'loading', 'loading', 'loading']);
     const [user, setUser] = useState();
     const [isAdmin, setIsAdmin] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
     const [range, setRange] = useState(0)
     const [loading, setLoading] = useState(true)
     const baseURL = 'https://havruta.org.il/wp-json'
     let api = axios.create({ baseURL });
-
     let parameter;
 
     useLayoutEffect(() => {
@@ -37,7 +37,7 @@ export default function GenericFeed({ navigation, route }) {
         } else if (route.params.title) {
             title = route.params.title
         } else {
-            title = ''
+            return
         }
         navigation.setOptions({
             title: title,
@@ -106,10 +106,12 @@ export default function GenericFeed({ navigation, route }) {
                         const user_tmp = doc.data()
                         setUser(user_tmp);
                         setIsAdmin(user_tmp.role == 'admin')
+                        setRefreshing(false)
                     }
                 })
                 .catch(err => {
                     console.log(err)
+                    setRefreshing(false)
                 })
         }
     }
@@ -154,15 +156,6 @@ export default function GenericFeed({ navigation, route }) {
         }
     }
 
-    // trolly loading animation to give the user the filling of the refresh option
-    const [refreshing, setRefreshing] = useState(false);
-    const wait = (timeout) => { return new Promise(resolve => setTimeout(resolve, timeout)); }
-    const onRefresh = useCallback(() => {
-        setRefreshing(true);
-        wait(2000).then(() => setRefreshing(false));
-    }, []);
-
-
     function renderFooter() {
         //it will show indicator at the bottom of the list when data is loading otherwise it returns null
         if (!loading) return null;
@@ -174,27 +167,18 @@ export default function GenericFeed({ navigation, route }) {
     };
 
     return (
-        <View style={styles.main}>
-            <SafeAreaView style={{ flex: 0, backgroundColor: '' }} />
-            <View style={styles.main}>
-                <FlatList
-                    data={[...fullArticles, 'end_list']}
-                    scrollIndicatorInsets={{ right: 1 }}
-                    refreshControl={
-                        <RefreshControl
-                            enabled={true}
-                            refreshing={refreshing}
-                            onRefresh={onRefresh}
-                        />
-                    }
-                    ListFooterComponent={() => renderFooter()}
-                    onEndReachedThreshold={0}
-                    onEndReached={() => getArticles(parameter, true)}
-                    renderItem={({ item }) => item_to_render(item)}
-                    keyExtractor={(item, idx) => idx}
-                />
-            </View>
-        </View>
+        <FlatList
+            style={styles.main}
+            data={[...fullArticles, 'end_list']}
+            scrollIndicatorInsets={{ right: 1 }}
+            refreshing={refreshing}
+            onRefresh={() => { setRefreshing(true); getArticles(); }}
+            ListFooterComponent={() => renderFooter()}
+            onEndReachedThreshold={0}
+            onEndReached={() => getArticles(parameter, true)}
+            renderItem={({ item }) => item_to_render(item)}
+            keyExtractor={(item, idx) => idx}
+        />
     );
 }
 

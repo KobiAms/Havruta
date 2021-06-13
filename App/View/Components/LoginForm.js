@@ -5,8 +5,8 @@ import auth from '@react-native-firebase/auth'
 
 
 function LoginForm({ setUser }) {
-    const [password, setPassword] = useState("12344321")
-    const [email, setEmail] = useState("testy@test.com")
+    const [password, setPassword] = useState("")
+    const [email, setEmail] = useState("")
     const [loading, setLoading] = useState(false)
 
     /**the function that activate the login flow */
@@ -14,7 +14,7 @@ function LoginForm({ setUser }) {
         if (loading)
             return;
         if (!(email && password)) {         //incase some data is missing
-            Alert.alert("Email or Password Missing", [{ text: "OK", }], { cancelable: false })
+            Alert.alert('האימייל או הסיסמא אינם נכונים', [{ text: "בסדר", }], { cancelable: false })
             return
         }
         setLoading(true)
@@ -28,10 +28,12 @@ function LoginForm({ setUser }) {
                 let errorMsg;
                 console.log(errorType)
                 if (errorType.code == "auth/wrong-password")
-                    errorMsg = "The password is invalid";
+                    errorMsg = 'האימייל או הסיסמא אינם נכונים';
+                else if (errorType.code == "auth/user-not-found")
+                    errorMsg = 'האימייל או הסיסמא אינם נכונים';
                 else
-                    errorMsg = "Some Error just happend\n" + errorType.code;
-                Alert.alert("Oops!.. Login Failed", errorMsg, [{ text: "OK", }], { cancelable: false })
+                    errorMsg = "\n אנא נסה שוב";
+                Alert.alert("אירעה שגיאה בהתחברות", errorMsg, [{ text: "בסדר", }], { cancelable: false })
             })
     }
     return (
@@ -41,18 +43,20 @@ function LoginForm({ setUser }) {
                 style={styles.input}
                 onChangeText={setEmail}
                 value={email}
-                placeholder={'Enter Email'}
+                textAlign={'center'}
+                placeholder={'israel@israeli.co.il'}
             />
             <TextInput
                 autoCapitalize={'none'}
                 style={styles.input}
                 onChangeText={setPassword}
                 value={password}
-                placeholder={'Enter Password'}
+                placeholder={'**********'}
+                textAlign={'center'}
                 secureTextEntry={true}
             />
             <TouchableOpacity style={styles.login_button} onPress={() => login()}>
-                {loading ? <ActivityIndicator size={'small'} color={'#0d5794'} /> : <Text>התחבר</Text>}
+                {loading ? <ActivityIndicator size={'small'} color={'#FFFFFF'} /> : <Text style={{ color: '#fff', fontSize: 18, fontWeight: '500' }}> התחבר 😎</Text>}
             </TouchableOpacity>
         </View>
     )
@@ -68,9 +72,10 @@ const styles = StyleSheet.create({
         width: '80%',
         borderWidth: 1,
         borderRadius: 20,
-        borderColor: '#aaa',
+        borderColor: '#0d5794',
         backgroundColor: '#FFFFFF',
         shadowColor: '#000',
+        height: 35,
         shadowOffset: {
             width: 0,
             height: 4,
@@ -82,14 +87,15 @@ const styles = StyleSheet.create({
         margin: 5
     },
     login_button: {
-        width: '50%',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        borderWidth: 1,
+        marginTop: 40,
+        height: 50,
+        paddingRight: 100,
+        paddingLeft: 100,
         borderRadius: 20,
-        borderColor: '#0d5794',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#0d5794',
         shadowColor: '#000',
         shadowOffset: {
             width: 0,

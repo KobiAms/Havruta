@@ -13,7 +13,7 @@ export default function LoadingComponent() {
     <View style={styles.container}>
       <Image
         style={styles.image}
-        source={require('../../Assets/POWERPNT_frXVLHdxnI.png')}
+        source={require('../../Assets/logo_stretch.png')}
       />
       <View>
         <ActivityIndicator size={'large'} color={'#0d5794'} />

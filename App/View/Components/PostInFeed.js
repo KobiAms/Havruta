@@ -34,7 +34,7 @@ function PostInFeed({ onPress, data, isAdmin }) {
     useEffect(() => {
         if (data.image_link) {
             const baseURL = data.image_link
-            axios.create({ baseURL }).get().then(res => {
+            const subscriber = axios.create({ baseURL }).get().then(res => {
                 if (res.data.guid.rendered[4] != '') {
                     setImageUrl(res.data.guid.rendered.substring(0, 4) + 's' + res.data.guid.rendered.substring(4, res.data.guid.rendered.length))
                 } else {
@@ -43,6 +43,7 @@ function PostInFeed({ onPress, data, isAdmin }) {
             }).catch((error) => {
                 console.log(error)
             })
+            return subscriber
         }
         loadExtraData()
 
@@ -55,7 +56,9 @@ function PostInFeed({ onPress, data, isAdmin }) {
                 comments: [],
                 likes: [],
                 lock: false
-            }).catch(err => { alert('Initialise failed:\n' + err.code) })
+            })
+                .then(() => loadExtraData())
+                .catch(err => { alert('Initialise failed:\n' + err.code) })
         } else if (postLock) {
             firestore().collection('article').doc(postData.id).update({ lock: false })
                 .then(() => {

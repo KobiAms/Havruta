@@ -7,7 +7,6 @@ import {
     Dimensions,
     Keyboard,
     TouchableWithoutFeedback,
-    Platform,
     Image,
     KeyboardAvoidingView
 } from 'react-native';
@@ -20,11 +19,12 @@ import auth from '@react-native-firebase/auth';
 import { ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/EvilIcons'
 import { launchImageLibrary } from 'react-native-image-picker';
+import { Alert } from 'react-native';
 /**A wizard to complete all of the missing data about a new user */
 export default function NewUserWizard() {
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-    const [editDate, setEditDate] = useState();
-    const [userDOB, setuserDOB] = useState('6.9.1969');
+    const [editDate, setEditDate] = useState(new Date());
+    const [userDOB, setuserDOB] = useState(new Date());
     const [editAbout, setEditAbout] = useState('');
     const [loading, setLoading] = useState(false)
     const [userName, setuserName] = useState('');
@@ -37,7 +37,7 @@ export default function NewUserWizard() {
     // gets the date from date alert after confirm date
     const handleDateConfirm = (date) => {
         setEditDate(date)
-        setuserDOB(dateToReadbleFormat(date))
+        setuserDOB(date)
         setDatePickerVisibility(false);
     };
 
@@ -57,56 +57,30 @@ export default function NewUserWizard() {
             const reference = storage().ref(
                 '/users/' + auth().currentUser.email + '/' + 'user_image.png',
             );
-            await reference.putFile(response.uri);
-            reference.getDownloadURL().then(url => {
-                user_new_data.photo = url;
-                firestore().collection('users').doc(auth().currentUser.email).update(user_new_data).then(() => {
-                    auth().currentUser.updateProfile({ displayName: userName }); setLoading(false)
-                }).catch(err => console.log(err))
-            })
+            await reference.putFile(userImage);
+            reference.getDownloadURL()
+                .then(url => {
+                    user_new_data.photo = url;
+                    firestore().collection('users').doc(auth().currentUser.email).update(user_new_data)
+                        .then(() => {
+                        })
+                        .catch(err => {
+                            Alert.alert('אירעה שגיאה!', 'אנא נסה שנית', [{ text: "בסדר", }], { cancelable: false })
+                            setLoading(false)
+                        })
+                }).catch(err => {
+                    Alert.alert('אירעה שגיאה!', 'אנא נסה שנית', [{ text: "בסדר", }], { cancelable: false })
+                    setLoading(false)
+                })
         }
         else {
             firestore().collection('users').doc(auth().currentUser.email).update(user_new_data).then(() => {
-                auth().currentUser.updateProfile({ displayName: userName }); setLoading(false)
-            }).catch(err => console.log(err))
+            }).catch(err => {
+                Alert.alert('אירעה שגיאה!', 'אנא נסה שנית', [{ text: "בסדר", }], { cancelable: false })
+                setLoading(false)
+            })
         }
-        // if (editDate && userName && editAbout) {
-
-        //     console.log("display name " + auth().currentUser.displayName);
-        //     console.log("firebase name " + userName)
-        //     firestore().collection('users').doc(auth().currentUser.email)
-        //         .update({
-        //             about: editAbout,
-        //             dob: firestore.Timestamp.fromDate(editDate),
-        //             isNew: false,
-        //             photo: userImage
-        //         })
-        //         .then(() => { auth().currentUser.updateProfile({ displayName: userName }); setLoading(false) })
-        //         .catch(err => console.log(err.code))
-        // }
-        // else {
-        //     console.log('something went wrong')
-        // }
     }
-
-    /**this useEffect gets this user information that are currently in the database */
-    useEffect(() => {
-        if (auth().currentUser) {
-            const subscriber = firestore()
-                .collection('users')
-                .doc(auth().currentUser.email)
-                .get()
-                .then(doc => {
-                    if (!doc.data()) return;
-                    setuserName(doc.data().name);
-                    setuserDOB(dateToReadbleFormat(doc.data().dob.toDate()));
-                    setEditDate(doc.data().dob.toDate());
-                    auth().currentUser.updateProfile({ displayName: userName });
-                })
-                .catch(err => console.log(err.code))
-            return subscriber
-        }
-    }, [setuserName]);
 
     // this function upload the avatar image into the storage
     function selectImage() {
@@ -148,10 +122,10 @@ export default function NewUserWizard() {
                         <Text style={{ fontSize: 18, alignSelf: 'center' }}>אנחנו שמחים שהצטרפת אלינו! בבקשה מלא את הפרטים הבאים כדי שנוכל להכיר אותך טוב יותר</Text>
                         <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>אנא בחר את תאריך הלידה שלך:</Text>
                         <TouchableOpacity onPress={() => setDatePickerVisibility(true)} style={styles.editable}>
-                            <Text style={{ fontSize: 18 }}>{userDOB}</Text>
+                            <Text style={{ fontSize: 18 }}>{dateToReadbleFormat(userDOB)}</Text>
                         </TouchableOpacity>
                     </View>
-                    <View style={{ margin: 10, alignSelf: 'center' }}>
+                    <View style={{ margin: 10, alignSelf: 'center', alignItems: 'center' }}>
                         <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>ספר לנו קצת על עצמך.</Text>
                         <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>שים לב, משתמשים אחרים יכולו לקרוא את זה</Text>
                         <AutoGrowingTextInput

@@ -162,8 +162,8 @@ function ArticleScreen({ navigation, route }) {
                                 <TouchableOpacity
                                     style={styles.row}
                                     onPress={auth().currentUser ? () => updateLikes() : null}>
-                                    <Icon name={'like1'} size={20} style={styles.pad} color={auth().currentUser && extraData.likes.includes(auth().currentUser.email) ? '#2e98c5' : '#333'} />
-                                    <Text style={{ color: auth().currentUser && extraData.likes.includes(auth().currentUser.email) ? '#2e98c5' : '#333' }}>likes: {extraData.likes.length}</Text>
+                                    <Icon name={'like1'} size={20} style={styles.pad} color={auth().currentUser && extraData.likes.includes(auth().currentUser.email) ? '#0d5794' : '#333'} />
+                                    <Text style={{ color: auth().currentUser && extraData.likes.includes(auth().currentUser.email) ? '#0d5794' : '#333' }}>likes: {extraData.likes.length}</Text>
                                 </TouchableOpacity>
                                 <Text style={{ color: '#333' }}>comments: {extraData.comments ? extraData.comments.length : 0}</Text>
                             </View>
@@ -186,7 +186,7 @@ function ArticleScreen({ navigation, route }) {
                                     }}
                                     style={{ marginLeft: 10, }}
                                 >
-                                    <IconIos name={'send'} size={25} color={'#2e98c5'} />
+                                    <IconIos name={'send'} size={25} color={'#0d5794'} />
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -221,6 +221,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 10,
+        marginBottom: Platform.OS == 'ios' ? 10 : 0,
         paddingHorizontal: Dimensions.get('screen').width / 3
     },
     reaction: {
@@ -233,7 +234,7 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
         borderWidth: 2,
-        borderColor: '#1111',
+        borderColor: '#0d5794bb',
         elevation: 5,
         padding: 10,
         backgroundColor: '#f2f2f3',
