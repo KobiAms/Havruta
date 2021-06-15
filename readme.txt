@@ -1,1 +1,1 @@
-in article screen user name of the comment WILL-NOT updates due to need firebase-Function side 
+
