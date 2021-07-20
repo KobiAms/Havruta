@@ -9,7 +9,7 @@ import { useHeaderHeight } from '@react-navigation/stack';
 import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/AntDesign';
 import IconIos from 'react-native-vector-icons/Ionicons';
-
+var decode = require('unescape');
 
 /*this function return the article components including
 * the article data from wordpress and the likes and comments
@@ -110,8 +110,9 @@ function ArticleScreen({ navigation, route }) {
     }
 
     useLayoutEffect(() => {
+        var tit = decode(route.params.data.headline);
         navigation.setOptions({
-            title: route.params.data.headline
+            title: tit
         });
     }, [navigation])
 

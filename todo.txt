@@ -13,23 +13,9 @@ in Other Screen
 in RegistraionScreen
     forget password 
     change password
-    validate password crash the app if password doesnot match in signup - V
 
 in EventScreen
     reverse the list
-
-in AddChat 
-    edit title to hebrew - V
-
-in PostInMain
-    no-op warning - V
-
-in GenericFeed
-    set header tite from GenericFeed to custom title - V
-
-in ArticleScreen
-    fix header title some parse
-    floating reaction attached to keyboard listiner - V
 
 
 ---------- ========== done ========== ----------:
@@ -38,6 +24,7 @@ in GenericFeed
     scrolling down load more articles - V
     indicator load more posts - V
     posts images - V
+    set header tite from GenericFeed to custom title - V
 
 in UserForm:
     implement the edit fucntion - V
@@ -57,9 +44,12 @@ in ArticleScreen
     insert or remove user_id to likes[] onPress in ArticleScreen.js line 88 - V
     comment delete by admin - V
     make the feed reload on swipe up or on press - V
+    fix header title some parse - V
+    floating reaction attached to keyboard listiner - V
 
 in RegistraionScreen
     integrate "NewUserWizard.js" component into sign up flow -V
+    validate password crash the app if password doesnot match in signup - V
 
 in Other Screen 
     more chats section -v
@@ -72,6 +62,7 @@ in AddChat
     validate the chat name - V
     send alert if all the fields are not fiiled -V
     unique id -V
+    edit title to hebrew - V
 
 in subjectArticle
     fix load from wordpress and display on screen. - V
@@ -101,6 +92,9 @@ in AddEvent
 
 in PostInFeed
     like lock fix - V
+
+in PostInMain
+    no-op warning - V
 
 in UserProfile
     user photo does not display properley -V
