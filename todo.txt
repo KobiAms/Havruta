@@ -3,20 +3,34 @@
 in ManageUser.js
     add block field in user collection in firestore. - using bulidin fb block server side - fb function - X
     implement delele user button. - using bulidin fb delete server side fb function - X
-
-in UserProfile
-    header title to be the user name fix - ?
-
-in Other Screen 
-    add category
+    
    
 in RegistraionScreen
-    forget password 
-    change password
+    1. forget password
+    2. signin by third party 
 
-in EventScreen
-    reverse the list
+in UserForm:
+    3. Reset password
 
+in ChatScreen:
+    4.2 set password to enter chat
+    4.3 reset password to specific chat - admin only
+
+in AddChat
+    4.1 change the created chat doc with [bool:isLocked] and [String:password]
+
+in MainScreen
+    3. MainPostInMain not clickable
+
+---------- ========== Next Version ========== ----------:
+
+MultiPicker To choose 5 main subject for the MainScreen
+Push notification for chats and followed articles
+re design other screen and donate/about
+send video/audio in chats
+SECURITY
+analitics
+add category
 
 ---------- ========== done ========== ----------:
 in GenericFeed
@@ -98,6 +112,7 @@ in PostInMain
 
 in UserProfile
     user photo does not display properley -V
+    header title to be the user name fix - v
 
 in MainScreen
     show the top 5 from any subject required -V
