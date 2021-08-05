@@ -1,4 +1,4 @@
-package com.havruta;
+package il.org.havruta;
 
 import com.facebook.react.ReactActivity;
 
