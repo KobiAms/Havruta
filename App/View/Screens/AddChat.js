@@ -150,7 +150,7 @@ function AddChat({ navigation, route }) {
                             onPress={value => setPremission(value)}
                             hasPadding
                             buttonColor={'#0d5794'}
-                            style={{ margin: 10, width: Dimensions.get('screen').width * (85 / 100), }}
+                            style={{ margin: 2, width: Dimensions.get('screen').width * (90 / 100), }}
                         />
                     </View>
                     {
