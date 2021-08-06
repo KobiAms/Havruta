@@ -1,20 +1,10 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 import {
-    View,
-    Text,
-    TouchableOpacity,
-    Dimensions,
-    StyleSheet,
-    TouchableWithoutFeedback,
-    Keyboard,
-    TextInput,
-    Alert,
-    Switch,
+    View, Text, TouchableOpacity, Dimensions, StyleSheet, TouchableWithoutFeedback, Keyboard,
+    TextInput, Alert, Switch,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-
-
 
 function PswrdScreen({ navigation, route }) {
     const [inputPass, setInputPass] = useState('');
@@ -24,8 +14,6 @@ function PswrdScreen({ navigation, route }) {
     let item = route.params.data;
     let mode = route.params.mode;
     let id = route.params.id;
-
-
 
     function resetPassword(tryPass) {
         if (id && password === '') {
@@ -56,9 +44,7 @@ function PswrdScreen({ navigation, route }) {
                 { cancelable: true });
         }
     }
-
     function updatePassword() {
-
         if ((inputPass.length >= 4 && isSafe) || !isSafe)
             firestore().collection('chats').doc(id).update({
                 isProtected: isSafe,
@@ -67,9 +53,6 @@ function PswrdScreen({ navigation, route }) {
         else Alert.alert('הסיסמא שבחרת קצרה מדי', 'בחר סיסמא באורך לפחות 4 תויים', [{ text: 'OK', style: 'cancel' }],
             { cancelable: false });
     }
-
-
-
     function validPassword(tryPass) {
         console.log(item);
         if (item.data.password === tryPass)
@@ -155,7 +138,6 @@ function PswrdScreen({ navigation, route }) {
                         </TouchableOpacity>
                     </View> : null
                 }
-
             </View>
         </TouchableWithoutFeedback>
     );
