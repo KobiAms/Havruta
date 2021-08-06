@@ -27,6 +27,7 @@ import AboutScreen from './App/View/Screens/AboutScreen';
 import EventsScreen from './App/View/Screens/EventsScreen';
 import AddEvent from './App/View/Screens/AddEvent';
 import UserProfile from './App/View/Screens/UserProfile';
+import PswrdScreen from './App/View/Screens/PswrdScreen';
 
 const HebrewDate = `<div>
 <script type="text/javascript" charset="utf-8"
@@ -205,7 +206,16 @@ App = () => {
             name="UserProfile"
             component={UserProfile}
           />
+
+          <Stack.Screen name="PswrdScreen" component={PswrdScreen} options={{
+            cardOverlayEnabled: true,
+            presentation: 'Modal',
+          }}
+          />
+
+
         </Stack.Navigator>
+
       </NavigationContainer>
     </SafeAreaProvider>
   );
