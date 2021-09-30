@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { View, Pressable, FlatList, TouchableOpacity, StyleSheet, Alert, Dimensions } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
@@ -129,7 +130,13 @@ function ChatScreen({ navigation, route }) {
         } else {
             return (
                 <Pressable
-                    onPress={() => navigation.navigate('GenericChat', { id: item.id, chat_name: item.data.name })}
+                    onPress={() => {
+                        if (item.data.isProtected) {
+                            navigation.navigate('PswrdScreen', { data: item, mode: 'INSERT' })
+                        }
+                        else
+                            navigation.navigate('GenericChat', { id: item.id, chat_name: item.data.name })
+                    }}
                     onLongPress={() => deleteChat(item)}>
                     <Chat item={item} />
                 </Pressable>

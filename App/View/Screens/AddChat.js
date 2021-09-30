@@ -1,8 +1,10 @@
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable prettier/prettier */
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { View, Text, TouchableOpacity, Dimensions, StyleSheet, TouchableWithoutFeedback, Keyboard, TextInput, Alert } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
-import SwitchSelector from "react-native-switch-selector";
+import SwitchSelector from 'react-native-switch-selector';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { useHeaderHeight } from '@react-navigation/stack';
 import { ActivityIndicator, KeyboardAvoidingView, Image } from 'react-native';
@@ -14,19 +16,21 @@ function AddChat({ navigation, route }) {
     const [imageUrl, setImageUrl] = useState();
     const [premission, setPremission] = useState();
     const [loading, setLoading] = useState(false);
-    const headerHeight = useHeaderHeight()
+    const [isProtected, setIsProtected] = useState(false);
+    const [password, setPassword] = useState('');
+    const headerHeight = useHeaderHeight();
 
     useLayoutEffect(() => {
         navigation.setOptions({
             title: 'הוספת צ׳אט',
         });
-    }, [navigation])
+    }, [navigation]);
 
     function choose_photo() {
         // lunching the camera roll / gallery
         launchImageLibrary({ maxWidth: 300, maxHeight: 200 }, async response => {
             if (response.didCancel) {
-                return
+                return;
             } else if (response.error) {
                 Alert.alert(
                     'Error',
@@ -35,7 +39,7 @@ function AddChat({ navigation, route }) {
                     { cancelable: false },
                 );
             } else {
-                setImageUrl(response.uri)
+                setImageUrl(response.uri);
             }
         });
     }
@@ -44,9 +48,9 @@ function AddChat({ navigation, route }) {
     async function add_chat_to_FB(name, premission) {     //a function to create new chat
         // if is in middle of action dont do anything
         if (loading) {
-            return
+            return;
         }
-        setLoading(true)
+        setLoading(true);
         // generates new chaat id from the name
         let id = makeid(20);                    //if it does not generate new random one
 
@@ -66,17 +70,19 @@ function AddChat({ navigation, route }) {
                         createdAt: String(new Date()),
                         user: {
                             _id: auth().currentUser.email,
-                            name: 'מנהל'
-                        }
+                            name: 'מנהל',
+                        },
                     }],
                     imageUrl: url,
                     name: name,
                     premission: premission,
+                    isProtected: isProtected,
+                    password: isProtected ? password : '',
                 })
                     // go back to all chats
                     .then(() => navigation.goBack())
-                    .catch(err => console.log(err))
-            })
+                    .catch(err => console.log(err));
+            });
         } else {
             // if image is not selected, upload only the chat Initialize to firestore
             firestore().collection('chats').doc(id).set({
@@ -86,13 +92,15 @@ function AddChat({ navigation, route }) {
                     createdAt: String(new Date()),
                     user: {
                         _id: auth().currentUser.email,
-                        name: 'מנהל'
-                    }
+                        name: 'מנהל',
+                    },
                 }],
                 name: name,
                 premission: premission,
+                isProtected: isProtected,
+                password: isProtected ? password : '',
             })
-                .then(() => navigation.goBack()).catch(err => console.log(err))
+                .then(() => navigation.goBack()).catch(err => console.log(err));
         }
 
 
@@ -112,8 +120,8 @@ function AddChat({ navigation, route }) {
     //alert function in case there is name or premission missing
     function fillAllFields() {
         Alert.alert(
-            "Some Data are missing",
-            "Please fill all the fields\nbefore creating a chat", [{ text: "OK", style: "cancel" }],
+            'חסרים נתונים!',
+            'אנא מלא את כל השדות לפני שתיצור צ\'אט חדש', [{ text: 'OK', style: 'cancel' }],
             { cancelable: true }
         );
     }
@@ -123,7 +131,7 @@ function AddChat({ navigation, route }) {
             <KeyboardAvoidingView
                 keyboardVerticalOffset={headerHeight}
                 style={styles.main}
-                behavior={Platform.OS == 'ios' ? "padding" : false} >
+                behavior={Platform.OS == 'ios' ? 'padding' : false} >
                 <View style={styles.main}>
                     <TouchableOpacity onPress={() => choose_photo()} style={styles.image_container}>
                         <Image style={styles.chat_image} source={imageUrl ? { uri: imageUrl } : require('../../Assets/logo.png')} />
@@ -136,7 +144,7 @@ function AddChat({ navigation, route }) {
                             style={styles.editable}
                             value={chatName}
                             onChangeText={setChatName}
-                            placeholder={`  הזן שם צ'אט...    `} />
+                            placeholder={'  הזן שם צ\'אט...    '} />
                     </View>
                     <View style={{ margin: 10, alignItems: 'center' }}>
                         <Text>מי יכול לשלוח הודעות בצ'אט הזה?</Text>
@@ -144,15 +152,46 @@ function AddChat({ navigation, route }) {
                             options={[
                                 { label: 'כל המשתמשים', value: 'user' },
                                 { label: 'כתבים', value: 'reporter' },
-                                { label: 'מנהלים בלבד', value: 'admin' }
+                                { label: 'מנהלים בלבד', value: 'admin' },
                             ]}
                             textColor={'#000'}
                             onPress={value => setPremission(value)}
                             hasPadding
                             buttonColor={'#0d5794'}
-                            style={{ margin: 10, width: Dimensions.get('screen').width * (85 / 100), }}
+                            style={{ margin: 2, width: Dimensions.get('screen').width * (90 / 100) }}
                         />
                     </View>
+                    <View style={{ margin: 10, alignItems: 'center' }}>
+                        <Text>מי יכול להיכנס לצ'אט הזה?</Text>
+                        <SwitchSelector
+                            options={[
+                                { label: 'מוגן באמצעות סיסמא', value: true },
+                                { label: 'פתוח לכולם', value: false },
+                            ]}
+                            textColor={'#000'}
+                            onPress={value => setIsProtected(value)}
+                            hasPadding
+                            buttonColor={'#0d5794'}
+                            style={{ margin: 2, width: Dimensions.get('screen').width * (90 / 100) }}
+                        />
+                    </View>
+
+                    <View style={{ margin: 10, alignItems: 'center' }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', margin: 10 }}>
+                            אנא בחר סיסמא
+                        </Text>
+                        {isProtected ? <TextInput
+                            style={styles.editable}
+                            value={password}
+                            onChangeText={setPassword}
+                            placeholder={'  סיסמא...    '} /> :
+                            <View style={styles.editcont}>
+                                <Text>ללא סיסמא</Text>
+                            </View>
+                        }
+
+                    </View>
+
                     {
                         loading ?
                             <ActivityIndicator color={'#0d5794'} size={'small'} />
@@ -160,7 +199,12 @@ function AddChat({ navigation, route }) {
                             <TouchableOpacity
                                 style={styles.submit}
                                 onPress={() => {
-                                    chatName && premission ? add_chat_to_FB(chatName, premission) : fillAllFields()
+                                    if (isProtected && password.length < 4) {
+                                        Alert.alert('הסיסמא שבחרת קצרה מדי', 'בחר סיסמא באורך לפחות 4 תויים', [{ text: 'OK', style: 'cancel' }],
+                                            { cancelable: false });
+                                        return;
+                                    }
+                                    chatName && premission ? add_chat_to_FB(chatName, premission) : fillAllFields();
                                 }
                                 }>
                                 <Text style={{ fontSize: 22, color: '#fff', fontWeight: 'bold' }}>צור את הצ'אט</Text>
@@ -170,7 +214,7 @@ function AddChat({ navigation, route }) {
                 </View >
             </KeyboardAvoidingView>
         </TouchableWithoutFeedback>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
@@ -179,7 +223,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         backgroundColor: '#f2f2f3',
-        padding: 15
+        padding: 15,
     },
     editable: {
         borderWidth: 1,
@@ -194,7 +238,22 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.32,
         shadowRadius: 5.46,
         elevation: 3,
-        padding: 7
+        padding: 7,
+    },
+    editcont: {
+        borderWidth: 1,
+        borderRadius: 10,
+        borderColor: '#aaa',
+        backgroundColor: '#FFFFFF',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity: 0.32,
+        shadowRadius: 5.46,
+        elevation: 3,
+        padding: 11,
     },
     submit: {
         backgroundColor: '#0d5794',
@@ -217,7 +276,7 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         overflow: 'hidden',
         borderWidth: 1,
-    }
-})
+    },
+});
 
 export default AddChat;

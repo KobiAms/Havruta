@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { useState, useCallback, useEffect, useLayoutEffect } from 'react'
 import {
     GiftedChat, Bubble, Actions, Send, Composer
@@ -7,6 +8,7 @@ import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
 import { ActivityIndicator, Keyboard, Pressable, View } from 'react-native';
 import Icon from 'react-native-vector-icons/EvilIcons';
+import IoIcon from 'react-native-vector-icons/Ionicons';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { Dimensions } from 'react-native';
 
@@ -55,13 +57,20 @@ export function GenericChat({ navigation, route }) {
         const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
         return subscriber
     }, []);
-
+    function resetPassword() {
+        navigation.navigate('PswrdScreen', { id: route.params.id, mode: 'RESET' })
+    }
     //chaged
     useLayoutEffect(() => {
         navigation.setOptions({
             title: route.params.chat_name,
+            headerRight: () => (
+                <Pressable style={{ paddingHorizontal: 10 }} onPress={() => { if (userRole === 'admin') resetPassword() }} >
+                    <IoIcon name={'key-sharp'} size={22} color={userRole == 'admin' ? '#fff' : '#0d5794'} />
+                </Pressable>
+            )
         });
-    }, [navigation])
+    }, [navigation, userRole])
 
     function refreshChat() {
         firestore()
