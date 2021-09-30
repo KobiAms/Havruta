@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   NavigationContainer,
   getFocusedRouteNameFromRoute,
 } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { StyleSheet, TouchableOpacity, Image, Dimensions, Platform, Text } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import {createStackNavigator} from '@react-navigation/stack';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {StyleSheet, TouchableOpacity, Image, Dimensions, Platform, Text} from 'react-native';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import IconFW from 'react-native-vector-icons/FontAwesome';
 import IconIC from 'react-native-vector-icons/Ionicons';
@@ -27,6 +27,8 @@ import AboutScreen from './App/View/Screens/AboutScreen';
 import EventsScreen from './App/View/Screens/EventsScreen';
 import AddEvent from './App/View/Screens/AddEvent';
 import UserProfile from './App/View/Screens/UserProfile';
+import PswrdScreen from './App/View/Screens/PswrdScreen';
+import hebrew from './App/View/Components/hebrew';
 
 const HebrewDate = `<div>
 <script type="text/javascript" charset="utf-8"
@@ -82,27 +84,27 @@ MainScreenNavigator = () => {
       <Tab.Screen
         name="דף הבית"
         component={MainScreen}
-        initialParams={{ categories_id: '122' }}
-        options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<IconFW name="home" size={25} color={color} />), })} />
+        initialParams={{categories_id: '122'}}
+        options={({route}) => ({tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({color}) => (<IconFW name="home" size={25} color={color} />), })} />
       <Tab.Screen
         name="מעט לעת"
         component={GenericFeed}
-        initialParams={{ category_id: '402' }}
-        options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="book-open" size={25} color={color} />), })} />
+        initialParams={{category_id: '402'}}
+        options={({route}) => ({tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({color}) => (<Icon name="book-open" size={25} color={color} />), })} />
       <Tab.Screen
         name="צ׳אט הכתבים"
         component={GenericChat}
-        initialParams={{ id: 'reporters', show_input: false, chat_name: "צ׳אט הכתבים" }}
-        options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<IconIC name="ios-chatbubbles-sharp" size={25} color={color} />), })} />
+        initialParams={{id: 'reporters', show_input: false, chat_name: "צ׳אט הכתבים"}}
+        options={({route}) => ({tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({color}) => (<IconIC name="ios-chatbubbles-sharp" size={25} color={color} />), })} />
       <Tab.Screen
         name="דוברות"
         component={GenericFeed}
-        initialParams={{ category_id: '404' }}
-        options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="torah" size={25} color={color} />), })} />
+        initialParams={{category_id: '404'}}
+        options={({route}) => ({tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({color}) => (<Icon name="torah" size={25} color={color} />), })} />
       <Tab.Screen
         name="נוספים"
         component={OtherScreen}
-        options={({ route }) => ({ tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({ color }) => (<Icon name="bars" size={25} color={color} />), })} />
+        options={({route}) => ({tabBarVisible: getTabBarVisibility(route), tabBarIcon: ({color}) => (<Icon name="bars" size={25} color={color} />), })} />
     </Tab.Navigator>
   );
 };
@@ -118,10 +120,11 @@ App = () => {
     setHebrewDate(date)
   }
   useEffect(() => {
-    getHebrewDate()
+    //getHebrewDate()
+    hebrew();
   }, [])
   return (
-    <SafeAreaProvider style={{ height: '100%', width: '100%' }}>
+    <SafeAreaProvider style={{height: '100%', width: '100%'}}>
       <NavigationContainer>
         <Stack.Navigator
           screenOptions={{
@@ -133,7 +136,7 @@ App = () => {
             name="MainScreenNavigator"
             component={MainScreenNavigator}
             // set the main header to show logo, search and user 
-            options={({ navigation }) => {
+            options={({navigation}) => {
 
               return ({
                 title: 'חברותא',
@@ -152,19 +155,19 @@ App = () => {
           <Stack.Screen
             name="Registration"
             component={RegistrationScreen}
-            options={{ title: 'Registration', }} />
+            options={{title: 'Registration', }} />
           <Stack.Screen
             name="Manage Users"
             component={ManageUsers}
-            options={{ title: 'ניהול', }} />
+            options={{title: 'ניהול', }} />
           <Stack.Screen
             name="Manage User"
             component={ManageUser}
-            options={{ title: 'ניהול', }} />
+            options={{title: 'ניהול', }} />
           <Stack.Screen
             name="Wizard"
             component={Wizard}
-            options={{ title: 'ברוכים הבאים', }} />
+            options={{title: 'ברוכים הבאים', }} />
           <Stack.Screen
             name="GenericFeed"
             component={GenericFeed}
@@ -205,7 +208,16 @@ App = () => {
             name="UserProfile"
             component={UserProfile}
           />
+
+          <Stack.Screen name="PswrdScreen" component={PswrdScreen} options={{
+            cardOverlayEnabled: true,
+            presentation: 'Modal',
+          }}
+          />
+
+
         </Stack.Navigator>
+
       </NavigationContainer>
     </SafeAreaProvider>
   );
