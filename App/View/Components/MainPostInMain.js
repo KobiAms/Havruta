@@ -28,7 +28,7 @@ function MainPostInMain({ data }) {
 
 
     return (
-        <TouchableWithoutFeedback>
+        <View>
             <View style={styles.main}>
                 <Image style={styles.backgroundImage} source={imageUrl ? { uri: imageUrl } : require('../../Assets/logo_stretch.png')} />
                 <View style={{ backgroundColor: '#fffe', padding: 10, width: '30%', borderBottomRightRadius: 15, alignItems: 'center' }}>
@@ -47,7 +47,7 @@ function MainPostInMain({ data }) {
                 >
                 </HTMLRend>
             </View>
-        </TouchableWithoutFeedback >
+        </View >
     );
 }
 

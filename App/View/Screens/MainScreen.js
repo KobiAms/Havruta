@@ -30,7 +30,7 @@ function MainScreen({ navigation, route }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [posts, setPosts] = useState([])
   const [refreshing, setRefreshing] = useState(false);
-  const [offset, setOffset] = useState(0)
+  // const [offset, setOffset] = useState(0)
   const baseURL = 'https://havruta.org.il/wp-json'
   let api = axios.create({ baseURL });
 

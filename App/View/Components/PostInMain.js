@@ -14,7 +14,7 @@ function PostInMain({ data }) {
         if (data.image_link) {
             const baseURL = data.image_link
             axios.create({ baseURL }).get().then(res => {
-                console.log(res.status)
+                // console.log(res.status)
                 if (res.data.guid.rendered[4] != '') {
                     setImageUrl(res.data.guid.rendered.substring(0, 4) + 's' + res.data.guid.rendered.substring(4, res.data.guid.rendered.length))
                 } else {

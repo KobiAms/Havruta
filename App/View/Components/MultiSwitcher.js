@@ -20,7 +20,7 @@ export default function MultiSwitcher({ onSelect, list, selectedIndex }) {
     useEffect(() => {
         //setSelected(list[selectedIndex])
 
-        console.log(list + ' \nthe selected index ' + selectedIndex);
+        // console.log(list + ' \nthe selected index ' + selectedIndex);
     }, [setSelected])
     const renderItem = ({ item }) => <Item item={item} onPress={() => select(item)} />
 

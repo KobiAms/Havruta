@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Keyboard, TouchableWithoutFeedback, Alert } from 'react-native';
 import IconIC from 'react-native-vector-icons/Ionicons';
 import auth from '@react-native-firebase/auth';
 import LoginForm from '../Components/LoginForm';
@@ -66,15 +66,15 @@ RegistrationScreen = ({ navigation }) => {
               </TouchableOpacity>
             </View>
             <View style={styles.social_login}>
-              <TouchableOpacity style={styles.social_login_button} onPress={() => alert('בקרוב...')}>
-                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} onPress={() => alert('בקרוב...')}>
+              <TouchableOpacity style={styles.social_login_button} onPress={() => Alert.alert('רק עוד קצת..', 'בקרוב..', [{ text: 'OK', style: 'cancel' }], { cancelable: true })}>
+                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                   <IconIC size={30} name={'md-logo-apple'} />
                 </View>
                 <View style={{ flex: 4, alignItems: 'center', justifyContent: 'center' }}>
                   <Text>{login_mode ? 'Continue' : 'Register'} With Apple</Text>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.social_login_button} onPress={() => alert('בקרוב...')}>
+              <TouchableOpacity style={styles.social_login_button} onPress={() => Alert.alert('רק עוד קצת..', 'בקרוב..', [{ text: 'OK', style: 'cancel' }], { cancelable: true })}>
                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                   <IconIC size={30} name={'ios-logo-google'} />
                 </View>
@@ -82,7 +82,7 @@ RegistrationScreen = ({ navigation }) => {
                   <Text>{login_mode ? 'Continue' : 'Register'} With Google</Text>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.social_login_button} onPress={() => alert('בקרוב...')}>
+              <TouchableOpacity style={styles.social_login_button} onPress={() => Alert.alert('רק עוד קצת..', 'בקרוב..', [{ text: 'OK', style: 'cancel' }], { cancelable: true })}>
                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                   <IconIC size={30} name={'ios-logo-facebook'} color={'#3577ea'} />
                 </View>
@@ -90,7 +90,7 @@ RegistrationScreen = ({ navigation }) => {
                   <Text>{login_mode ? 'Continue' : 'Register'} With Facebook</Text>
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.social_login_button, { width: '60%', borderColor: '#0d5794' }]} onPress={() => alert('בקרוב...')}>
+              <TouchableOpacity style={[styles.social_login_button, { width: '60%', borderColor: '#0d5794' }]} onPress={() => Alert.alert('רק עוד קצת..', 'בקרוב..', [{ text: 'OK', style: 'cancel' }], { cancelable: true })}>
                 <View style={{ flex: 4, alignItems: 'center', justifyContent: 'center' }}>
                   <Text style={{ color: '#0d5794' }}> שכחתי סיסמא</Text>
                 </View>
